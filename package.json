@@ -1,0 +1,45 @@
+{
+  "name": "reelmap",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/core": "^10.0.7",
+    "@emotion/styled": "^10.0.7",
+    "@googlemap-react/core": "^0.1.1-alpha.1",
+    "hull.js": "^0.2.10",
+    "lodash-move": "^1.1.1",
+    "outstated": "^2.0.1",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "react-highlighter": "^0.4.3",
+    "react-materialize": "^2.6.0",
+    "react-scripts": "2.1.5",
+    "react-spinners": "^0.5.3",
+    "react-split-pane": "^0.1.85",
+    "react-spring": "^5.9.2",
+    "react-tippy": "^1.2.3"
+  },
+  "main": "src/main.js",
+  "scripts": {
+    "start": "concurrently \"cross-env BROWSER=none react-scripts start\" \"wait-on http://localhost:3006 && electron .\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron ."
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "electron": "^4.0.4",
+    "wait-on": "^3.2.0"
+  }
+}
