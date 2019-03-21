@@ -88,6 +88,11 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, active }) => {
             </td>
             <td style={{ minWidth: '4ch' }}>
                 <Badge>
+                    <SearchHighlight search={search}>{data.Sequence}</SearchHighlight>
+                </Badge>
+            </td>
+            <td style={{ minWidth: '4ch' }}>
+                <Badge>
                     {'#'}
                     <SearchHighlight search={search}>{data.OrderId}</SearchHighlight>
                 </Badge>

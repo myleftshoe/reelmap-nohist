@@ -15,7 +15,7 @@ export default async function vroom(items) {
     // console.log("vroom", GAS.depot.LatLng);
     // const depot = [GAS.depot.LatLng.longitude, GAS.depot.LatLng.latitude];
     const depot = [145.005252, -37.688797];
-    const drivers = ['CHA', 'DRK', 'SAM1'];
+    const drivers = ['CHA'];
     const _items = items.reduce((obj, item) => ((obj[item.OrderId] = item, obj)), {});
     console.log(JSON.parse(JSON.stringify(_items)));
     const jobs = items.map(item => {

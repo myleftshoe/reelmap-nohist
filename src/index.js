@@ -7,12 +7,18 @@ import { GoogleMapProvider } from '@googlemap-react/core';
 import { Provider } from 'outstated';
 import dataStore from './stores/data-store';
 
+function AppContainer({ store }) {
+    return (
+        <GoogleMapProvider>
+            <Provider stores={[store]}>
+                <App />
+            </Provider>
+        </GoogleMapProvider>
+    )
+}
+
 ReactDOM.render(
-    <GoogleMapProvider>
-        <Provider stores={[dataStore]}>
-            <App />
-        </Provider>
-    </GoogleMapProvider>,
+    <AppContainer store={dataStore} />,
     document.getElementById('root')
 );
 

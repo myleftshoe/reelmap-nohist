@@ -20,9 +20,10 @@ import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
 import { colors, resizableProps } from './constants'
-import vroom from './map/services/vroom'
+import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 
+const driver = window.location.pathname.split('/')[1];
 
 function App() {
 
@@ -31,21 +32,23 @@ function App() {
   const [selectedDriver, selectDriver] = useState();
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
-  const [groupBy, setGroupBy] = useState('PostalCode,City');
+  const [sortBy, setSortBy] = useState('PostalCode,City');
   const [suburb, setSuburb] = useState('');
-  const [panes, setPanes] = useState(['CHA', 'DRK', 'SAM1', 'UNASSIGNED']);
+  const [panes, setPanes] = useState(['SAM1', 'DRK', 'CHA', 'UNASSIGNED']);
   const { state: mapState } = useContext(GoogleMapContext);
   const [paths, setPaths] = useState([]);
   const [working, setWorking] = useState(false);
 
   const items = [...store.values()];
-  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
+  console.log(items)
+  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), sortBy);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
+  const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
 
-  console.log(quickChange, selectedMarkerId, suburb, selectedDriver);
-
+  console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
+  // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);
   function handleDrop(transferredData, target, e) {
     const { type, id, selected } = transferredData;
     console.log(transferredData, target);
@@ -81,11 +84,13 @@ function App() {
 
   function handleMarkerRightClick(id) {
     if (quickChange) {
-      store.get(id).Driver = quickChange;
-      updateStore(persist);
+      const next = quickChange + 1;
+      store.get(id).Sequence = next;
+      setQuickChange(next)
+      updateStore();
     }
     else
-      setQuickChange(store.get(id).Driver);
+      setQuickChange(store.get(id).Sequence);
   }
 
   function handleMarkerDrop(latLng, id) {
@@ -97,12 +102,17 @@ function App() {
 
   async function autoAssign() {
     setWorking(true);
-    setPaths(await vroom(items))
+    const { paths, newItems } = await vroom(items, [driver]);
+    setPaths(paths);
+    updateStore();
     setWorking(false);
   }
 
   function clearAll() {
-    [...store.values()].forEach(item => item.Driver = 'UNASSIGNED');
+    [...store.values()].forEach(item => {
+      // item.Driver = 'UNASSIGNED';
+      item.Sequence = '';
+    });
     setPaths([])
     updateStore()
   }
@@ -138,12 +148,14 @@ function App() {
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
         <Sidebar.Navigation>
-          <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
-          {/* <Sidebar.NavButton active={groupBy === 'Driver'} onClick={() => setGroupBy('Driver')}>people</Sidebar.NavButton> */}
-          <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id=',' active={groupBy === ','} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
-          <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
+          <Sidebar.NavButton id='City' active={sortBy === 'City'} onClick={setSortBy} tooltip='Sort by suburb'>location_city</Sidebar.NavButton>
+          {/* <Sidebar.NavButton active={groupBy === 'Driver'} onClick={() => setSortBy('Driver')}>people</Sidebar.NavButton> */}
+          <Sidebar.NavButton id='PostalCode' active={sortBy === 'PostalCode'} onClick={setSortBy} tooltip='Sort by post code'>local_post_office</Sidebar.NavButton>
+          <Sidebar.NavButton id='Sequence' active={sortBy === 'Sequence'} onClick={setSortBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton>
+          <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+          <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton>
           <BeatLoader
             css={css`margin-top: auto;`}
             sizeUnit='px'
@@ -155,47 +167,33 @@ function App() {
         <Sidebar.Content>
           <Minibar>
             <Filter onChange={setFilter} />
-            {/* <Minibar.Button onClick={() => setGroupBy('City,PostalCode')}>location_city</Minibar.Button>
-            <Minibar.Button onClick={() => setGroupBy('PostalCode,City')}>local_post_office</Minibar.Button>
-            <Minibar.Button onClick={() => setGroupBy([])}>format_list_numbered</Minibar.Button> */}
+            {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
+            <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
+            <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
           </Minibar>
           {
             panes.map(paneKey => {
               const filteredByDriver = filteredData.filter(({ Driver }) => Driver === paneKey || !Driver);
-              const filteredAndGrouped = ArrayX.groupBy2(filteredByDriver, groupBy);
-              const groupKeys = Object.keys(filteredAndGrouped);
               return (
-                <Pane key={paneKey} onReorder={setPanes} expanded={false} id={paneKey} onDrop={(_, e) => handleDrop(_, paneKey, e)} onMouseOver={() => selectDriver(paneKey)}>
+                <Pane key={paneKey} onReorder={setPanes} expanded={true} id={paneKey} onDrop={(_, e) => handleDrop(_, paneKey, e)} onMouseOver={() => selectDriver(paneKey)}>
                   <Pane.Header active={paneKey === selectedDriver} color={colors[paneKey]} type='header' id={paneKey} draggable>
                     {paneKey}
                     <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
-                  </Pane.Header> {
-                    groupKeys.map(groupKey =>
-                      <Group
-                        key={groupKey}
-                        id={groupKey.split(',')[0]}
-                        type={groupBy.split(',')[0]}
-                        content={groupKey}
-                        onClick={() => handleGroupHeaderClick(groupKey)}
-                        flatten={groupKey === 'undefined'}
-                        count={filteredAndGrouped[groupKey].length}
-                        expanded={isFiltered}
+                  </Pane.Header>
+                  <Group.Items>
+                    {filteredByDriver.map(item =>
+                      <Group.Item
+                        id={item.OrderId}
+                        key={item.OrderId}
+                        data={item}
                         filter={filter}
-                      >
-                        {filteredAndGrouped[groupKey].map(item =>
-                          <Group.Item
-                            id={item.OrderId}
-                            key={item.OrderId}
-                            data={item}
-                            filter={filter}
-                            compact={groupKey !== 'undefined'}
-                            active={item.OrderId === selectedMarkerId}
-                            // onClick={() => selectMarker(item.OrderId)}
-                            onMouseOver={() => selectMarker(item.OrderId)}
-                          />)
-                        }
-                      </Group>
-                    )}
+                        // compact={groupKey !== 'undefined'}
+                        active={item.OrderId === selectedMarkerId}
+                        // onClick={() => selectMarker(item.OrderId)}
+                        onMouseOver={() => selectMarker(item.OrderId)}
+                      />)
+                    }
+                  </Group.Items>
                 </Pane>
               )
             })
@@ -205,7 +203,7 @@ function App() {
       <GoogleMap
         onClick={() => selectMarker(null)}
         onRightClick={() => setQuickChange(null)}
-        cursor={quickChange && circle({ radius: 16, color: colors[quickChange] }).cursor}
+        cursor={cursor}
       >
         <Marker
           key={'depot'}
@@ -221,10 +219,10 @@ function App() {
             },
             // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
             // icon: labeledIcon({label:id, color: colors[Driver]}),
-            cursor: quickChange && circle({ radius: 16, color: colors[quickChange] }).cursor
+            cursor
           }}
         />
-        {filteredData.map(({ OrderId: id, GeocodedAddress, Driver }) => {
+        {filteredData.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           if (!GeocodedAddress) return null;
           const driver = Driver || 'UNASSIGNED'
           return <Marker
@@ -232,12 +230,21 @@ function App() {
             id={id}
             opts={{
               draggable: true,
-              // label: id,
+              // label: `${Sequence}`,
+              label: Sequence && {
+                text: `${Sequence}`,
+                color: 'black',
+                fontSize: '10px',
+                fontWeight: 'bold',
+              },
               position: { lat: GeocodedAddress.latitude, lng: GeocodedAddress.longitude },
-              icon: { url: `http://maps.google.com/mapfiles/ms/icons/${colors[driver]}.png` },
+              icon: {
+                url: `http://maps.google.com/mapfiles/ms/icons/${colors[driver]}.png`,
+                labelOrigin: new google.maps.Point(15, 10)
+              },
               // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
               // icon: labeledIcon({label:id, color: colors[Driver]}),
-              cursor: quickChange && circle({ radius: 16, color: colors[quickChange] }).cursor
+              cursor
             }}
             onClick={() => selectMarker(id)}
             onRightClick={() => handleMarkerRightClick(id)}
@@ -254,13 +261,13 @@ function App() {
         >
           {selectedMarkerId && <MarkerInfoWindowContent item={selectedItem} color={colors[selectedItem.Driver]} />}
         </InfoWindow>
-        <ContouredPolygon
+        {/* <ContouredPolygon
           id='polygon'
           points={polygonPoints}
           // color={colors[selectedDriver]}
           color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
           onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
-        />
+        /> */}
         {!isFiltered && paths.map(({ path, driver }) => {
           // console.log(path)
           const points = google.maps.geometry.encoding.decodePath(path)
@@ -281,7 +288,7 @@ function App() {
               }}
             // onClick={onClick}
             />
-            <Polygon key={'polygon' + driver} id={'polygon' + driver}
+            {/* <Polygon key={'polygon' + driver} id={'polygon' + driver}
               opts={{
                 clickable: true,
                 path: points,
@@ -294,7 +301,7 @@ function App() {
                 fillOpacity: driver === (selectedDriver || driver) ? 0.16 : 0.0,
               }}
               onClick={() => mapState.map.fitBounds(Bounds.from(points))}
-              onRightClick={() => reassignRoute(driver)} />
+              onRightClick={() => reassignRoute(driver)} /> */}
           </React.Fragment>
         })}
         <SuburbBoundary suburb={suburb} />
