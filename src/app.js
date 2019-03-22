@@ -336,7 +336,7 @@ function App(props) {
               }}
             // onClick={onClick}
             />
-            {/* <Polygon key={'polygon' + driver} id={'polygon' + driver}
+            <Polygon key={'polygon' + driver} id={'polygon' + driver}
               opts={{
                 clickable: true,
                 path: points,
@@ -349,7 +349,7 @@ function App(props) {
                 fillOpacity: driver === (selectedDriver || driver) ? 0.16 : 0.0,
               }}
               onClick={() => mapState.map.fitBounds(Bounds.from(points))}
-              onRightClick={() => reassignRoute(driver)} /> */}
+              onRightClick={() => reassignRoute(driver)} />
           </React.Fragment>
         })}
         <SuburbBoundary suburb={suburb} />
