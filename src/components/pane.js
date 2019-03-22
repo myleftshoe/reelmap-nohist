@@ -103,6 +103,13 @@ function Pane(props) {
         content = content.slice(1)
     }
 
+    let flex = null;
+    if (props.keepOpen) {
+        if (props.keepOpen === props.id)
+            flex = '1 1 38px'
+        else
+            flex = '0 0 0px'
+    }
     return (
         <PaneContainer
             id={props.id}
@@ -114,6 +121,7 @@ function Pane(props) {
             onDragOver={handleDragOver}
             onMouseOver={props.onMouseOver}
             onClick={props.onClick}
+            style={{ flex }}
         >
             <div onClick={toggleExpanded}>
                 {header}

@@ -24,12 +24,12 @@ import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 
 // const driver = window.location.pathname.split('/')[1];
-const allDrivers = ['SAM1', 'DRK', 'CHA'];
+const drivers = ['SAM1', 'DRK', 'CHA'];
 
 function App(props) {
 
-  const driver = props.match.params.id;
-  const drivers = (driver && [driver]) || allDrivers;
+  console.log('rendering')
+  // const driver = props.match.params.id;
 
   const [store, updateStore, persist] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
@@ -40,6 +40,7 @@ function App(props) {
   const [groupBy, setGroupBy] = useState('PostalCode,City');
   // const [suburb, setSuburb] = useState('');
   const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
+  const [pane, selectPane] = useState();
   const { state: mapState } = useContext(GoogleMapContext);
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
@@ -47,6 +48,7 @@ function App(props) {
   // if (drivers.length + 1 !== panes.length) {
   //   setPanes([...drivers, 'UNASSIGNED'])
   // }
+  const driver = pane;
 
   let activePaths;
   if (paths.has(driver))
@@ -54,11 +56,12 @@ function App(props) {
   else
     activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
 
-  let items = [...store.values()];
-  if (driver) items = items.filter(({ Driver }) => Driver === driver);
+  const items = [...store.values()];
+  const selectedDriverItems = items.filter(({ Driver }) => Driver === driver);
 
   // console.log(items)
-  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
+  const _items = driver ? selectedDriverItems : items;
+  const filteredData = ArrayX.sortByProperty(Filter.apply(_items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
@@ -122,8 +125,11 @@ function App(props) {
   }
 
   async function autoAssign() {
+    const _items = driver ? selectedDriverItems : items;
+    const _drivers = driver ? [driver] : [...drivers];
+    if (!_items.length) return;
     setWorking(true);
-    const { paths: newPaths, newItems } = await vroom(items, [...drivers]);
+    const { paths: newPaths, newItems } = await vroom(_items, _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
     updateStore();
@@ -131,7 +137,8 @@ function App(props) {
   }
 
   function clearAll() {
-    [...store.values()].forEach(item => {
+    const _items = driver ? selectedDriverItems : items;
+    _items.forEach(item => {
       item.Driver = 'UNASSIGNED';
       item.Sequence = '';
     });
@@ -160,13 +167,6 @@ function App(props) {
     });
 
     setPaths(paths);
-  }
-
-  function editRoute(id) {
-    if (driver === id)
-      props.history.goBack();
-    else
-      props.history.push(`/${id}`);
   }
 
   return (
@@ -229,7 +229,16 @@ function App(props) {
                       {paneKey}
                       <div>
                         {/* <Minibar.Button id={paneKey} visible={active} onClick={editRoute}>{driver === paneKey ? 'visibility' : 'visibility_off'}</Minibar.Button> */}
-                        <Minibar.Button id={paneKey} visible={active} onClick={editRoute}>{driver === paneKey ? 'done' : 'edit'}</Minibar.Button>
+                        <Minibar.Button
+                          id={paneKey}
+                          visible={active}
+                          color={colors[paneKey]}
+                          onClick={() => selectPane(pane === paneKey ? null : paneKey)}
+                        >
+                          {/* {driver !== paneKey ? 'unfold_more' : 'unfold_less'} */}
+                          {driver !== paneKey ? 'edit' : 'done'}
+                          {/* {driver !== paneKey ? 'fullscreen' : 'fullscreen_exit'} */}
+                        </Minibar.Button>
                         {/* <a href={`http://localhost:3006/${paneKey}`}><Pane.Header.Icon visible={active} >open_in_new</Pane.Header.Icon></a> */}
                         <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
                       </div>

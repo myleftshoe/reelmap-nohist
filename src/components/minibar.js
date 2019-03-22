@@ -17,7 +17,7 @@ const StyledMinibarButton = styled.span`
     color:#FFF;
     opacity: ${props => props.visible ? 0.5 : 0};
     /* visibility: ${props => props.visible ? 'visible' : 'hidden'}; */
-    transition:opacity 0.1s linear 0.0s;
+    transition:opacity 0.1s linear 0.3s;
     :hover {
         opacity: 1;
         cursor: pointer;
