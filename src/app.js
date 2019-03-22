@@ -44,9 +44,9 @@ function App(props) {
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
-  if (drivers.length + 1 !== panes.length) {
-    setPanes([...drivers, 'UNASSIGNED'])
-  }
+  // if (drivers.length + 1 !== panes.length) {
+  //   setPanes([...drivers, 'UNASSIGNED'])
+  // }
 
   let activePaths;
   if (paths.has(driver))
@@ -187,7 +187,7 @@ function App(props) {
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {driver && <>
-            <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton>
+            {/* <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton> */}
             <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           </>
           }
@@ -215,7 +215,9 @@ function App(props) {
                 <Pane
                   key={paneKey}
                   onReorder={setPanes}
-                  expanded={true}
+                  expanded={paneKey === driver}
+                  keepOpen={driver}
+                  // expanded={false}
                   id={paneKey}
                   onDrop={(_, e) => handleDrop(_, paneKey, e)}
                   onMouseOver={() => selectDriver(paneKey)}
@@ -241,7 +243,8 @@ function App(props) {
                         type={groupBy.split(',')[0]}
                         content={groupKey}
                         onClick={() => handleGroupHeaderClick(groupKey)}
-                        flatten={groupKey === 'undefined' || driver}
+                        // flatten={groupKey === 'undefined' || driver}
+                        flatten={groupKey === 'undefined'}
                         count={filteredAndGrouped[groupKey].length}
                         expanded={isFiltered}
                         filter={filter}
@@ -252,7 +255,8 @@ function App(props) {
                             key={item.OrderId}
                             data={item}
                             filter={filter}
-                            compact={groupKey !== 'undefined' && !driver}
+                            // compact={groupKey !== 'undefined' && !driver}
+                            compact={groupKey !== 'undefined'}
                             active={item.OrderId === selectedMarkerId}
                             onClick={() => selectMarker(item.OrderId)}
                           // onMouseOver={() => selectMarker(item.OrderId)}

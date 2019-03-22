@@ -51,6 +51,13 @@ function Pane(props) {
 
     const [expanded, toggleExpanded] = useToggle(props.expanded);
 
+    let _expanded = props.expanded || expanded;
+    if (props.keepOpen)
+        if (props.id === props.keepOpen)
+            _expanded = true;
+        else
+            _expanded = false;
+
     function handleDragStart(e) {
         const id = e.target.id;
         const type = e.target.getAttribute('type');
@@ -101,7 +108,7 @@ function Pane(props) {
             id={props.id}
             type='pane'
             draggable
-            expanded={expanded}
+            expanded={_expanded}
             onDragStart={handleDragStart}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
