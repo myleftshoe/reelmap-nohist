@@ -23,9 +23,14 @@ import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 
-const driver = window.location.pathname.split('/')[1];
+// const driver = window.location.pathname.split('/')[1];
+const allDrivers = ['SAM1', 'DRK', 'CHA'];
 
-function App() {
+function App(props) {
+
+  const driver = props.match.params.id;
+  console.log(driver)
+  const drivers = (driver && [driver]) || allDrivers;
 
   const [store, updateStore, persist] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
@@ -34,13 +39,28 @@ function App() {
   const [filter, setFilter] = useState('');
   const [sortBy, setSortBy] = useState('PostalCode,City');
   const [suburb, setSuburb] = useState('');
-  const [panes, setPanes] = useState(['SAM1', 'DRK', 'CHA', 'UNASSIGNED']);
+  const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
   const { state: mapState } = useContext(GoogleMapContext);
   const [paths, setPaths] = useState([]);
   const [working, setWorking] = useState(false);
 
-  const items = [...store.values()];
-  console.log(items)
+  if (drivers.length + 1 !== panes.length) {
+    setPanes([...drivers, 'UNASSIGNED'])
+  }
+
+  let activePaths = [...paths];
+  if (driver) {
+    const path = paths.find(path => path.driver === driver);
+    activePaths = path ? [path] : [];
+    // activePaths = [paths.find(path => path.driver === driver)]
+  }
+  console.log(activePaths, paths)
+
+  console.log(driver)
+  let items = [...store.values()];
+  if (driver) items = items.filter(({ Driver }) => Driver === driver);
+
+  // console.log(items)
   const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), sortBy);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
@@ -66,6 +86,10 @@ function App() {
     updateStore();
     // updateStore(persist);
   }
+  // function openInNewTab(url) {
+  //   var win = window.open(url, '_blank');
+  //   win.focus();
+  // }
 
   function handleGroupHeaderClick(id) {
     const splitId = id.split(', ');
@@ -102,7 +126,7 @@ function App() {
 
   async function autoAssign() {
     setWorking(true);
-    const { paths, newItems } = await vroom(items, [driver]);
+    const { paths, newItems } = await vroom(items, [...drivers]);
     setPaths(paths);
     updateStore();
     setWorking(false);
@@ -143,6 +167,13 @@ function App() {
     // updateStore()
   }
 
+  function editRoute(id) {
+    if (driver === id)
+      props.history.goBack();
+    else
+      props.history.push(`/${id}`);
+  }
+
   return (
 
     <Resizable split='vertical' {...resizableProps}>
@@ -175,10 +206,27 @@ function App() {
             panes.map(paneKey => {
               const filteredByDriver = filteredData.filter(({ Driver }) => Driver === paneKey || !Driver);
               return (
-                <Pane key={paneKey} onReorder={setPanes} expanded={true} id={paneKey} onDrop={(_, e) => handleDrop(_, paneKey, e)} onMouseOver={() => selectDriver(paneKey)}>
+                <Pane
+                  key={paneKey}
+                  onReorder={setPanes}
+                  expanded={true}
+                  id={paneKey}
+                  onDrop={(_, e) => handleDrop(_, paneKey, e)}
+                  onMouseOver={() => selectDriver(paneKey)}
+                // onClick={() => window.open(`http://localhost:3006/${paneKey}`)}
+                // onClick={() => props.history.push(`/${paneKey}`)}
+                >
                   <Pane.Header active={paneKey === selectedDriver} color={colors[paneKey]} type='header' id={paneKey} draggable>
-                    {paneKey}
-                    <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
+                    {active => <>
+                      {paneKey}
+                      <div>
+                        {/* <Minibar.Button id={paneKey} visible={active} onClick={editRoute}>{driver === paneKey ? 'visibility' : 'visibility_off'}</Minibar.Button> */}
+                        <Minibar.Button id={paneKey} visible={active} onClick={editRoute}>{driver === paneKey ? 'done' : 'edit'}</Minibar.Button>
+                        {/* <a href={`http://localhost:3006/${paneKey}`}><Pane.Header.Icon visible={active} >open_in_new</Pane.Header.Icon></a> */}
+                        <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
+                      </div>
+                    </>
+                    }
                   </Pane.Header>
                   <Group.Items>
                     {filteredByDriver.map(item =>
@@ -189,8 +237,8 @@ function App() {
                         filter={filter}
                         // compact={groupKey !== 'undefined'}
                         active={item.OrderId === selectedMarkerId}
-                        // onClick={() => selectMarker(item.OrderId)}
-                        onMouseOver={() => selectMarker(item.OrderId)}
+                        onClick={() => selectMarker(item.OrderId)}
+                      // onMouseOver={() => selectMarker(item.OrderId)}
                       />)
                     }
                   </Group.Items>
@@ -268,7 +316,7 @@ function App() {
           color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
           onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
         /> */}
-        {!isFiltered && paths.map(({ path, driver }) => {
+        {!isFiltered && activePaths.map(({ path, driver }) => {
           // console.log(path)
           const points = google.maps.geometry.encoding.decodePath(path)
             .map(point => point.toJSON());

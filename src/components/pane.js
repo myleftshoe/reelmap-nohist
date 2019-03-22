@@ -42,7 +42,9 @@ const PaneHeader = styled.div`
 Pane.Header = props => {
     const [active, setActive] = useState(false);
     console.log(props.id, active, props.active, active)
-    return <PaneHeader onMouseOver={() => setActive(true)} onMouseLeave={() => setActive(false)} {...props} active={active || props.active} />
+    return <PaneHeader onMouseOver={() => setActive(true)} onMouseLeave={() => setActive(false)} {...props} active={active || props.active} >
+        {props.children(active)}
+    </PaneHeader>
 }
 
 function Pane(props) {
@@ -104,6 +106,7 @@ function Pane(props) {
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onMouseOver={props.onMouseOver}
+            onClick={props.onClick}
         >
             <div onClick={toggleExpanded}>
                 {header}

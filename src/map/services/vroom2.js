@@ -11,8 +11,6 @@ async function doFetch(payload) {
     return response.json();
 }
 
-
-
 export default async function vroom(items = [], drivers = []) {
 
     const itemsMap = new Map([...items.map(item => [item.OrderId, item])]);
@@ -43,18 +41,18 @@ export default async function vroom(items = [], drivers = []) {
     const json = await doFetch({ vehicles, jobs, options });
 
     const newItems = [];
-    json.routes.forEach(r => {
-        const steps = r.steps.filter(s => s.type === "job");
+    json.routes.forEach(route => {
+        const steps = route.steps.filter(s => s.type === "job");
         console.log(steps);
         steps.forEach((s, i) => {
             const item = itemsMap.get(`${s.job}`);
-            item.Driver = drivers[r.vehicle];
+            item.Driver = drivers[route.vehicle];
             item.Sequence = i + 1;
             newItems.push(item);
         });
     });
 
-    const paths = json.routes.map(r => ({ driver: drivers[r.vehicle], path: r.geometry }));
+    const paths = json.routes.map(route => ({ driver: drivers[route.vehicle], path: route.geometry }));
 
     return { paths, items: newItems };
     // return new Items(newItems);

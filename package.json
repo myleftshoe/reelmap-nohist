@@ -13,6 +13,7 @@
     "react-dom": "^16.8.1",
     "react-highlighter": "^0.4.3",
     "react-materialize": "^2.6.0",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.5",
     "react-spinners": "^0.5.3",
     "react-split-pane": "^0.1.85",

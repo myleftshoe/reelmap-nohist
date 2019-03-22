@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import { Spring, config, animated } from 'react-spring'
+import usePrevious from '../hooks/usePrevious';
 
-export function usePrevious(value) {
-  const ref = useRef()
-  useEffect(() => void (ref.current = value), [value])
-  return ref.current
-}
+// export function usePrevious(value) {
+//   const ref = useRef()
+//   useEffect(() => void (ref.current = value), [value])
+//   return ref.current
+// }
 
 const Contents = ({ children, ...style }) => (
   <animated.div style={{ ...style, }}>

@@ -15,8 +15,9 @@ export default function dataStore() {
         }
     }
 
-    const driver = window.location.pathname.split('/')[1];
-    const where = driver && ['Driver', '==', driver];
+    // const driver = window.location.pathname.split('/')[1];
+    // const where = driver && ['Driver', '==', driver];
+    const where = null;
     const [state, update, persist] = firebaseStore(collection, { where }, handleUpdate);
 
     return [state, update, persist];

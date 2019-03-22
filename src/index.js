@@ -6,12 +6,18 @@ import * as serviceWorker from './serviceWorker';
 import { GoogleMapProvider } from '@googlemap-react/core';
 import { Provider } from 'outstated';
 import dataStore from './stores/data-store';
+import Routes from "./routes"
+import { Router } from "react-router-dom"
+import { createBrowserHistory } from 'history'
+const history = createBrowserHistory()
 
 function AppContainer({ store }) {
     return (
         <GoogleMapProvider>
             <Provider stores={[store]}>
-                <App />
+                <Router history={history}>
+                    <Routes />
+                </Router>,
             </Provider>
         </GoogleMapProvider>
     )
