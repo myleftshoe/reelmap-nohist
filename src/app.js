@@ -16,7 +16,7 @@ import { GoogleMapContext, InfoWindow, Marker, Polyline, Polygon } from '@google
 // import { labeledIcon } from './map/markers/markers.js'
 import { LatLng, Bounds } from './map/utils'
 import ContouredPolygon, { polygon } from './map/contoured-polygon'
-import SuburbBoundary from './map/suburb-boundary'
+// import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
 import { colors, resizableProps } from './constants'
@@ -38,7 +38,7 @@ function App(props) {
   const [filter, setFilter] = useState('');
   const [sortBy, setSortBy] = useState();
   const [groupBy, setGroupBy] = useState('PostalCode,City');
-  const [suburb, setSuburb] = useState('');
+  // const [suburb, setSuburb] = useState('');
   const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
   const { state: mapState } = useContext(GoogleMapContext);
   const [paths, setPaths] = useState(new Map());
@@ -90,8 +90,8 @@ function App(props) {
 
   function handleGroupHeaderClick(id) {
     const splitId = id.split(', ');
-    const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-    setSuburb(suburb);
+    // const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
+    // setSuburb(suburb);
   }
 
   // function handleMarkerClick(id) {
@@ -370,7 +370,7 @@ function App(props) {
               onRightClick={() => reassignRoute(driver)} />
           </React.Fragment>
         })}
-        <SuburbBoundary suburb={suburb} />
+        {/* <SuburbBoundary suburb={suburb} /> */}
       </GoogleMap>
     </Resizable >
 
