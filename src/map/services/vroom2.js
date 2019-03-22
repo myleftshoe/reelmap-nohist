@@ -13,6 +13,8 @@ async function doFetch(payload) {
 
 export default async function vroom(items = [], drivers = []) {
 
+    if (!items.length) return { paths: [], items };
+
     const itemsMap = new Map([...items.map(item => [item.OrderId, item])]);
     // const items = [...itemsMap.values()];
     const depot = [145.005252, -37.688797];

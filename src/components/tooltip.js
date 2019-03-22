@@ -10,6 +10,7 @@ export default function Tooltip(props) {
         title={props.content}
         theme='light'
         arrow
+        delay={300}
         html={(
             <div style={{ fontSize: '.7rem' }}>
                 {props.content}
