@@ -183,7 +183,7 @@ function App(props) {
           <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton> */}
           <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id=',' active={groupBy === ','} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {driver && <>
@@ -241,8 +241,7 @@ function App(props) {
                         type={groupBy.split(',')[0]}
                         content={groupKey}
                         onClick={() => handleGroupHeaderClick(groupKey)}
-                        flatten={true}
-                        // flatten={groupKey === 'undefined'}
+                        flatten={groupKey === 'undefined' || driver}
                         count={filteredAndGrouped[groupKey].length}
                         expanded={isFiltered}
                         filter={filter}
@@ -253,7 +252,7 @@ function App(props) {
                             key={item.OrderId}
                             data={item}
                             filter={filter}
-                            // compact={groupKey !== 'undefined'}
+                            compact={groupKey !== 'undefined' && !driver}
                             active={item.OrderId === selectedMarkerId}
                             onClick={() => selectMarker(item.OrderId)}
                           // onMouseOver={() => selectMarker(item.OrderId)}
