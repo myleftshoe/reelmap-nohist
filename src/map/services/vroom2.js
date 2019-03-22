@@ -43,7 +43,7 @@ export default async function vroom(items = [], drivers = []) {
     const newItems = [];
     json.routes.forEach(route => {
         const steps = route.steps.filter(s => s.type === "job");
-        console.log(steps);
+        // console.log(steps);
         steps.forEach((s, i) => {
             const item = itemsMap.get(`${s.job}`);
             item.Driver = drivers[route.vehicle];
@@ -52,7 +52,7 @@ export default async function vroom(items = [], drivers = []) {
         });
     });
 
-    const paths = json.routes.map(route => ({ driver: drivers[route.vehicle], path: route.geometry }));
+    const paths = new Map(json.routes.map(route => ([drivers[route.vehicle], route.geometry])));
 
     return { paths, items: newItems };
     // return new Items(newItems);

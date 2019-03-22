@@ -29,7 +29,6 @@ const allDrivers = ['SAM1', 'DRK', 'CHA'];
 function App(props) {
 
   const driver = props.match.params.id;
-  console.log(driver)
   const drivers = (driver && [driver]) || allDrivers;
 
   const [store, updateStore, persist] = useStore(dataStore)
@@ -37,37 +36,35 @@ function App(props) {
   const [selectedDriver, selectDriver] = useState();
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
-  const [sortBy, setSortBy] = useState('PostalCode,City');
+  const [sortBy, setSortBy] = useState();
+  const [groupBy, setGroupBy] = useState('PostalCode,City');
   const [suburb, setSuburb] = useState('');
   const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
   const { state: mapState } = useContext(GoogleMapContext);
-  const [paths, setPaths] = useState([]);
+  const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
   if (drivers.length + 1 !== panes.length) {
     setPanes([...drivers, 'UNASSIGNED'])
   }
 
-  let activePaths = [...paths];
-  if (driver) {
-    const path = paths.find(path => path.driver === driver);
-    activePaths = path ? [path] : [];
-    // activePaths = [paths.find(path => path.driver === driver)]
-  }
-  console.log(activePaths, paths)
+  let activePaths;
+  if (paths.has(driver))
+    activePaths = [{ driver, path: paths.get(driver) }]
+  else
+    activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
 
-  console.log(driver)
   let items = [...store.values()];
   if (driver) items = items.filter(({ Driver }) => Driver === driver);
 
   // console.log(items)
-  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), sortBy);
+  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
   const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
 
-  console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
+  // console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
   // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);
   function handleDrop(transferredData, target, e) {
     const { type, id, selected } = transferredData;
@@ -126,7 +123,8 @@ function App(props) {
 
   async function autoAssign() {
     setWorking(true);
-    const { paths, newItems } = await vroom(items, [...drivers]);
+    const { paths: newPaths, newItems } = await vroom(items, [...drivers]);
+    newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
     updateStore();
     setWorking(false);
@@ -134,22 +132,24 @@ function App(props) {
 
   function clearAll() {
     [...store.values()].forEach(item => {
-      // item.Driver = 'UNASSIGNED';
+      item.Driver = 'UNASSIGNED';
       item.Sequence = '';
     });
-    setPaths([])
+    setPaths(new Map())
     updateStore()
   }
 
   function reassignRoute(from, to) {
-    const _paths = new Map([...paths.map(({ driver, path }) => [driver, path])]);
-    // console.log(_paths);
-    const toPath = _paths.get(to);
-    const fromPath = _paths.get(from);
+
+    const toPath = paths.get(to);
+    const fromPath = paths.get(from);
+
     if (!toPath || !fromPath)
       return;
-    _paths.set(to, fromPath);
-    _paths.set(from, toPath);
+
+    paths.set(to, fromPath);
+    paths.set(from, toPath);
+
     [...store.values()].forEach(item => {
       if (item.Driver === from) {
         item.Driver = to;
@@ -158,13 +158,8 @@ function App(props) {
         item.Driver = from;
       }
     });
-    // console.table([...store.values()], ['OrderId', 'Driver']);
-    const p = [..._paths.entries()].map(([driver, path]) => ({ driver, path }));
-    console.log(p)
-    setPaths(p);
-    // setPaths(_paths.entries().map((driver, path) => ({ driver, path })))
 
-    // updateStore()
+    setPaths(paths);
   }
 
   function editRoute(id) {
@@ -179,14 +174,23 @@ function App(props) {
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
         <Sidebar.Navigation>
-          <Sidebar.NavButton id='City' active={sortBy === 'City'} onClick={setSortBy} tooltip='Sort by suburb'>location_city</Sidebar.NavButton>
-          {/* <Sidebar.NavButton active={groupBy === 'Driver'} onClick={() => setSortBy('Driver')}>people</Sidebar.NavButton> */}
+          {/* <Sidebar.NavButton id='City' active={sortBy === 'City'} onClick={setSortBy} tooltip='Sort by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode' active={sortBy === 'PostalCode'} onClick={setSortBy} tooltip='Sort by post code'>local_post_office</Sidebar.NavButton>
           <Sidebar.NavButton id='Sequence' active={sortBy === 'Sequence'} onClick={setSortBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton>
+          <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton> */}
+          <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
+          <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
+          <Sidebar.NavButton id=',' active={groupBy === ','} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
+          <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+          {driver && <>
+            <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton>
+            <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
+          </>
+          }
           <BeatLoader
             css={css`margin-top: auto;`}
             sizeUnit='px'
@@ -205,6 +209,8 @@ function App(props) {
           {
             panes.map(paneKey => {
               const filteredByDriver = filteredData.filter(({ Driver }) => Driver === paneKey || !Driver);
+              const filteredAndGrouped = ArrayX.groupBy2(filteredByDriver, groupBy);
+              const groupKeys = Object.keys(filteredAndGrouped);
               return (
                 <Pane
                   key={paneKey}
@@ -227,21 +233,34 @@ function App(props) {
                       </div>
                     </>
                     }
-                  </Pane.Header>
-                  <Group.Items>
-                    {filteredByDriver.map(item =>
-                      <Group.Item
-                        id={item.OrderId}
-                        key={item.OrderId}
-                        data={item}
+                  </Pane.Header> {
+                    groupKeys.map(groupKey =>
+                      <Group
+                        key={groupKey}
+                        id={groupKey.split(',')[0]}
+                        type={groupBy.split(',')[0]}
+                        content={groupKey}
+                        onClick={() => handleGroupHeaderClick(groupKey)}
+                        flatten={true}
+                        // flatten={groupKey === 'undefined'}
+                        count={filteredAndGrouped[groupKey].length}
+                        expanded={isFiltered}
                         filter={filter}
-                        // compact={groupKey !== 'undefined'}
-                        active={item.OrderId === selectedMarkerId}
-                        onClick={() => selectMarker(item.OrderId)}
-                      // onMouseOver={() => selectMarker(item.OrderId)}
-                      />)
-                    }
-                  </Group.Items>
+                      >
+                        {filteredAndGrouped[groupKey].map(item =>
+                          <Group.Item
+                            id={item.OrderId}
+                            key={item.OrderId}
+                            data={item}
+                            filter={filter}
+                            // compact={groupKey !== 'undefined'}
+                            active={item.OrderId === selectedMarkerId}
+                            onClick={() => selectMarker(item.OrderId)}
+                          // onMouseOver={() => selectMarker(item.OrderId)}
+                          />)
+                        }
+                      </Group>
+                    )}
                 </Pane>
               )
             })

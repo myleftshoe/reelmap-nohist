@@ -8,7 +8,6 @@ const firestore = global.firebase.firestore();
 // the use effect arrow function returns it to the caller
 // (cw verbose version below)
 export function useSnapShot(name, callback, { where, limit } = {}) {
-    console.log(where)
     function handleSnapshot(snapshot) {
         const changes = snapshot.docChanges().map(({ type, doc }) => ({ type, id: doc.id, data: doc.data() }));
         callback(changes);
