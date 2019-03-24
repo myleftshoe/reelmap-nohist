@@ -12,16 +12,19 @@ import Badge from './components/badge'
 import Filter from './components/filter'
 import ArrayX from './utils/arrayx'
 import GoogleMap from './map/map'
-import { GoogleMapContext, InfoWindow, Marker, Polyline, Polygon } from '@googlemap-react/core'
+import { GoogleMapContext, InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
-import { LatLng, Bounds } from './map/utils'
+import { LatLng } from './map/utils'
 import ContouredPolygon, { polygon } from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
 import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
-import { BeatLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners'
+import JobMarker from './map/job-marker'
+import DepotMarker from './map/depot-marker'
+import Route from './map/route';
 
 // const driver = window.location.pathname.split('/')[1];
 const drivers = ['SAM1', 'DRK', 'CHA'];
@@ -92,7 +95,7 @@ function App(props) {
   // }
 
   function handleGroupHeaderClick(id) {
-    const splitId = id.split(', ');
+    // const splitId = id.split(', ');
     // const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
     // setSuburb(suburb);
   }
@@ -284,47 +287,22 @@ function App(props) {
         onRightClick={() => setQuickChange(null)}
         cursor={cursor}
       >
-        <Marker
+        <DepotMarker
           key={'depot'}
           id={'depot'}
-          opts={{
-            draggable: true,
-            // label: id,
-            position: { lat: -37.688797, lng: 145.005252 },
-            icon: {
-              // url: `https://cdn.iconscout.com/icon/premium/png-256-thumb/map-pin-121-864982.png`,
-              url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
-              // scaledSize: window.google && new google.maps.Size(40, 40)
-            },
-            // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
-            // icon: labeledIcon({label:id, color: colors[Driver]}),
-            cursor
-          }}
+          position={{ lat: -37.688797, lng: 145.005252 }}
+          cursor={cursor}
         />
         {filteredData.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           if (!GeocodedAddress) return null;
           const driver = Driver || 'UNASSIGNED'
-          return <Marker
+          return <JobMarker
             key={id}
             id={id}
-            opts={{
-              draggable: true,
-              // label: `${Sequence}`,
-              label: Sequence && {
-                text: `${Sequence}`,
-                color: 'black',
-                fontSize: '10px',
-                fontWeight: 'bold',
-              },
-              position: { lat: GeocodedAddress.latitude, lng: GeocodedAddress.longitude },
-              icon: {
-                url: `http://maps.google.com/mapfiles/ms/icons/${colors[driver]}.png`,
-                labelOrigin: new google.maps.Point(15, 10)
-              },
-              // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
-              // icon: labeledIcon({label:id, color: colors[Driver]}),
-              cursor
-            }}
+            label={Sequence}
+            position={GeocodedAddress}
+            color={colors[driver]}
+            cursor={cursor}
             onClick={() => selectMarker(id)}
             onRightClick={() => handleMarkerRightClick(id)}
             onMouseOver={() => selectMarker(id)}
@@ -347,42 +325,16 @@ function App(props) {
           color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
           onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
         /> */}
-        {!isFiltered && activePaths.map(({ path, driver }) => {
+        {!isFiltered && activePaths.map(({ path, driver }) =>
           // console.log(path)
-          const points = google.maps.geometry.encoding.decodePath(path)
-            .map(point => point.toJSON());
-          // console.log(points)
-          return <React.Fragment key={'path' + driver}>
-            <Polyline key={'polyline' + driver} id={driver}
-              opts={{
-                clickable: true,
-                path: points,
-                geodesic: true,
-                strokeColor: colors[driver],
-                strokeOpacity: 0.5,
-                strokeWeight: 5, // 33 is the max
-                strokePosition: 2, //window.google.maps.StrokePosition.OUTSIDE,
-                fillColor: colors[driver],
-                fillOpacity: 0.5,
-              }}
-            // onClick={onClick}
-            />
-            <Polygon key={'polygon' + driver} id={'polygon' + driver}
-              opts={{
-                clickable: true,
-                path: points,
-                geodesic: true,
-                strokeColor: colors[driver],
-                strokeOpacity: driver === (selectedDriver || driver) ? 0.16 : 0.0,
-                strokeWeight: 33, // 33 is the max
-                strokePosition: 2, //window.google.maps.StrokePosition.OUTSIDE,
-                fillColor: colors[driver],
-                fillOpacity: driver === (selectedDriver || driver) ? 0.16 : 0.0,
-              }}
-              onClick={() => mapState.map.fitBounds(Bounds.from(points))}
-              onRightClick={() => reassignRoute(driver)} />
-          </React.Fragment>
-        })}
+          <Route
+            key={'path' + driver}
+            id={'path' + driver}
+            path={path}
+            color={colors[driver]}
+            onRightClick={() => reassignRoute(driver)}
+          />
+        )}
         {/* <SuburbBoundary suburb={suburb} /> */}
       </GoogleMap>
     </Resizable >
