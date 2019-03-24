@@ -1,5 +1,4 @@
-/* global google */
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { css } from '@emotion/core';
 import { useStore } from 'outstated'
 import dataStore from './stores/data-store'
@@ -12,7 +11,7 @@ import Badge from './components/badge'
 import Filter from './components/filter'
 import ArrayX from './utils/arrayx'
 import GoogleMap from './map/map'
-import { GoogleMapContext, InfoWindow } from '@googlemap-react/core'
+import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
 import { LatLng } from './map/utils'
 import ContouredPolygon, { polygon } from './map/contoured-polygon'
@@ -44,7 +43,6 @@ function App(props) {
   // const [suburb, setSuburb] = useState('');
   const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
   const [pane, selectPane] = useState();
-  const { state: mapState } = useContext(GoogleMapContext);
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
@@ -294,7 +292,7 @@ function App(props) {
           cursor={cursor}
         />
         {filteredData.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
-          if (!GeocodedAddress) return null;
+          // if (!GeocodedAddress) return null;
           const driver = Driver || 'UNASSIGNED'
           return <JobMarker
             key={id}
