@@ -2,8 +2,7 @@ import React from 'react'
 import { Polygon } from '@googlemap-react/core';
 
 export default function RoutePolygon({ id, path, color, ...eventProps }) {
-    return <Polygon
-        id={id}
+    return <Polygon id={id}
         opts={{
             clickable: true,
             path,
@@ -16,6 +15,5 @@ export default function RoutePolygon({ id, path, color, ...eventProps }) {
             fillOpacity: 0.16,
         }}
         {...eventProps}
-
     />
 }

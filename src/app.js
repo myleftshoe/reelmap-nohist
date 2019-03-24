@@ -328,8 +328,8 @@ function App(props) {
         {!isFiltered && activePaths.map(({ path, driver }) =>
           // console.log(path)
           <Route
-            key={'path' + driver}
-            id={'path' + driver}
+            key={`Route.${driver}`}
+            id={`Route.${driver}`}
             path={path}
             color={colors[driver]}
             onRightClick={() => reassignRoute(driver)}
