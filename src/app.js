@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { css } from '@emotion/core';
 import { useStore } from 'outstated'
-import dataStore from './stores/data-store'
+import dataStore from './stores/mock-data-store'
 import Minibar from './components/minibar'
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
@@ -116,6 +116,12 @@ function App(props) {
     }
     else
       setQuickChange(store.get(id).Sequence);
+  }
+
+  function reassignItem(id, driver) {
+    const item = store.get(id);
+    item.Driver = driver;
+    updateStore();
   }
 
   function handleMarkerDrop(latLng, id) {
@@ -301,6 +307,7 @@ function App(props) {
             position={GeocodedAddress}
             color={colors[driver]}
             cursor={cursor}
+            big={selectedMarkerId === id}
             onClick={() => selectMarker(id)}
             onRightClick={() => handleMarkerRightClick(id)}
             onMouseOver={() => selectMarker(id)}
@@ -314,7 +321,14 @@ function App(props) {
           onCloseClick={() => selectMarker(null)}
           opts={{ disableAutoPan: true }}
         >
-          {selectedMarkerId && <MarkerInfoWindowContent item={selectedItem} color={colors[selectedItem.Driver]} />}
+          {selectedMarkerId &&
+            <MarkerInfoWindowContent
+              item={selectedItem}
+              color={colors[selectedItem.Driver]}
+              onDriverChange={reassignItem}
+              dropDownValues={colors}
+            />
+          }
         </InfoWindow>
         {/* <ContouredPolygon
           id='polygon'
