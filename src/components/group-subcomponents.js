@@ -37,7 +37,7 @@ export const Header = styled.span`
 `
 
 export const Address = styled.td`
-    padding-left: 12px;
+    padding-left: ${props => props.compact ? '26px' : '12px'};
     padding-top: 4px;
     padding-bottom: 4px;
     background-color: #f0f0;

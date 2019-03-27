@@ -88,7 +88,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
             onDragLeave={() => setDraggingOver(false)}
             onDrop={handleDrop}
         >
-            <Address draggingOver={draggingOver} isselected={selected.toString()} minWidth={`${minWidth}px`}>
+            <Address compact={compact} draggingOver={draggingOver} isselected={selected.toString()} minWidth={`${minWidth}px`}>
                 <Street>
                     <SearchHighlight search={search}>{data.Street}</SearchHighlight>
                 </Street>
