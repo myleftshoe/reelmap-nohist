@@ -251,25 +251,19 @@ function App(props) {
                   id={paneKey}
                   onDrop={(_, e) => handleDrop(_, paneKey, e)}
                   onMouseOver={() => selectDriver(paneKey)}
-                // onClick={() => window.open(`http://localhost:3006/${paneKey}`)}
-                // onClick={() => props.history.push(`/${paneKey}`)}
                 >
                   <Pane.Header active={paneKey === selectedDriver} color={colors[paneKey]} type='header' id={paneKey} draggable>
                     {active => <>
                       {paneKey}
                       <div>
-                        {/* <Minibar.Button id={paneKey} visible={active} onClick={editRoute}>{driver === paneKey ? 'visibility' : 'visibility_off'}</Minibar.Button> */}
                         <Minibar.Button
                           id={paneKey}
                           visible={active}
                           color={colors[paneKey]}
                           onClick={() => selectPane(pane === paneKey ? null : paneKey)}
                         >
-                          {/* {driver !== paneKey ? 'unfold_more' : 'unfold_less'} */}
                           {driver !== paneKey ? 'edit' : 'done'}
-                          {/* {driver !== paneKey ? 'fullscreen' : 'fullscreen_exit'} */}
                         </Minibar.Button>
-                        {/* <a href={`http://localhost:3006/${paneKey}`}><Pane.Header.Icon visible={active} >open_in_new</Pane.Header.Icon></a> */}
                         <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
                       </div>
                     </>
