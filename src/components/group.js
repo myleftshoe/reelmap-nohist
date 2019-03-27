@@ -6,6 +6,8 @@ import Highlight from 'react-highlighter'
 import Badge from './badge'
 import Expandable from "./expandable";
 import useToggle from '../hooks/useToggle';
+import { useState } from 'react';
+import usePrevious from '../hooks/usePrevious';
 
 const minWidth = 300;
 
@@ -39,6 +41,21 @@ const Group = props => !props.flatten
     : <Group.Items>{props.children}</Group.Items>
 
 
+const PrimaryItem = styled.td`
+    padding-left: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: #f0f0;
+    font-size: 0.8rem;
+    /* box-shadow: ${props => props.draggingOver ? '0px -1px 0px 0px #FC5185' : '0px 0px 0px 0px #FC5185'}; */
+    min-width: ${props => props.minWidth};
+    /* &:hover {
+        box-shadow: ${props => props.draggingOver && '0px -1px 0px 0px #FC5185'};
+    }; */
+    transition: box-shadow 0.2s ease 0.2s;
+`
+
+
 Group.Items = props => <table style={{
     borderCollapse: 'separate',
     borderSpacing: '0 8px',
@@ -50,10 +67,11 @@ const SearchHighlight = props =>
         {props.children}
     </Highlight>
 
-Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, active }) => {
+Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active }) => {
 
     const search = filter || '';
     const [selected, toggleSelected] = useToggle(false);
+    const [draggingOver, setDraggingOver] = useState(false);
 
     function handleClick(e) {
         e.stopPropagation();
@@ -66,17 +84,55 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, active }) => {
         onMouseOver && onMouseOver();
     }
 
+
+    function handleDragStart(e) {
+
+        const { x, y, width, height } = e.target.getBoundingClientRect();
+        const { clientX, clientY } = e;
+
+        const crt = e.target.cloneNode(e.target);
+        crt.style.color = "white";
+        crt.style.height = `${height}px`;
+        crt.style.width = `${minWidth}px`;
+        crt.style.position = "absolute";
+        crt.style.top = "0";
+        crt.style.left = "0";
+        crt.style.zIndex = "-1";
+        e.target.parentNode.appendChild(crt);
+        e.dataTransfer.setDragImage(crt, clientX - x, clientY - y);
+
+        setTimeout(() => crt.parentNode.removeChild(crt), 0);
+
+    }
+
+    function handleDrop(e) {
+        const id = e.currentTarget.id;
+        console.log(id);
+        e.stopPropagation();
+
+        setDraggingOver(false);
+        onDrop && onDrop(id, e);
+    }
+
     return (
         <tr
+            id={id} type='item'
+            draggable
             css={css`
                 padding-left: 8px;
-                &:hover { background-color: #7773; };
-                background-color: ${(selected || active) && '#7773'};
+                &:hover { background-color: #7773;  };
+                background-color: ${draggingOver ? '#000f' : '#f0f0'};
+                /* background-color: ${(selected || active) && '#7773'}; */
+                transition: background-color 200ms ease;
             `}
             onClick={handleClick}
             onMouseOver={handleMouseOver}
+            onDragStart={handleDragStart}
+            onDragOver={() => setDraggingOver(true)}
+            onDragLeave={() => setDraggingOver(false)}
+            onDrop={handleDrop}
         >
-            <td id={id} type='item' isselected={selected.toString()} draggable style={{ minWidth, paddingLeft: compact ? 26 : 12, paddingTop: 4, paddingBottom: 4, backgroundColor: '#f0f0', fontSize: '0.8rem' }}>
+            <PrimaryItem draggingOver={draggingOver} isselected={selected.toString()} minWidth={'300px'}>
                 <div>
                     <SearchHighlight search={search}>{data.Street}</SearchHighlight>
                 </div>
@@ -85,7 +141,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, active }) => {
                         <SearchHighlight search={search}>{data.City + ' ' + data.PostalCode}</SearchHighlight>
                     </div>
                 }
-            </td>
+            </PrimaryItem>
             <td style={{ minWidth: '4ch' }}>
                 <Badge>
                     <SearchHighlight search={search}>{data.Sequence}</SearchHighlight>

@@ -24,6 +24,7 @@ import { BeatLoader } from 'react-spinners'
 import JobMarker from './map/job-marker'
 import DepotMarker from './map/depot-marker'
 import Route from './map/route';
+import move from 'lodash-move';
 
 // const driver = window.location.pathname.split('/')[1];
 const drivers = ['SAM1', 'DRK', 'CHA'];
@@ -33,7 +34,7 @@ function App(props) {
   console.log('rendering')
   // const driver = props.match.params.id;
 
-  const [store, updateStore, persist] = useStore(dataStore)
+  const [store, updateStore, persist, storeFromArray] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
   const [selectedDriver, selectDriver] = useState();
   const [quickChange, setQuickChange] = useState();
@@ -58,6 +59,7 @@ function App(props) {
     activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
 
   const items = [...store.values()];
+  // console.table(items, ['OrderId', 'Street'])
   const selectedDriverItems = items.filter(({ Driver }) => Driver === driver);
 
   // console.log(items)
@@ -71,9 +73,12 @@ function App(props) {
   // console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
   // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);
   function handleDrop(transferredData, target, e) {
-    const { type, id, selected } = transferredData;
-    console.log(transferredData, target);
+    const { type, id, selected, to } = transferredData;
+    console.log(transferredData, target, e.currentTarget.id);
+    console.log(to)
     if (type === 'item') {
+      // const fromItem = store.get(id);
+      // const toItem = store.get()
       selected.forEach(id => store.get(id).Driver = target);
     }
     else if (type === 'header' && e.ctrlKey) {
@@ -86,6 +91,24 @@ function App(props) {
     }
     updateStore();
     // updateStore(persist);
+  }
+
+  function handleItemDrop(id, e) {
+    const transferredData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    console.log('>>>>>>>>>>>>', id, transferredData);
+    const toItem = store.get(id);
+    const fromItem = store.get(transferredData.id)
+    const toIndex = items.findIndex(item => item.OrderId === toItem.OrderId)
+    const fromIndex = items.findIndex(item => item.OrderId === fromItem.OrderId)
+    console.log(fromItem.OrderId, fromIndex, toItem.OrderId, toIndex)
+    const _items = move(items, fromIndex, toIndex);
+    const _items2 = _items.filter(item => item.Driver === fromItem.Driver).map((item, index) => {
+      item.Sequence = index + 1;
+      return item;
+    })
+    // console.table(_items2, ['OrderId', 'Street'])
+    storeFromArray(_items2);
+    // updateStore();
   }
   // function openInNewTab(url) {
   //   var win = window.open(url, '_blank');
@@ -190,7 +213,7 @@ function App(props) {
           <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton> */}
           <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id=',' active={groupBy === ','} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {driver && <>
@@ -275,6 +298,7 @@ function App(props) {
                             compact={groupKey !== 'undefined'}
                             active={item.OrderId === selectedMarkerId}
                             onClick={() => selectMarker(item.OrderId)}
+                            onDrop={handleItemDrop}
                           // onMouseOver={() => selectMarker(item.OrderId)}
                           />)
                         }
