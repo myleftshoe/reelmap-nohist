@@ -59,8 +59,13 @@ function Pane(props) {
             _expanded = false;
 
     function handleDragStart(e) {
+        console.log(e.target)
         const id = e.target.id;
         const type = e.target.getAttribute('type');
+        // if (type === 'pane') {
+        //     e.preventDefault()
+        //     return;
+        // }
 
         const selectedElements = document.querySelectorAll(`[type="${type}"][isselected="true"]`);
         const selectedIds = new Set([...selectedElements].map(({ id }) => id));
@@ -114,7 +119,7 @@ function Pane(props) {
         <PaneContainer
             id={props.id}
             type='pane'
-            draggable
+            // draggable
             expanded={_expanded}
             onDragStart={handleDragStart}
             onDrop={handleDrop}
@@ -123,7 +128,7 @@ function Pane(props) {
             onClick={props.onClick}
             style={{ flex }}
         >
-            <div onClick={toggleExpanded}>
+            <div onClick={toggleExpanded} >
                 {header}
             </div>
             <PaneContent>

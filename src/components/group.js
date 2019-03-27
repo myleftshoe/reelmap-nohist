@@ -121,7 +121,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
             css={css`
                 padding-left: 8px;
                 &:hover { background-color: #7773;  };
-                background-color: ${draggingOver ? '#000f' : '#f0f0'};
+                background-color: ${draggingOver ? '#0003' : '#f0f0'};
                 /* background-color: ${(selected || active) && '#7773'}; */
                 transition: background-color 200ms ease;
             `}
@@ -133,27 +133,27 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
             onDrop={handleDrop}
         >
             <PrimaryItem draggingOver={draggingOver} isselected={selected.toString()} minWidth={'300px'}>
-                <div>
+                <div style={{ pointerEvents: 'none' }}>
                     <SearchHighlight search={search}>{data.Street}</SearchHighlight>
                 </div>
                 {!compact &&
-                    <div style={{ fontSize: '0.6rem', color: '#AAAA', textTransform: 'uppercase' }}>
+                    <div style={{ pointerEvents: 'none', fontSize: '0.6rem', color: '#AAAA', textTransform: 'uppercase' }}>
                         <SearchHighlight search={search}>{data.City + ' ' + data.PostalCode}</SearchHighlight>
                     </div>
                 }
             </PrimaryItem>
-            <td style={{ minWidth: '4ch' }}>
+            <td style={{ pointerEvents: 'none', minWidth: '4ch' }}>
                 <Badge>
                     <SearchHighlight search={search}>{data.Sequence}</SearchHighlight>
                 </Badge>
             </td>
-            <td style={{ minWidth: '4ch' }}>
+            <td style={{ pointerEvents: 'none', minWidth: '4ch' }}>
                 <Badge>
                     {'#'}
                     <SearchHighlight search={search}>{data.OrderId}</SearchHighlight>
                 </Badge>
             </td>
-            <td style={{ minWidth, maxWidth: '25vw', fontSize: '0.6rem', color: '#AAAA', textTransform: 'uppercase' }}>
+            <td style={{ pointerEvents: 'none', minWidth, maxWidth: '25vw', fontSize: '0.6rem', color: '#AAAA', textTransform: 'uppercase' }}>
                 <SearchHighlight search={search}>{data.DeliveryNotes}</SearchHighlight>
             </td>
         </tr >
