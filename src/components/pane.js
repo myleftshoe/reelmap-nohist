@@ -60,12 +60,9 @@ function Pane(props) {
 
     function handleDragStart(e) {
         console.log(e.target)
+
         const id = e.target.id;
         const type = e.target.getAttribute('type');
-        // if (type === 'pane') {
-        //     e.preventDefault()
-        //     return;
-        // }
 
         const selectedElements = document.querySelectorAll(`[type="${type}"][isselected="true"]`);
         const selectedIds = new Set([...selectedElements].map(({ id }) => id));
