@@ -54,7 +54,7 @@ function App(props) {
 
   const items = [...store.values()];
   // console.table(items, ['OrderId', 'Street'])
-  const selectedDriverItems = items.filter(({ Driver }) => Driver === selectedDriver);
+  const selectedDriverItems = ArrayX.sortByProperty(items.filter(({ Driver }) => Driver === selectedDriver), groupBy.split(',')[0]);
 
   // console.log(items)
   // const _items = items;
@@ -94,7 +94,7 @@ function App(props) {
     const fromIndex = items.findIndex(item => item.OrderId === fromItem.OrderId)
     console.log(fromItem.OrderId, fromIndex, toItem.OrderId, toIndex)
     const _items = move(items, fromIndex, toIndex);
-    const _items2 = _items.filter(item => item.Driver === fromItem.Driver).map((item, index) => {
+    const _items2 = selectedDriverItems.sort((a, b) => a.Sequence - b.Sequence).map((item, index) => {
       item.Sequence = index + 1;
       return item;
     })
@@ -205,7 +205,8 @@ function App(props) {
           <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton> */}
           <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='Sort by order id'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {selectedDriver && <>
