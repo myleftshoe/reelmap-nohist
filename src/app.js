@@ -61,7 +61,7 @@ function App(props) {
   const _items = selectedDriver ? selectedDriverItems : items;
   const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
-  const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
+  // const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
   const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
 
@@ -99,7 +99,7 @@ function App(props) {
       return item;
     })
     // console.table(_items2, ['OrderId', 'Street'])
-    storeFromArray(_items2);
+    storeFromArray(_items);
     // updateStore();
   }
   // function openInNewTab(url) {
@@ -107,11 +107,11 @@ function App(props) {
   //   win.focus();
   // }
 
-  function handleGroupHeaderClick(id) {
-    // const splitId = id.split(', ');
-    // const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-    // setSuburb(suburb);
-  }
+  // function handleGroupHeaderClick(id) {
+  //   const splitId = id.split(', ');
+  //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
+  //   setSuburb(suburb);
+  // }
 
   // function handleMarkerClick(id) {
   //   console.log(id, quickChange);
@@ -246,7 +246,7 @@ function App(props) {
                     id={groupKey.split(',')[0]}
                     type={groupBy.split(',')[0]}
                     content={groupKey}
-                    onClick={() => handleGroupHeaderClick(groupKey)}
+                    // onClick={() => handleGroupHeaderClick(groupKey)}
                     // flatten={groupKey === 'undefined' || driver}
                     flatten={groupKey === 'undefined'}
                     count={groupedItems[groupKey].length}
