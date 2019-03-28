@@ -1,15 +1,5 @@
 import React, { useState } from 'react'
-import ArrayX from '../utils/arrayx';
 import Pane from './pane';
-
-const panesArray = [
-    ['CHA', { count: 22 }],
-    ['DRK', { count: 33 }],
-    ['SAM1', { count: 44 }],
-    ['UNASSIGNED', { count: 0 }],
-];
-
-// const panes = new Map(panesArray);
 
 export default function Panes({ panes, data, groupBy, children, isFiltered, onDrop }) {
 
