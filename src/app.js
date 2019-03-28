@@ -27,6 +27,7 @@ import Panes from './components/panes';
 
 // const driver = window.location.pathname.split('/')[1];
 const drivers = ['SAM1', 'DRK', 'CHA'];
+const panes = [...drivers, 'UNASSIGNED'];
 
 function App(props) {
 
@@ -41,30 +42,23 @@ function App(props) {
   const [sortBy, setSortBy] = useState();
   const [groupBy, setGroupBy] = useState('PostalCode,City');
   // const [suburb, setSuburb] = useState('');
-  const [panes, setPanes] = useState([...drivers, 'UNASSIGNED']);
-  const [pane, selectPane] = useState();
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
 
-  // if (drivers.length + 1 !== panes.length) {
-  //   setPanes([...drivers, 'UNASSIGNED'])
-  // }
-  const driver = pane;
-
   let activePaths;
-  if (paths.has(driver))
-    activePaths = [{ driver, path: paths.get(driver) }]
+  if (paths.has(selectedDriver))
+    activePaths = [{ driver: selectedDriver, path: paths.get(selectedDriver) }]
   else
     activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
 
   const items = [...store.values()];
   // console.table(items, ['OrderId', 'Street'])
-  const selectedDriverItems = items.filter(({ Driver }) => Driver === driver);
+  const selectedDriverItems = items.filter(({ Driver }) => Driver === selectedDriver);
 
   // console.log(items)
   // const _items = items;
-  const _items = driver ? selectedDriverItems : items;
+  const _items = selectedDriver ? selectedDriverItems : items;
   const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
@@ -153,8 +147,8 @@ function App(props) {
   }
 
   async function autoAssign() {
-    const _items = driver ? selectedDriverItems : items;
-    const _drivers = driver ? [driver] : [...drivers];
+    const _items = selectedDriver ? selectedDriverItems : items;
+    const _drivers = selectedDriver ? [selectedDriver] : [...drivers];
     if (!_items.length) return;
     setWorking(true);
     const { paths: newPaths, newItems } = await vroom(_items, _drivers);
@@ -165,7 +159,7 @@ function App(props) {
   }
 
   function clearAll() {
-    const _items = driver ? selectedDriverItems : items;
+    const _items = selectedDriver ? selectedDriverItems : items;
     _items.forEach(item => {
       item.Driver = 'UNASSIGNED';
       item.Sequence = '';
@@ -214,7 +208,7 @@ function App(props) {
           <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='No grouping'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          {driver && <>
+          {selectedDriver && <>
             {/* <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton> */}
             <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           </>
@@ -241,7 +235,7 @@ function App(props) {
               data={filteredData}
               isFiltered={isFiltered}
               onDrop={handleDrop}
-              onMaximizeEnd={selectPane}
+              onMaximizeEnd={selectDriver}
             >
               {items => {
                 const groupedItems = ArrayX.groupBy2(items, groupBy);
