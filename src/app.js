@@ -11,8 +11,9 @@ import ArrayX from './utils/arrayx'
 import GoogleMap from './map/map'
 import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
-import { LatLng } from './map/utils'
-import ContouredPolygon, { polygon } from './map/contoured-polygon'
+// import { LatLng } from './map/utils'
+// import ContouredPolygon from './map/contoured-polygon'
+import { polygon } from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
@@ -25,14 +26,12 @@ import Route from './map/route';
 import move from 'lodash-move';
 import Panes from './components/panes';
 
-// const driver = window.location.pathname.split('/')[1];
 const drivers = ['SAM1', 'DRK', 'CHA'];
 const panes = [...drivers, 'UNASSIGNED'];
 
 function App(props) {
 
   console.log('rendering')
-  // const driver = props.match.params.id;
 
   const [store, updateStore, persist, storeFromArray] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
@@ -53,11 +52,8 @@ function App(props) {
     activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
 
   const items = [...store.values()];
-  // console.table(items, ['OrderId', 'Street'])
   const selectedDriverItems = ArrayX.sortByProperty(items.filter(({ Driver }) => Driver === selectedDriver), groupBy.split(',')[0]);
 
-  // console.log(items)
-  // const _items = items;
   const _items = selectedDriver ? selectedDriverItems : items;
   const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
@@ -102,10 +98,6 @@ function App(props) {
     storeFromArray(_items);
     // updateStore();
   }
-  // function openInNewTab(url) {
-  //   var win = window.open(url, '_blank');
-  //   win.focus();
-  // }
 
   // function handleGroupHeaderClick(id) {
   //   const splitId = id.split(', ');
@@ -211,7 +203,7 @@ function App(props) {
           <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='Sort by order id'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
-          <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+          <Sidebar.NavButton id='clearall' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {selectedDriver && <>
             {/* <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton> */}
             <Sidebar.NavButton id='reverse' onClick={reverseItems} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
