@@ -1,62 +1,27 @@
 import React, { useState } from 'react'
-import styled from '@emotion/styled'
 import useToggle from '../hooks/useToggle'
 import move from 'lodash-move';
-
-
-const PaneContainer = styled.div`
-    display:flex;
-    flex-direction: column;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    flex: ${props => props.expanded ? '1 1 38px' : '0 0 38px'};
-    order: ${props => props.order};
-    transition: flex 0.36s ease;
-    /* transition-delay: 1s */
-`
-
-const PaneContent = styled.div`
-    /* padding-right:4px; */
-    overflow-y: overlay;
-    overflow-x: hidden;
-    ::-webkit-scrollbar { width: 10px; };
-    :hover::-webkit-scrollbar-thumb { background-color: #FFF3; };
-    ::-webkit-scrollbar-thumb:hover { background-color: #0FF6; };
-    ::-webkit-scrollbar-thumb:active { background-color: #0FFA; };
-`
-
-const PaneHeader = styled.div`
-    background-color: #0003;
-    /* background-color: ${props => (props.color && (props.color + '33')) || '#0003'}; */
-    padding: 10px 12px 10px 12px;
-    font-size:0.88em;
-    text-transform: uppercase;
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items:center;
-    max-width:800px;
-    /* border-bottom: ${props => props.active ? `${props.color} 2px solid}` : 'transparent 2px solid'}; */
-`
-
-Pane.Header = props => {
-    const [active, setActive] = useState(false);
-    // console.log(props.id, active, props.active, active)
-    return <PaneHeader onMouseOver={() => setActive(true)} onMouseLeave={() => setActive(false)} {...props} active={active || props.active} >
-        {props.children(active)}
-    </PaneHeader>
-}
+import Minibar from './minibar';
+import Badge from './badge';
+import { PaneContainer, PaneHeader, PaneContent } from './pane.sc'
 
 function Pane(props) {
 
     const [expanded, toggleExpanded] = useToggle(props.expanded);
+    const [headerMouseOver, setHeaderMouseOver] = useState(false);
 
     let _expanded = props.expanded || expanded;
-    if (props.keepOpen)
-        if (props.id === props.keepOpen)
+    let flex = null;
+    if (props.maximized) {
+        if (props.id === props.maximized) {
             _expanded = true;
-        else
+            flex = '1 1 38px'
+        }
+        else {
             _expanded = false;
+            flex = '0 0 0px'
+        }
+    }
 
     function handleDragStart(e) {
         console.log(e.target)
@@ -88,7 +53,7 @@ function Pane(props) {
             props.onReorder(newPaneOrder);
         }
         // else {
-        props.onDrop && props.onDrop(transferredData, e);
+        props.onDrop && props.onDrop(transferredData, props.id, e);
         // }
     }
 
@@ -98,20 +63,29 @@ function Pane(props) {
         e.preventDefault();
     }
 
-    let header;
-    let content = props.children || [[]];
-    if (content[0].type === Pane.Header) {
-        header = content[0];
-        content = content.slice(1)
+    function handleHeaderClick() {
+        if (props.maximized === props.id) {
+            props.onMaximize(null)
+            // setTimeout(() => props.onMaximize(null), 1000);
+            return;
+        }
+        toggleExpanded();
     }
 
-    let flex = null;
-    if (props.keepOpen) {
-        if (props.keepOpen === props.id)
-            flex = '1 1 38px'
-        else
-            flex = '0 0 0px'
+    function handleMaximizeClick() {
+        props.onMaximize(props.id)
     }
+
+    function handleHeaderMouseOver() {
+        setHeaderMouseOver(true);
+    }
+
+    function handleHeaderMouseLeave() {
+        setHeaderMouseOver(false);
+    }
+
+    const showMaximizeButton = headerMouseOver && !props.maximized && expanded;
+
     return (
         <PaneContainer
             id={props.id}
@@ -125,11 +99,24 @@ function Pane(props) {
             onClick={props.onClick}
             style={{ flex }}
         >
-            <div onClick={toggleExpanded} >
-                {header}
-            </div>
+            <PaneHeader
+                id={props.id}
+                type='header'
+                draggable
+                onClick={handleHeaderClick}
+                onMouseOver={handleHeaderMouseOver}
+                onMouseLeave={handleHeaderMouseLeave}
+            >
+                {props.title}
+                <div>
+                    <Minibar.Button visible={showMaximizeButton} onClick={handleMaximizeClick}>
+                        fullscreen
+                    </Minibar.Button>
+                    <Badge color={props.countColor}>{props.count}</Badge>
+                </div>
+            </PaneHeader>
             <PaneContent>
-                {content}
+                {props.children}
             </PaneContent>
         </PaneContainer >
     )

@@ -11,12 +11,13 @@ export const Minibar = styled.div`
     }; */
 `
 
-const StyledMinibarButton = styled.span`
+const MinibarButton = styled.span`
     padding: 6px 6px;
     font-size: 14px;
     color:#FFF;
-    opacity: ${props => props.visible ? 0.5 : 0};
-    /* visibility: ${props => props.visible ? 'visible' : 'hidden'}; */
+    /* opacity: ${props => props.visible ? 0.5 : 0}; */
+    opacity:0.5;
+    visibility: ${props => props.visible ? 'visible' : 'hidden'};
     transition:opacity 0.1s linear 0.3s;
     :hover {
         opacity: 1;
@@ -30,9 +31,9 @@ Minibar.Button = props => {
         props.onClick && props.onClick(props.id);
     }
     const icon = props.children;
-    return <StyledMinibarButton visible={props.visible} onClick={onClick}>
+    return <MinibarButton visible={props.visible} onClick={onClick}>
         <i className="material-icons" style={{ fontSize: '16px' }}>{icon}</i>
-    </StyledMinibarButton >
+    </MinibarButton >
 }
 
 export default Minibar;

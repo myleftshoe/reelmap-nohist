@@ -5,9 +5,7 @@ import dataStore from './stores/mock-data-store'
 import Minibar from './components/minibar'
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
-import Pane from './components/pane'
 import Group from './components/group'
-import Badge from './components/badge'
 import Filter from './components/filter'
 import ArrayX from './utils/arrayx'
 import GoogleMap from './map/map'
@@ -25,6 +23,7 @@ import JobMarker from './map/job-marker'
 import DepotMarker from './map/depot-marker'
 import Route from './map/route';
 import move from 'lodash-move';
+import Panes from './components/panes';
 
 // const driver = window.location.pathname.split('/')[1];
 const drivers = ['SAM1', 'DRK', 'CHA'];
@@ -46,6 +45,7 @@ function App(props) {
   const [pane, selectPane] = useState();
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
+
 
   // if (drivers.length + 1 !== panes.length) {
   //   setPanes([...drivers, 'UNASSIGNED'])
@@ -73,12 +73,9 @@ function App(props) {
   // console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
   // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);
   function handleDrop(transferredData, target, e) {
-    const { type, id, selected, to } = transferredData;
+    const { type, id, selected } = transferredData;
     console.log(transferredData, target, e.currentTarget.id);
-    console.log(to)
     if (type === 'item') {
-      // const fromItem = store.get(id);
-      // const toItem = store.get()
       selected.forEach(id => store.get(id).Driver = target);
     }
     else if (type === 'header' && e.ctrlKey) {
@@ -237,70 +234,47 @@ function App(props) {
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
           </Minibar>
           {
-            panes.map(paneKey => {
-              const filteredByDriver = filteredData.filter(({ Driver }) => Driver === paneKey || !Driver);
-              const filteredAndGrouped = ArrayX.groupBy2(filteredByDriver, groupBy);
-              const groupKeys = Object.keys(filteredAndGrouped);
-              return (
-                <Pane
-                  key={paneKey}
-                  onReorder={setPanes}
-                  expanded={paneKey === driver}
-                  keepOpen={driver}
-                  // expanded={false}
-                  id={paneKey}
-                  onDrop={(_, e) => handleDrop(_, paneKey, e)}
-                  onMouseOver={() => selectDriver(paneKey)}
-                >
-                  <Pane.Header active={paneKey === selectedDriver} color={colors[paneKey]} type='header' id={paneKey} draggable>
-                    {active => <>
-                      {paneKey}
-                      <div>
-                        <Minibar.Button
-                          id={paneKey}
-                          visible={active}
-                          color={colors[paneKey]}
-                          onClick={() => selectPane(pane === paneKey ? null : paneKey)}
-                        >
-                          {driver !== paneKey ? 'edit' : 'done'}
-                        </Minibar.Button>
-                        <Badge color={isFiltered && filteredByDriver.length ? '#FACF00' : null}>{filteredByDriver.length}</Badge>
-                      </div>
-                    </>
-                    }
-                  </Pane.Header> {
-                    groupKeys.map(groupKey =>
-                      <Group
-                        key={groupKey}
-                        id={groupKey.split(',')[0]}
-                        type={groupBy.split(',')[0]}
-                        content={groupKey}
-                        onClick={() => handleGroupHeaderClick(groupKey)}
-                        // flatten={groupKey === 'undefined' || driver}
-                        flatten={groupKey === 'undefined'}
-                        count={filteredAndGrouped[groupKey].length}
-                        expanded={isFiltered}
+            <Panes
+              panes={panes}
+              groupBy={'Driver'}
+              data={filteredData}
+              isFiltered={isFiltered}
+              onDrop={handleDrop}
+            >
+              {items => {
+                const groupedItems = ArrayX.groupBy2(items, groupBy);
+                const groupKeys = Object.keys(groupedItems);
+                return groupKeys.map(groupKey =>
+                  <Group
+                    key={groupKey}
+                    id={groupKey.split(',')[0]}
+                    type={groupBy.split(',')[0]}
+                    content={groupKey}
+                    onClick={() => handleGroupHeaderClick(groupKey)}
+                    // flatten={groupKey === 'undefined' || driver}
+                    flatten={groupKey === 'undefined'}
+                    count={groupedItems[groupKey].length}
+                    expanded={isFiltered}
+                    filter={filter}
+                  >
+                    {groupedItems[groupKey].map(item =>
+                      <Group.Item
+                        id={item.OrderId}
+                        key={item.OrderId}
+                        data={item}
                         filter={filter}
-                      >
-                        {filteredAndGrouped[groupKey].map(item =>
-                          <Group.Item
-                            id={item.OrderId}
-                            key={item.OrderId}
-                            data={item}
-                            filter={filter}
-                            // compact={groupKey !== 'undefined' && !driver}
-                            compact={groupKey !== 'undefined'}
-                            active={item.OrderId === selectedMarkerId}
-                            onClick={() => selectMarker(item.OrderId)}
-                            onDrop={handleItemDrop}
-                          // onMouseOver={() => selectMarker(item.OrderId)}
-                          />)
-                        }
-                      </Group>
-                    )}
-                </Pane>
-              )
-            })
+                        // compact={groupKey !== 'undefined' && !driver}
+                        compact={groupKey !== 'undefined'}
+                        active={item.OrderId === selectedMarkerId}
+                        onClick={() => selectMarker(item.OrderId)}
+                        onDrop={handleItemDrop}
+                      // onMouseOver={() => selectMarker(item.OrderId)}
+                      />)
+                    }
+                  </Group>
+                )
+              }}
+            </Panes>
           }
         </Sidebar.Content>
       </Sidebar >
