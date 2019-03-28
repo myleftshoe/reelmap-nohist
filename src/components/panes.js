@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
 import Pane from './pane';
 
-export default function Panes({ panes, data, groupBy, children, isFiltered, onDrop }) {
+export default function Panes({ panes, data, groupBy, children, isFiltered, onDrop, onMaximizeEnd }) {
 
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
+
+    function handleMaximize(id) {
+        setMaximizedPaneId(id);
+        setTimeout(() => onMaximizeEnd(id), 500);
+    }
     console.log(maximizedPaneId);
 
     return _panes.map((id) => {
@@ -22,7 +27,7 @@ export default function Panes({ panes, data, groupBy, children, isFiltered, onDr
                 // onDrop=  {(_, e) => handleDrop(_, paneKey, e)}
                 onDrop={onDrop}
                 // onMouseOver={() => selectDriver(paneKey)}
-                onMaximize={setMaximizedPaneId}
+                onMaximize={handleMaximize}
             >
                 {children(paneData)}
             </Pane>

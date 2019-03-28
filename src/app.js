@@ -63,8 +63,9 @@ function App(props) {
   const selectedDriverItems = items.filter(({ Driver }) => Driver === driver);
 
   // console.log(items)
+  // const _items = items;
   const _items = driver ? selectedDriverItems : items;
-  const filteredData = ArrayX.sortByProperty(Filter.apply(_items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
+  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
   const isFiltered = Boolean(filter && filteredData.length)
   const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
@@ -240,6 +241,7 @@ function App(props) {
               data={filteredData}
               isFiltered={isFiltered}
               onDrop={handleDrop}
+              onMaximizeEnd={selectPane}
             >
               {items => {
                 const groupedItems = ArrayX.groupBy2(items, groupBy);
@@ -289,7 +291,7 @@ function App(props) {
           position={{ lat: -37.688797, lng: 145.005252 }}
           cursor={cursor}
         />
-        {filteredData.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
+        {_items.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           // if (!GeocodedAddress) return null;
           const driver = Driver || 'UNASSIGNED'
           return <JobMarker
