@@ -15,8 +15,6 @@ const MinibarButton = styled.span`
     padding: 6px 6px;
     font-size: 14px;
     color:#FFF;
-    /* opacity: ${props => props.visible ? 0.5 : 0}; */
-    /* opacity:0.5; */
     visibility: ${props => props.visible ? 'visible' : 'hidden'};
     opacity: ${props => props.visible ? 0.5 : 0};
     transition: opacity 0.1s linear 0.3s;
