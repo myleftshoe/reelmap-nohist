@@ -253,20 +253,20 @@ function App(props) {
                     count={groupedItems[groupKey].length}
                     expanded={isFiltered}
                     filter={filter}
-                  > {
-                      groupedItems[groupKey].map(item =>
-                        <Group.Item
-                          id={item.OrderId}
-                          key={item.OrderId}
-                          data={item}
-                          filter={filter}
-                          // compact={groupKey !== 'undefined' && !driver}
-                          compact={groupKey !== 'undefined'}
-                          active={item.OrderId === selectedMarkerId}
-                          onClick={() => selectMarker(item.OrderId)}
-                          onDrop={handleItemDrop}
-                        // onMouseOver={() => selectMarker(item.OrderId)}
-                        />)
+                  >
+                    {groupedItems[groupKey].map(item =>
+                      <Group.Item
+                        id={item.OrderId}
+                        key={item.OrderId}
+                        data={item}
+                        filter={filter}
+                        // compact={groupKey !== 'undefined' && !driver}
+                        compact={groupKey !== 'undefined'}
+                        active={item.OrderId === selectedMarkerId}
+                        onClick={() => selectMarker(item.OrderId)}
+                        onDrop={handleItemDrop}
+                      // onMouseOver={() => selectMarker(item.OrderId)}
+                      />)
                     }
                   </Group>
                 )
