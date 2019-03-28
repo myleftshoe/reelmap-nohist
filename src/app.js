@@ -191,6 +191,9 @@ function App(props) {
     setPaths(paths);
   }
 
+  function reverseItems() {
+  }
+
   return (
 
     <Resizable split='vertical' {...resizableProps}>
@@ -211,7 +214,7 @@ function App(props) {
           <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {selectedDriver && <>
             {/* <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton> */}
-            <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
+            <Sidebar.NavButton id='reverse' onClick={reverseItems} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           </>
           }
           <BeatLoader
