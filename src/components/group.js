@@ -105,7 +105,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
                 {'#'}
                 <SearchHighlight search={search}>{data.OrderId}</SearchHighlight>
             </Numeric>
-            <Notes>
+            <Notes minWidth={minWidth}>
                 <SearchHighlight search={search}>{data.DeliveryNotes}</SearchHighlight>
             </Notes>
         </Row>
