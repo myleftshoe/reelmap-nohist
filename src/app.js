@@ -25,6 +25,7 @@ import DepotMarker from './map/depot-marker'
 import Route from './map/route';
 import move from 'lodash-move';
 import Panes from './components/panes';
+import collect from 'collect.js';
 
 const drivers = ['SAM1', 'DRK', 'CHA'];
 const panes = [...drivers, 'UNASSIGNED'];
@@ -38,25 +39,26 @@ function App(props) {
   const [selectedDriver, selectDriver] = useState();
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
-  const [sortBy, setSortBy] = useState();
+  // const [sortBy, setSortBy] = useState();
   const [groupBy, setGroupBy] = useState('PostalCode,City');
   // const [suburb, setSuburb] = useState('');
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
+  const sortBy = groupBy.split(',')[0];
 
-  let activePaths;
-  if (paths.has(selectedDriver))
-    activePaths = [{ driver: selectedDriver, path: paths.get(selectedDriver) }]
-  else
-    activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }))
+  const itemsCollection = collect([...store.values()]).sortBy(sortBy);
 
-  const items = [...store.values()];
-  const selectedDriverItems = ArrayX.sortByProperty(items.filter(({ Driver }) => Driver === selectedDriver), groupBy.split(',')[0]);
+  const items = itemsCollection.all();
+  const selectedDriverItems = itemsCollection.where('Driver', selectedDriver).all();
+  const filteredItems = Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
+  const isFiltered = Boolean(filter && filteredItems.length)
 
-  const _items = selectedDriver ? selectedDriverItems : items;
-  const filteredData = ArrayX.sortByProperty(Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']), groupBy.split(',')[0]);
-  const isFiltered = Boolean(filter && filteredData.length)
+  const activeItems = selectedDriver ? selectedDriverItems : items;
+  const activePaths = selectedDriver
+    ? [{ driver: selectedDriver, path: paths.get(selectedDriver) || '' }]
+    : [...paths.entries()].map(([driver, path]) => ({ driver, path }))
+
   // const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
   const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
@@ -139,11 +141,10 @@ function App(props) {
   }
 
   async function autoAssign() {
-    const _items = selectedDriver ? selectedDriverItems : items;
     const _drivers = selectedDriver ? [selectedDriver] : [...drivers];
-    if (!_items.length) return;
+    if (!activeItems.length) return;
     setWorking(true);
-    const { paths: newPaths, newItems } = await vroom(_items, _drivers);
+    const { paths: newPaths, newItems } = await vroom(activeItems, _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
     updateStore();
@@ -151,8 +152,7 @@ function App(props) {
   }
 
   function clearAll() {
-    const _items = selectedDriver ? selectedDriverItems : items;
-    _items.forEach(item => {
+    activeItems.forEach(item => {
       item.Driver = 'UNASSIGNED';
       item.Sequence = '';
     });
@@ -228,7 +228,7 @@ function App(props) {
             <Panes
               panes={panes}
               groupBy={'Driver'}
-              data={filteredData}
+              data={filteredItems}
               isFiltered={isFiltered}
               onDrop={handleDrop}
               onMaximizeEnd={selectDriver}
@@ -240,7 +240,7 @@ function App(props) {
                   <Group
                     key={groupKey}
                     id={groupKey.split(',')[0]}
-                    type={groupBy.split(',')[0]}
+                    type={sortBy}
                     content={groupKey}
                     // onClick={() => handleGroupHeaderClick(groupKey)}
                     // flatten={groupKey === 'undefined' || driver}
@@ -281,7 +281,7 @@ function App(props) {
           position={{ lat: -37.688797, lng: 145.005252 }}
           cursor={cursor}
         />
-        {_items.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
+        {activeItems.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           // if (!GeocodedAddress) return null;
           const driver = Driver || 'UNASSIGNED'
           return <JobMarker
