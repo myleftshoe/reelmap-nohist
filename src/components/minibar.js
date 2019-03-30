@@ -11,7 +11,7 @@ export const Minibar = styled.div`
     }; */
 `
 
-const MinibarButton = styled.span`
+const MinibarButton = styled.i`
     padding: 6px 6px;
     font-size: 14px;
     color:#FFF;
@@ -30,8 +30,8 @@ Minibar.Button = props => {
         props.onClick && props.onClick(props.id);
     }
     const icon = props.children;
-    return <MinibarButton visible={props.visible} onClick={onClick}>
-        <i className="material-icons" style={{ fontSize: '16px' }}>{icon}</i>
+    return <MinibarButton className="material-icons" visible={props.visible} onClick={onClick}>
+        {icon}
     </MinibarButton >
 }
 
