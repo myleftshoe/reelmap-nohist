@@ -87,7 +87,11 @@ function App(props) {
     const transferredData = JSON.parse(e.dataTransfer.getData("text/plain"));
     console.log('>>>>>>>>>>>>', id, transferredData);
     const toItem = store.get(id);
-    const fromItem = store.get(transferredData.id)
+    const fromItem = store.get(transferredData.id);
+    if (toItem.Driver !== fromItem.Driver) {
+      handleDrop(transferredData, toItem.Driver, e)
+      return
+    }
     const toIndex = items.findIndex(item => item.OrderId === toItem.OrderId)
     const fromIndex = items.findIndex(item => item.OrderId === fromItem.OrderId)
     console.log(fromItem.OrderId, fromIndex, toItem.OrderId, toIndex)
