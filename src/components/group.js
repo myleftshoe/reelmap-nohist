@@ -49,19 +49,21 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
 
     function handleDragStart(e) {
 
-        const { x, y, width, height } = e.target.getBoundingClientRect();
+        // const { x, y, width, height } = e.target.firstChild.getBoundingClientRect();
+        const { x, y } = e.target.getBoundingClientRect();
         const { clientX, clientY } = e;
 
         const crt = e.target.cloneNode(e.target);
         crt.style.color = "white";
-        crt.style.height = `${height}px`;
+        // crt.style.backgroundColor = "red";
+        // crt.style.height = `${height}px`;
         crt.style.width = `${minWidth}px`;
         crt.style.position = "absolute";
         crt.style.top = "0";
         crt.style.left = "0";
         crt.style.zIndex = "-1";
         e.target.parentNode.appendChild(crt);
-        e.dataTransfer.setDragImage(crt, clientX - x, clientY - y);
+        e.dataTransfer.setDragImage(crt, clientX - x + 8, clientY - y + 10);
 
         setTimeout(() => crt.parentNode.removeChild(crt), 0);
 
