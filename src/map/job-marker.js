@@ -19,7 +19,7 @@ export default function JobMarker({ id, label, position, color, cursor, ...event
             position: LatLng(position),
             icon: {
                 url: `http://maps.google.com/mapfiles/ms/icons/${color}.png`,
-                labelOrigin: window.google && new google.maps.Point(16, 10)
+                labelOrigin: { x: 15, y: 10 }
             },
             // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
             // icon: labeledIcon({label:id, color: colors[Driver]}),

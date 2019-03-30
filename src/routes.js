@@ -1,14 +1,12 @@
 import React from "react"
 import { Route, Switch } from "react-router-dom"
 import App from "./app"
+import Single from "./single"
 
 const Routes = () => {
     return (
         <Switch>
-            {/* <Route exact path="/" component={App} /> */}
-            <Route path="/:id" component={App} />
-            {/* <Route path="/CHA" component={App} />
-            <Route path="/DRK" component={App} /> */}
+            <Route path="/:id" component={Single} />
             <Route component={App} />
         </Switch>
     )

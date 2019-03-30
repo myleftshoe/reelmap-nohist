@@ -186,6 +186,14 @@ function App(props) {
   function reverseItems() {
   }
 
+  function editRoute(id) {
+    window.open(`http://localhost:3006/${id}`);
+    // if (driver === id)
+    //   props.history.goBack();
+    // else
+    //   props.history.push(`/${id}`);
+  }
+
   return (
 
     <Resizable split='vertical' {...resizableProps}>
@@ -224,50 +232,49 @@ function App(props) {
             <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
           </Minibar>
-          {
-            <Panes
-              panes={panes}
-              groupBy={'Driver'}
-              data={filteredItems}
-              isFiltered={isFiltered}
-              onDrop={handleDrop}
-              onMaximizeEnd={selectDriver}
-            >
-              {items => {
-                const groupedItems = ArrayX.groupBy2(items, groupBy);
-                const groupKeys = Object.keys(groupedItems);
-                return groupKeys.map(groupKey =>
-                  <Group
-                    key={groupKey}
-                    id={groupKey.split(',')[0]}
-                    type={sortBy}
-                    content={groupKey}
-                    // onClick={() => handleGroupHeaderClick(groupKey)}
-                    // flatten={groupKey === 'undefined' || driver}
-                    flatten={groupKey === 'undefined'}
-                    count={groupedItems[groupKey].length}
-                    expanded={isFiltered}
-                    filter={filter}
-                  >
-                    {groupedItems[groupKey].map(item =>
-                      <Group.Item
-                        id={item.OrderId}
-                        key={item.OrderId}
-                        data={item}
-                        filter={filter}
-                        // compact={groupKey !== 'undefined' && !driver}
-                        compact={groupKey !== 'undefined'}
-                        active={item.OrderId === selectedMarkerId}
-                        onClick={() => selectMarker(item.OrderId)}
-                        onDrop={handleItemDrop}
-                      // onMouseOver={() => selectMarker(item.OrderId)}
-                      />)
-                    }
-                  </Group>
-                )
-              }}
-            </Panes>
-          }
+          <Panes
+            panes={panes}
+            groupBy={'Driver'}
+            data={filteredItems}
+            isFiltered={isFiltered}
+            onDrop={handleDrop}
+            onMaximizeEnd={selectDriver}
+            onOpenInNew={editRoute}
+          >
+            {items => {
+              const groupedItems = ArrayX.groupBy2(items, groupBy);
+              const groupKeys = Object.keys(groupedItems);
+              return groupKeys.map(groupKey =>
+                <Group
+                  key={groupKey}
+                  id={groupKey.split(',')[0]}
+                  type={sortBy}
+                  content={groupKey}
+                  // onClick={() => handleGroupHeaderClick(groupKey)}
+                  // flatten={groupKey === 'undefined' || driver}
+                  flatten={groupKey === 'undefined'}
+                  count={groupedItems[groupKey].length}
+                  expanded={isFiltered}
+                  filter={filter}
+                >
+                  {groupedItems[groupKey].map(item =>
+                    <Group.Item
+                      id={item.OrderId}
+                      key={item.OrderId}
+                      data={item}
+                      filter={filter}
+                      // compact={groupKey !== 'undefined' && !driver}
+                      compact={groupKey !== 'undefined'}
+                      active={item.OrderId === selectedMarkerId}
+                      onClick={() => selectMarker(item.OrderId)}
+                      onDrop={handleItemDrop}
+                    // onMouseOver={() => selectMarker(item.OrderId)}
+                    />)
+                  }
+                </Group>
+              )
+            }}
+          </Panes>
         </Sidebar.Content>
       </Sidebar >
       <GoogleMap

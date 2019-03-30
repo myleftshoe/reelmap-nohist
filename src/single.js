@@ -2,11 +2,11 @@
 import React, { useState } from 'react'
 import { css } from '@emotion/core';
 import { useStore } from 'outstated'
-import dataStore from './stores/data-store'
+import dataStore from './stores/mock-data-store'
 import Minibar from './components/minibar'
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
-import Pane from './components/pane'
+import Panes from './components/panes'
 import Group from './components/group'
 import Badge from './components/badge'
 import Filter from './components/filter'
@@ -18,6 +18,7 @@ import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 import collect from 'collect.js';
+import ArrayX from './utils/arrayx';
 
 function Single(props) {
 
@@ -56,8 +57,9 @@ function Single(props) {
   async function optimize() {
     setWorking(true);
     const { paths, newItems } = await vroom(items, [driver]);
+    console.log(paths)
     // console.log(paths[0].path)
-    setPath(paths[0].path);
+    setPath(paths.get(driver).path);
     updateStore();
     setWorking(false);
   }
@@ -103,37 +105,48 @@ function Single(props) {
             <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
           </Minibar>
-          <Pane
-            key={pane}
-            expanded={true}
-            id={pane}
-            // onDrop={(_, e) => handleDrop(_, pane, e)}
-            onMouseOver={() => selectDriver(pane)}
-          // onClick={() => window.open(`http://localhost:3006/${pane}`)}
-          // onClick={() => props.history.push(`/${pane}`)}
+          <Panes
+            panes={[pane]}
+            groupBy={'Driver'}
+            data={filteredItems}
+            isFiltered={isFiltered}
+            // onDrop={handleDrop}
+            onMaximizeEnd={selectDriver}
           >
-            <Pane.Header active={pane === selectedDriver} color={colors[pane]} type='header' id={pane} draggable>
-              {() => <>
-                {pane}
-                <Badge color={isFiltered && items.length ? '#FACF00' : null}>{items.length}</Badge>
-              </>
-              }
-            </Pane.Header>
-            <Group.Items>
-              {filteredItems.map(item =>
-                <Group.Item
-                  id={item.OrderId}
-                  key={item.OrderId}
-                  data={item}
+            {items => {
+              const groupedItems = ArrayX.groupBy2(items, sortBy);
+              const groupKeys = Object.keys(groupedItems);
+              return groupKeys.map(groupKey =>
+                <Group
+                  key={groupKey}
+                  id={groupKey.split(',')[0]}
+                  type={sortBy}
+                  content={groupKey}
+                  // onClick={() => handleGroupHeaderClick(groupKey)}
+                  // flatten={groupKey === 'undefined' || driver}
+                  flatten={groupKey === 'undefined'}
+                  count={groupedItems[groupKey].length}
+                  expanded={isFiltered}
                   filter={filter}
-                  // compact={groupKey !== 'undefined'}
-                  active={item.OrderId === selectedMarkerId}
-                  onClick={() => selectMarker(item.OrderId)}
-                // onMouseOver={() => selectMarker(item.OrderId)}
-                />)
-              }
-            </Group.Items>
-          </Pane>
+                >
+                  {groupedItems[groupKey].map(item =>
+                    <Group.Item
+                      id={item.OrderId}
+                      key={item.OrderId}
+                      data={item}
+                      filter={filter}
+                      // compact={groupKey !== 'undefined' && !driver}
+                      compact={groupKey !== 'undefined'}
+                      active={item.OrderId === selectedMarkerId}
+                      onClick={() => selectMarker(item.OrderId)}
+                    // onDrop={handleItemDrop}
+                    // onMouseOver={() => selectMarker(item.OrderId)}
+                    />)
+                  }
+                </Group>
+              )
+            }}
+          </Panes>
         </Sidebar.Content>
       </Sidebar >
       <GoogleMap
@@ -167,7 +180,7 @@ function Single(props) {
               position: { lat: GeocodedAddress.latitude, lng: GeocodedAddress.longitude },
               icon: {
                 url: `http://maps.google.com/mapfiles/ms/icons/${colors[driver]}.png`,
-                labelOrigin: new google.maps.Point(15, 10)
+                labelOrigin: { x: 15, y: 10 }
               },
               cursor
             }}

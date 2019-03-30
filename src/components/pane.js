@@ -76,6 +76,10 @@ function Pane(props) {
         props.onMaximize(props.id)
     }
 
+    function handleOpenInNewClick() {
+        props.onOpenInNew(props.id)
+    }
+
     function handleHeaderMouseOver() {
         setHeaderMouseOver(true);
     }
@@ -85,6 +89,7 @@ function Pane(props) {
     }
 
     const showMaximizeButton = headerMouseOver && !props.maximized && expanded;
+    const showOpenInNewButton = headerMouseOver && props.maximized;
 
     return (
         <PaneContainer
@@ -108,12 +113,19 @@ function Pane(props) {
                 onMouseLeave={handleHeaderMouseLeave}
             >
                 {props.title}
-                <div>
-                    <Minibar.Button visible={showMaximizeButton} onClick={handleMaximizeClick}>
-                        fullscreen
-                    </Minibar.Button>
+                <Minibar>
+                    {showOpenInNewButton &&
+                        <Minibar.Button visible={true} onClick={handleOpenInNewClick}>
+                            open_in_new
+                        </Minibar.Button>
+                    }
+                    {showMaximizeButton &&
+                        <Minibar.Button visible={true} onClick={handleMaximizeClick}>
+                            fullscreen
+                        </Minibar.Button>
+                    }
                     <Badge color={props.countColor}>{props.count}</Badge>
-                </div>
+                </Minibar>
             </PaneHeader>
             <PaneContent>
                 {props.children}
