@@ -55,7 +55,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
 
         const crt = e.target.cloneNode(e.target);
         crt.style.color = "white";
-        // crt.style.backgroundColor = "red";
+        // crt.style.backgroundColor = "#1d2f3d";
         // crt.style.height = `${height}px`;
         crt.style.width = `${minWidth}px`;
         crt.style.position = "absolute";
