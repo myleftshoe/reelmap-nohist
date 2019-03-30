@@ -99,7 +99,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
                 }
             </Address>
             <Numeric>
-                <SearchHighlight search={search}>{data.Sequence}</SearchHighlight>
+                <SearchHighlight search={search}>{data.Sequence || ''}</SearchHighlight>
             </Numeric>
             <Numeric>
                 {'#'}
