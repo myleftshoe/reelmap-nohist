@@ -37,7 +37,8 @@ export default async function vroom(items = [], drivers = []) {
         id: parseInt(item.OrderId, 10),
         location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude],
         // amount: [1],
-        skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0]
+        skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0],
+        service: 300
     }));
 
     // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
@@ -52,6 +53,7 @@ export default async function vroom(items = [], drivers = []) {
             "id": index,
             "start": depot,
             "end": depot,
+            // "time_window": [36000, 48000],
             "time_window": [36000, 61200],
             // capacity: [Math.ceil(capacityFactor * shiftDurations[index]) + 2],
             skills: [0, index + 1]
@@ -60,10 +62,10 @@ export default async function vroom(items = [], drivers = []) {
 
     const options = { "g": true }; //returns route geometry
 
-    const json = await doFetch({ vehicles, jobs, options });
-
+    const solution = await doFetch({ vehicles, jobs, options });
+    console.log(solution)
     const newItems = [];
-    json.routes.forEach(route => {
+    solution.routes.forEach(route => {
         const steps = route.steps.filter(s => s.type === "job");
         // console.log(steps);
         steps.forEach((s, i) => {
@@ -74,7 +76,7 @@ export default async function vroom(items = [], drivers = []) {
         });
     });
 
-    const paths = new Map(json.routes.map(route => ([drivers[route.vehicle], route.geometry])));
+    const paths = new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
 
     return { paths, items: newItems };
     // return new Items(newItems);
