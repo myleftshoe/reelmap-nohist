@@ -1,63 +1,25 @@
 import React from 'react';
-import styled from '@emotion/styled'
+import { CustomControl } from '@googlemap-react/core';
+import S from './custom-control-bar-sc';
 
-const CustomControlBar = styled.div`
-    overflow:hidden;
-    background-color:#FFF;
-    display:flex;
-    flex-direction: row;
-    justify-content:space-between;
-    align-items:center;
-    margin:10px;
-    filter: drop-shadow(0px 1px 1px #00000028);
-    border-radius:2px;
-    cursor:pointer;
-`
 
-CustomControlBar.IconButton = ({children:materialIconName, ...props}) =>
-    <CustomControlBarIconButton className='material-icons' style={{fontSize:'20px'}} {...props}>{materialIconName}</CustomControlBarIconButton>
+const CustomControlBar = ({ small, position = 'TOP_LEFT', children }) =>
+    <CustomControl bindingPosition={position}>
+        <S.ControlBar>{
+            React.Children.map(children, child =>
+                React.cloneElement(child, { small })
+            )}
+        </S.ControlBar>
+    </CustomControl>
 
-const CustomControlBarIconButton = styled.i`
-    padding:8px;
-    opacity:0.66;
-    min-width:24px;
-    height:24px;
-    display:flex;
-    align-items:center;
-    justify-content: center;
-    :hover {
-        opacity:1;
-        background-color:#00000015;
-    };
-    border-left: 1px solid #00000015;
-    :first-child {
-        border-left: none;
-    }
-`
+CustomControlBar.IconButton = ({ children: materialIconName, small, ...props }) =>
+    small
+        ? <S.IconButtonSmall className='material-icons' {...props}>{materialIconName}</S.IconButtonSmall>
+        : <S.IconButton className='material-icons' {...props}>{materialIconName}</S.IconButton>
 
-CustomControlBar.Divider=styled.div`
-    height:40px;
-    width:1px;
-    background-color:#00000015;
-`
-
-CustomControlBar.TextButton = styled.div`
-    font-size:18px;
-    padding:8px 17px;
-    opacity:0.66;
-    min-width:24px;
-    height:24px;
-    display:flex;
-    align-items:center;
-    justify-content: center;
-    :hover {
-        opacity:1;
-        background-color:#00000015;
-    };
-    border-left: 1px solid #00000015;
-    :first-child {
-        border-left: none;
-    }
-`
+CustomControlBar.TextButton = ({ children: materialIconName, small, ...props }) =>
+    small
+        ? <S.TextButtonSmall {...props}>{materialIconName}</S.TextButtonSmall>
+        : <S.TextButton {...props}>{materialIconName}</S.TextButton>
 
 export default CustomControlBar;
