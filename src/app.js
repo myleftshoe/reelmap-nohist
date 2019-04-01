@@ -11,7 +11,7 @@ import ArrayX from './utils/arrayx'
 import GoogleMap from './map/map'
 import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
-// import { LatLng } from './map/utils'
+import { LatLng } from './map/utils'
 // import ContouredPolygon from './map/contoured-polygon'
 import { polygon } from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
@@ -26,6 +26,8 @@ import Route from './map/route';
 import move from 'lodash-move';
 import Panes from './components/panes';
 import collect from 'collect.js';
+import CustomControlBar from './map/custom-control-bar';
+import RegionSelectControl from './map/region-select-control';
 
 const drivers = ['SAM1', 'DRK', 'CHA'];
 const panes = [...drivers, 'UNASSIGNED'];
@@ -37,6 +39,8 @@ function App(props) {
   const [store, updateStore, persist, storeFromArray] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
   const [selectedDriver, selectDriver] = useState();
+  const [regionSelectId, setRegionSelectId] = useState();
+  const [editMode, setEditMode] = useState();
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
   // const [sortBy, setSortBy] = useState();
@@ -111,14 +115,14 @@ function App(props) {
   //   setSuburb(suburb);
   // }
 
-  // function handleMarkerClick(id) {
-  //   console.log(id, quickChange);
-  //   if (quickChange) {
-  //     store.get(id).Driver = quickChange;
-  //     updateStore(persist);
-  //   }
-  //   else (selectMarker(id))
-  // }
+  function handleMarkerClick(id) {
+    console.log(id, quickChange);
+    if (regionSelectId) {
+      store.get(id).Driver = regionSelectId;
+      updateStore();
+    }
+    else (selectMarker(id))
+  }
 
   function handleMarkerRightClick(id) {
     if (quickChange) {
@@ -196,6 +200,29 @@ function App(props) {
     //   props.history.goBack();
     // else
     //   props.history.push(`/${id}`);
+  }
+
+  function handleSelectionComplete(e) {
+    console.log(e.bounds);
+    items.forEach(item => {
+      if (e.bounds.contains(LatLng(item.GeocodedAddress))) {
+        console.log(item.Street)
+        item.Driver = regionSelectId
+      }
+    })
+    updateStore()
+  }
+
+  function handleSelectionChange(id) {
+    setRegionSelectId(id);
+    // !editMode && selectDriver(id)
+  }
+
+  function handleEditControlSelect(id) {
+    setEditMode(Boolean(id))
+    console.log(id)
+    // setRegionSelectId(id);
+    // id && selectDriver(id)
   }
 
   return (
@@ -303,7 +330,7 @@ function App(props) {
             color={colors[driver]}
             cursor={cursor}
             big={selectedMarkerId === id}
-            onClick={() => selectMarker(id)}
+            onClick={() => handleMarkerClick(id)}
             onRightClick={() => handleMarkerRightClick(id)}
             onMouseOver={() => selectMarker(id)}
             // onDrag={(e) => console.log(e)}
@@ -343,6 +370,17 @@ function App(props) {
           />
         )}
         {/* <SuburbBoundary suburb={suburb} /> */}
+        <CustomControlBar small>
+          <CustomControlBar.ButtonGroup onSelectionChanged={handleSelectionChange}>
+            {drivers.map(driver =>
+              <CustomControlBar.IconButton key={driver} id={driver} color={colors[driver]}>stop</CustomControlBar.IconButton>
+            )}
+          </CustomControlBar.ButtonGroup>
+          <CustomControlBar.ButtonGroup onSelectionChanged={handleEditControlSelect}>
+            <CustomControlBar.IconButton id='markerSelectTool'>fiber_manual_record</CustomControlBar.IconButton>
+            <RegionSelectControl id='regionSelectTool' onSelectionComplete={handleSelectionComplete} clearOnComplete color={colors[regionSelectId]} />
+          </CustomControlBar.ButtonGroup>
+        </CustomControlBar>
       </GoogleMap>
     </Resizable >
 

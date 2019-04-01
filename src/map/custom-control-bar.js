@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CustomControl } from '@googlemap-react/core';
 import S from './custom-control-bar-sc';
+import useToggle from '../hooks/useToggle';
 
 const CustomControlBar = ({ position = 'TOP_LEFT', small, children }) => {
     const vertical = position.startsWith('LEFT_') || position.startsWith('RIGHT_');
@@ -13,10 +14,12 @@ const CustomControlBar = ({ position = 'TOP_LEFT', small, children }) => {
     </CustomControl>
 }
 
-CustomControlBar.IconButton = ({ children: materialIconName, small, ...props }) =>
-    small
-        ? <S.IconButtonSmall className='material-icons' {...props}>{materialIconName}</S.IconButtonSmall>
-        : <S.IconButton className='material-icons' {...props}>{materialIconName}</S.IconButton>
+CustomControlBar.IconButton = ({ children: materialIconName, small, ...props }) => {
+    const [active, toggleActive] = useToggle(false);
+    return small
+        ? <S.IconButtonSmall className='material-icons' active={active} onClick={toggleActive} {...props}>{materialIconName}</S.IconButtonSmall>
+        : <S.IconButton className='material-icons' active={active} onClick={toggleActive} {...props}>{materialIconName}</S.IconButton>
+}
 
 CustomControlBar.TextButton = ({ children: materialIconName, small, ...props }) =>
     small
@@ -24,3 +27,18 @@ CustomControlBar.TextButton = ({ children: materialIconName, small, ...props }) 
         : <S.TextButton {...props}>{materialIconName}</S.TextButton>
 
 export default CustomControlBar;
+
+CustomControlBar.ButtonGroup = ({ onSelectionChanged, children, small, vertical }) => {
+    console.log(children);
+    const [selectedId, setSelectedId] = useState();
+    function handleClick(child, e) {
+        console.log(e.target.id, child)
+        const id = e.target.id !== selectedId && e.target.id;
+        setSelectedId(id);
+        child.props.onClick && child.props.onClick(id);
+        onSelectionChanged && onSelectionChanged(id);
+    }
+    return React.Children.map(children, child =>
+        React.cloneElement(child, { small, vertical, active: selectedId === child.props.id, onClick: e => handleClick(child, e) })
+    )
+}

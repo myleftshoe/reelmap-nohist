@@ -16,12 +16,13 @@ S.ControlBar = styled.div`
     cursor:pointer;
 `
 
-S.ButtonBase = ({ vertical, color }) => css`
+S.ButtonBase = ({ vertical, color, active = false }) => css`
     color:${color};
     opacity:0.66;
     display:flex;
     align-items:center;
     justify-content: center;
+    ${active && 'background-color: #00000030;'}
     :hover {
         opacity:1;
         background-color:#00000015;
