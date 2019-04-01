@@ -204,7 +204,7 @@ function App(props) {
 
   function handleSelectionComplete(e) {
     console.log(e.bounds);
-    items.forEach(item => {
+    activeItems.forEach(item => {
       if (e.bounds.contains(LatLng(item.GeocodedAddress))) {
         console.log(item.Street)
         item.Driver = regionSelectId
@@ -215,7 +215,7 @@ function App(props) {
 
   function handleSelectionChange(id) {
     setRegionSelectId(id);
-    // !editMode && selectDriver(id)
+    !editMode && selectDriver(id)
   }
 
   function handleEditControlSelect(id) {
@@ -373,12 +373,12 @@ function App(props) {
         <CustomControlBar small>
           <CustomControlBar.ButtonGroup onSelectionChanged={handleSelectionChange}>
             {drivers.map(driver =>
-              <CustomControlBar.IconButton key={driver} id={driver} color={colors[driver]}>stop</CustomControlBar.IconButton>
+              <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>stop</CustomControlBar.IconButton>
             )}
           </CustomControlBar.ButtonGroup>
           <CustomControlBar.ButtonGroup onSelectionChanged={handleEditControlSelect}>
-            <CustomControlBar.IconButton id='markerSelectTool'>fiber_manual_record</CustomControlBar.IconButton>
-            <RegionSelectControl id='regionSelectTool' onSelectionComplete={handleSelectionComplete} clearOnComplete color={colors[regionSelectId]} />
+            <CustomControlBar.IconButton id='markerSelectTool' title='Marker select tool'>fiber_manual_record</CustomControlBar.IconButton>
+            <RegionSelectControl id='regionSelectTool' title='Region select tool' onSelectionComplete={handleSelectionComplete} clearOnComplete color={colors[regionSelectId]} />
           </CustomControlBar.ButtonGroup>
         </CustomControlBar>
       </GoogleMap>
