@@ -14,6 +14,7 @@ S.ControlBar = styled.div`
     filter: drop-shadow(0px 1px 1px #00000028);
     border-radius:2px;
     cursor:pointer;
+    user-select:none;
 `
 
 S.ButtonBase = ({ vertical, color, active = false }) => css`
