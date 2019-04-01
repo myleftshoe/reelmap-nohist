@@ -7,7 +7,7 @@ S.ControlBar = styled.div`
     overflow:hidden;
     background-color:#FFF;
     display:flex;
-    flex-direction: row;
+    flex-direction: ${({ vertical }) => vertical ? 'column' : 'row'};
     justify-content:space-between;
     align-items:center;
     margin:10px;
@@ -16,7 +16,8 @@ S.ControlBar = styled.div`
     cursor:pointer;
 `
 
-S.ButtonBase = css`
+S.ButtonBase = ({ vertical, color }) => css`
+    color:${color};
     opacity:0.66;
     display:flex;
     align-items:center;
@@ -25,9 +26,13 @@ S.ButtonBase = css`
         opacity:1;
         background-color:#00000015;
     };
-    border-left: 1px solid #00000015;
+    ${vertical
+        ? 'border-top: 1px solid #00000015'
+        : 'border-left: 1px solid #00000015'
+    };
     :first-child {
         border-left: none;
+        border-top: none;
     }
 `
 
