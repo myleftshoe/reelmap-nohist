@@ -14,6 +14,7 @@ export default function Map(props) {
                 zoom: 11,
                 styles: styles[localStorage.getItem('mapTheme')],
             }}
+            useDrawing
             useGeometry
             useGoogleApi
             onClick={props.onClick}
