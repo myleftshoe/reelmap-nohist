@@ -18,6 +18,7 @@ Sidebar.Navigation = styled.div`
     grid-row: 1/-1; /* stretch from first grid line to last grid line */
     display:flex;
     flex-direction:column;
+    user-select:none;
 `
 
 Sidebar.Content = styled.div`

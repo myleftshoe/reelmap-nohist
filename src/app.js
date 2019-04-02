@@ -13,7 +13,7 @@ import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
 import { LatLng } from './map/utils'
 // import ContouredPolygon from './map/contoured-polygon'
-import { polygon } from './map/contoured-polygon'
+import ContouredPolygon, { polygon } from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
@@ -46,7 +46,7 @@ function App(props) {
   const [filter, setFilter] = useState('');
   // const [sortBy, setSortBy] = useState();
   const [groupBy, setGroupBy] = useState('PostalCode,City');
-  // const [suburb, setSuburb] = useState('');
+  const [suburb, setSuburb] = useState('');
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
@@ -67,7 +67,7 @@ function App(props) {
     activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
   }
 
-  // const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
+  const polygonPoints = itemsCollection.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
   const selectedItem = store.get(selectedMarkerId);
   // const cursor = circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor
   const cursor = editMode && regionSelectId ? circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor : null
@@ -78,15 +78,17 @@ function App(props) {
     const { type, id, selected } = transferredData;
     console.log(transferredData, target, e.currentTarget.id);
     if (type === 'item') {
-      selected.forEach(id => store.get(id).Driver = target);
+      dispatch({ type: 'assign', ids: selected, driver: target });
     }
     else if (type === 'header' && e.ctrlKey) {
       reassignRoute(target, id);
     }
     else {
-      items.filter(({ [type]: prop }) => prop === id).forEach(({ OrderId }) => {
-        store.get(OrderId).Driver = target;
-      });
+      const ids = itemsCollection.where(type, id).pluck('OrderId').all();
+      dispatch({ type: 'assign', ids, driver: target })
+      // items.filter(({ [type]: prop }) => prop === id).forEach(({ OrderId }) => {
+      //   store.get(OrderId).Driver = target;
+      // });
     }
     // updateStore();
     // updateStore(persist);
@@ -114,11 +116,11 @@ function App(props) {
     // updateStore();
   }
 
-  // function handleGroupHeaderClick(id) {
-  //   const splitId = id.split(', ');
-  //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-  //   setSuburb(suburb);
-  // }
+  function handleGroupHeaderClick(id) {
+    const splitId = id.split(', ');
+    const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
+    setSuburb(suburb);
+  }
 
   function handleMarkerClick(id) {
     console.log(id, quickChange);
@@ -143,7 +145,7 @@ function App(props) {
   function reassignItem(id, driver) {
     // const item = store.get(id);
     // item.Driver = driver;
-    dispatch({ type: 'assign', id, driver })
+    dispatch({ type: 'assign', ids: [id], driver })
     // updateStore();
   }
 
@@ -177,7 +179,7 @@ function App(props) {
     paths.set(to, fromPath);
     paths.set(from, toPath);
 
-    dispatch({ type: 'reassign-route', from, to })
+    dispatch({ type: 'swap-route', from, to })
     // [...store.values()].forEach(item => {
     //   if (item.Driver === from) {
     //     item.Driver = to;
@@ -203,13 +205,8 @@ function App(props) {
 
   function handleSelectionComplete(e) {
     console.log(e.bounds);
-    activeItems.forEach(item => {
-      if (e.bounds.contains(LatLng(item.GeocodedAddress))) {
-        console.log(item.Street)
-        item.Driver = regionSelectId
-      }
-    })
-    dispatch({ type: 'update' })
+    const ids = collect(activeItems).filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
+    dispatch({ type: 'assign', ids, driver: regionSelectId })
     // updateStore()
   }
 
@@ -287,7 +284,7 @@ function App(props) {
                   id={groupKey.split(',')[0]}
                   type={sortBy}
                   content={groupKey}
-                  // onClick={() => handleGroupHeaderClick(groupKey)}
+                  onClick={() => handleGroupHeaderClick(groupKey)}
                   // flatten={groupKey === 'undefined' || driver}
                   flatten={groupKey === 'undefined'}
                   count={groupedItems[groupKey].length}
@@ -356,13 +353,13 @@ function App(props) {
             />
           }
         </InfoWindow>
-        {/* <ContouredPolygon
+        <ContouredPolygon
           id='polygon'
           points={polygonPoints}
-          // color={colors[selectedDriver]}
-          color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
-          onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
-        /> */}
+        // color={colors[selectedDriver]}
+        // color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
+        // onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
+        />
         {!isFiltered && activePaths.map(({ path, driver }) =>
           // console.log(path)
           <Route

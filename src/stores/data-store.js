@@ -1,5 +1,7 @@
 import firebaseStore from '../dbs/firebase'
-import { geocode } from '../map/services/geocode';
+import { useReducer } from 'react'
+import { geocode } from '../map/services/geocode'
+import reducer from './reducer'
 
 const collection = 'Items2'
 
@@ -18,7 +20,9 @@ export default function dataStore() {
     // const driver = window.location.pathname.split('/')[1];
     // const where = driver && ['Driver', '==', driver];
     const where = null;
-    const [state, update, persist] = firebaseStore(collection, { where, limit: 5 }, handleUpdate);
+    const [dbState, update, persist] = firebaseStore(collection, { where, limit: 120 }, handleUpdate);
 
-    return [state, update, persist];
+    const [state, dispatch] = useReducer(reducer, dbState);
+
+    return [state, dispatch, persist];
 }

@@ -1,4 +1,3 @@
-/* global google */
 import React from 'react'
 import { Marker } from "@googlemap-react/core";
 import { LatLng } from './utils';
