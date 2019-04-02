@@ -36,7 +36,7 @@ function App(props) {
 
   console.log('rendering')
 
-  const [store, updateStore, persist, storeFromArray] = useStore(dataStore)
+  const [store, dispatch] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
   const [selectedDriver, selectDriver] = useState();
   const [selectedDrivers, setSelectedDrivers] = useState([]);
@@ -88,7 +88,7 @@ function App(props) {
         store.get(OrderId).Driver = target;
       });
     }
-    updateStore();
+    // updateStore();
     // updateStore(persist);
   }
 
@@ -110,7 +110,7 @@ function App(props) {
       return item;
     })
     // console.table(_items2, ['OrderId', 'Street'])
-    storeFromArray(_items);
+    // storeFromArray(_items);
     // updateStore();
   }
 
@@ -124,7 +124,7 @@ function App(props) {
     console.log(id, quickChange);
     if (regionSelectId) {
       store.get(id).Driver = regionSelectId;
-      updateStore();
+      // updateStore();
     }
     else (selectMarker(id))
   }
@@ -134,23 +134,17 @@ function App(props) {
       const next = quickChange + 1;
       store.get(id).Sequence = next;
       setQuickChange(next)
-      updateStore();
+      // updateStore();
     }
     else
       setQuickChange(store.get(id).Sequence);
   }
 
   function reassignItem(id, driver) {
-    const item = store.get(id);
-    item.Driver = driver;
-    updateStore();
-  }
-
-  function handleMarkerDrop(latLng, id) {
-    if (polygon.contains(latLng)) {
-      store.get(id).Driver = selectedDriver;
-      updateStore();
-    }
+    // const item = store.get(id);
+    // item.Driver = driver;
+    dispatch({ type: 'assign', id, driver })
+    // updateStore();
   }
 
   async function autoAssign() {
@@ -160,7 +154,7 @@ function App(props) {
     const { paths: newPaths, newItems } = await vroom(activeItems, _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
-    updateStore();
+    // updateStore();
     setWorking(false);
   }
 
@@ -170,11 +164,10 @@ function App(props) {
       item.Sequence = '';
     });
     setPaths(new Map())
-    updateStore()
+    // updateStore()
   }
 
   function reassignRoute(from, to) {
-
     const toPath = paths.get(to);
     const fromPath = paths.get(from);
 
@@ -184,14 +177,15 @@ function App(props) {
     paths.set(to, fromPath);
     paths.set(from, toPath);
 
-    [...store.values()].forEach(item => {
-      if (item.Driver === from) {
-        item.Driver = to;
-      }
-      else if (item.Driver === to) {
-        item.Driver = from;
-      }
-    });
+    dispatch({ type: 'reassign-route', from, to })
+    // [...store.values()].forEach(item => {
+    //   if (item.Driver === from) {
+    //     item.Driver = to;
+    //   }
+    //   else if (item.Driver === to) {
+    //     item.Driver = from;
+    //   }
+    // });
 
     setPaths(paths);
   }
@@ -215,7 +209,8 @@ function App(props) {
         item.Driver = regionSelectId
       }
     })
-    updateStore()
+    dispatch({ type: 'update' })
+    // updateStore()
   }
 
   function handleSelectionChange(ids) {
@@ -344,8 +339,6 @@ function App(props) {
             onClick={() => handleMarkerClick(id)}
             onRightClick={() => handleMarkerRightClick(id)}
             onMouseOver={() => selectMarker(id)}
-            // onDrag={(e) => console.log(e)}
-            onDragEnd={({ latLng }) => handleMarkerDrop(latLng, id)}
           />
         })}
         <InfoWindow
