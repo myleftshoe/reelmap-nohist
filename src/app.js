@@ -126,9 +126,10 @@ function App(props) {
   function handleMarkerClick(id) {
     console.log(id, quickChange);
     if (regionSelectId) {
-      dispatch({ type: 'assign', ids: [id], driver: regionSelectId })
+      dispatch({ type: 'assign', ids: [id], driver: regionSelectId });
+      return;
     }
-    else (selectMarker(id))
+    selectMarker(id)
   }
 
   function handleMarkerRightClick(id) {
@@ -136,9 +137,9 @@ function App(props) {
       const next = quickChange + 1;
       store.get(id).Sequence = next;
       setQuickChange(next)
+      return;
     }
-    else
-      setQuickChange(store.get(id).Sequence);
+    setQuickChange(store.get(id).Sequence);
   }
 
   function reassignItem(id, driver) {
@@ -165,8 +166,7 @@ function App(props) {
     const toPath = paths.get(to);
     const fromPath = paths.get(from);
 
-    if (!toPath || !fromPath)
-      return;
+    if (!toPath || !fromPath) return;
 
     paths.set(to, fromPath);
     paths.set(from, toPath);
