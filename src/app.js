@@ -69,11 +69,9 @@ function App(props) {
 
   const polygonPoints = itemsCollection.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
   const selectedItem = store.get(selectedMarkerId);
-  // const cursor = circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor
   const cursor = editMode && regionSelectId ? circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor : null
 
-  // console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
-  // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);
+
   function handleDrop(transferredData, target, e) {
     const { type, id, selected } = transferredData;
     console.log(transferredData, target, e.currentTarget.id);
@@ -108,7 +106,6 @@ function App(props) {
     })
     // console.table(_items2, ['OrderId', 'Street'])
     // storeFromArray(_items);
-    // updateStore();
   }
 
   function handleGroupHeaderClick(id) {
@@ -120,8 +117,7 @@ function App(props) {
   function handleMarkerClick(id) {
     console.log(id, quickChange);
     if (regionSelectId) {
-      store.get(id).Driver = regionSelectId;
-      // updateStore();
+      dispatch({ type: 'assign', ids: [id], driver: regionSelectId })
     }
     else (selectMarker(id))
   }
@@ -131,7 +127,6 @@ function App(props) {
       const next = quickChange + 1;
       store.get(id).Sequence = next;
       setQuickChange(next)
-      // updateStore();
     }
     else
       setQuickChange(store.get(id).Sequence);
@@ -148,7 +143,6 @@ function App(props) {
     const { paths: newPaths, newItems } = await vroom(activeItems, _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
-    // updateStore();
     setWorking(false);
   }
 
