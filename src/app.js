@@ -86,12 +86,7 @@ function App(props) {
     else {
       const ids = itemsCollection.where(type, id).pluck('OrderId').all();
       dispatch({ type: 'assign', ids, driver: target })
-      // items.filter(({ [type]: prop }) => prop === id).forEach(({ OrderId }) => {
-      //   store.get(OrderId).Driver = target;
-      // });
     }
-    // updateStore();
-    // updateStore(persist);
   }
 
   function handleItemDrop(id, e) {
@@ -143,10 +138,7 @@ function App(props) {
   }
 
   function reassignItem(id, driver) {
-    // const item = store.get(id);
-    // item.Driver = driver;
     dispatch({ type: 'assign', ids: [id], driver })
-    // updateStore();
   }
 
   async function autoAssign() {
@@ -161,12 +153,9 @@ function App(props) {
   }
 
   function clearAll() {
-    activeItems.forEach(item => {
-      item.Driver = 'UNASSIGNED';
-      item.Sequence = '';
-    });
+    const ids = collect(activeItems).pluck('OrderId').all();
+    dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
     setPaths(new Map())
-    // updateStore()
   }
 
   function reassignRoute(from, to) {
@@ -180,14 +169,6 @@ function App(props) {
     paths.set(from, toPath);
 
     dispatch({ type: 'swap-route', from, to })
-    // [...store.values()].forEach(item => {
-    //   if (item.Driver === from) {
-    //     item.Driver = to;
-    //   }
-    //   else if (item.Driver === to) {
-    //     item.Driver = from;
-    //   }
-    // });
 
     setPaths(paths);
   }
@@ -207,7 +188,6 @@ function App(props) {
     console.log(e.bounds);
     const ids = collect(activeItems).filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
     dispatch({ type: 'assign', ids, driver: regionSelectId })
-    // updateStore()
   }
 
   function handleSelectionChange(ids) {

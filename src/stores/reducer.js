@@ -2,7 +2,11 @@ export default function reducer(state, action) {
     console.log('reducing.....', action)
     switch (action.type) {
         case 'assign': {
-            action.ids.forEach(id => state.get(id).Driver = action.driver);
+            action.ids.forEach(id => {
+                const item = state.get(id);
+                item.Driver = action.driver;
+                item.Sequence = null;
+            });
             return new Map(state);
         }
         case 'swap-route': {
