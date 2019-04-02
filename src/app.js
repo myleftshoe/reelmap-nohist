@@ -39,6 +39,7 @@ function App(props) {
   const [store, updateStore, persist, storeFromArray] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
   const [selectedDriver, selectDriver] = useState();
+  const [selectedDrivers, setSelectedDrivers] = useState([]);
   const [regionSelectId, setRegionSelectId] = useState();
   const [editMode, setEditMode] = useState();
   const [quickChange, setQuickChange] = useState();
@@ -54,14 +55,17 @@ function App(props) {
   const itemsCollection = collect([...store.values()]).sortBy(sortBy);
 
   const items = itemsCollection.all();
-  const selectedDriverItems = itemsCollection.where('Driver', selectedDriver).all();
+  const selectedDriverItems = itemsCollection.whereIn('Driver', selectedDrivers).all();
+
   const filteredItems = Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
   const isFiltered = Boolean(filter && filteredItems.length)
 
-  const activeItems = selectedDriver ? selectedDriverItems : items;
-  const activePaths = selectedDriver
-    ? [{ driver: selectedDriver, path: paths.get(selectedDriver) || '' }]
-    : [...paths.entries()].map(([driver, path]) => ({ driver, path }))
+  let activeItems = items;
+  let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
+  if (selectedDrivers.length) {
+    activeItems = selectedDriverItems;
+    activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
+  }
 
   // const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
@@ -214,9 +218,11 @@ function App(props) {
     updateStore()
   }
 
-  function handleSelectionChange(id) {
-    setRegionSelectId(id);
-    !editMode && selectDriver(id)
+  function handleSelectionChange(ids) {
+    console.log(ids)
+    setSelectedDrivers(ids);
+    // setRegionSelectId(id);
+    // !editMode && selectDriver(id)
   }
 
   function handleEditControlSelect(id) {
@@ -224,6 +230,10 @@ function App(props) {
     console.log(id)
     // setRegionSelectId(id);
     // id && selectDriver(id)
+  }
+
+  function handleMaximizeEnd(id) {
+    setSelectedDrivers(id ? [id] : [])
   }
 
   return (
@@ -270,7 +280,7 @@ function App(props) {
             data={filteredItems}
             isFiltered={isFiltered}
             onDrop={handleDrop}
-            onMaximizeEnd={selectDriver}
+            onMaximizeEnd={handleMaximizeEnd}
             onOpenInNew={editRoute}
           >
             {items => {
@@ -372,11 +382,11 @@ function App(props) {
         )}
         {/* <SuburbBoundary suburb={suburb} /> */}
         <CustomControlBar small>
-          <CustomControlBar.ButtonGroup onSelectionChanged={handleSelectionChange}>
+          <CustomControlBar.Select multiple onSelectionChanged={handleSelectionChange}>
             {drivers.map(driver =>
               <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>stop</CustomControlBar.IconButton>
             )}
-          </CustomControlBar.ButtonGroup>
+          </CustomControlBar.Select>
           <CustomControlBar.ButtonGroup onSelectionChanged={handleEditControlSelect}>
             <CustomControlBar.IconButton id='markerSelectTool' title='Marker select tool'>fiber_manual_record</CustomControlBar.IconButton>
             <RegionSelectControl id='regionSelectTool' title='Region select tool' onSelectionComplete={handleSelectionComplete} clearOnComplete color={colors[regionSelectId]} />

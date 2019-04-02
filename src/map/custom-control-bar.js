@@ -42,3 +42,27 @@ CustomControlBar.ButtonGroup = ({ onSelectionChanged, children, small, vertical 
         React.cloneElement(child, { small, vertical, active: selectedId === child.props.id, onClick: e => handleClick(child, e) })
     )
 }
+
+CustomControlBar.Select = ({ onSelectionChanged, children, small, vertical, multiple }) => {
+    console.log(children);
+    const [selected, setSelected] = useState(new Set());
+    function handleClick(child, e) {
+        const id = e.target.id;
+        const _selected = new Set(selected);
+        console.log(id, child, multiple);
+        if (_selected.has(id))
+            _selected.delete(id);
+        else {
+            if (!multiple) {
+                _selected.clear();
+            }
+            _selected.add(id);
+        }
+        setSelected(new Set(_selected));
+        child.props.onClick && child.props.onClick(id);
+        onSelectionChanged && onSelectionChanged([..._selected.values()]);
+    }
+    return React.Children.map(children, child =>
+        React.cloneElement(child, { small, vertical, active: selected.has(child.props.id), onClick: e => handleClick(child, e) })
+    )
+}
