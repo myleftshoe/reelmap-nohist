@@ -55,6 +55,7 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
 
         const crt = e.target.cloneNode(e.target);
         crt.style.color = "white";
+        // crt.style.backgroundColor = "red";
         // crt.style.backgroundColor = "#1d2f3d";
         // crt.style.height = `${height}px`;
         crt.style.width = `${minWidth}px`;
@@ -69,15 +70,6 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
 
     }
 
-    function handleDrop(e) {
-        const id = e.currentTarget.id;
-        console.log(id);
-        e.stopPropagation();
-
-        setDraggingOver(false);
-        onDrop && onDrop(id, e);
-    }
-
     return (
         <Row
             id={id} type='item'
@@ -88,9 +80,9 @@ Group.Item = ({ id, data, filter, compact, onClick, onMouseOver, onDrop, active 
             onDragStart={handleDragStart}
             onDragOver={() => setDraggingOver(true)}
             onDragLeave={() => setDraggingOver(false)}
-            onDrop={handleDrop}
+            onDrop={() => setDraggingOver(false)}
         >
-            <Address compact={compact} draggingOver={draggingOver} isselected={selected.toString()} minWidth={`${minWidth}px`}>
+            <Address draggable='false' id={id} compact={compact} isselected={selected.toString()} minWidth={`${minWidth}px`}>
                 <Street>
                     <SearchHighlight search={search}>{data.Street}</SearchHighlight>
                 </Street>

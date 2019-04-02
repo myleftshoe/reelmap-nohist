@@ -73,22 +73,33 @@ function App(props) {
 
   function handleDrop(transferredData, target, e) {
     const { type, id, selected } = transferredData;
-    console.log(transferredData, target, e.currentTarget.id);
-    if (type === 'item') {
-      dispatch({ type: 'assign', ids: selected, driver: target });
-    }
-    else if (type === 'header' && e.ctrlKey) {
-      reassignRoute(target, id);
-    }
-    else {
-      const ids = itemsCollection.where(type, id).pluck('OrderId').all();
-      dispatch({ type: 'assign', ids, driver: target })
+    console.log('handleDrop', transferredData, target, e.currentTarget, e.target);
+
+    switch (type) {
+      case 'item': {
+        const fromItem = store.get(id);
+        const toItem = store.get(e.target.id);
+        if (toItem && toItem.Driver === fromItem.Driver) {
+        }
+        else {
+          dispatch({ type: 'assign', ids: selected, driver: target });
+        }
+        break;
+      }
+      case 'header': {
+        reassignRoute(target, id);
+        break;
+      }
+      default: {
+        const ids = itemsCollection.where(type, id).pluck('OrderId').all();
+        dispatch({ type: 'assign', ids, driver: target })
+      }
     }
   }
 
   function handleItemDrop(id, e) {
     const transferredData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    console.log('>>>>>>>>>>>>', id, transferredData);
+    console.log('handleItemDrop', id, transferredData, e.currentTarget);
     const toItem = store.get(id);
     const fromItem = store.get(transferredData.id);
     if (toItem.Driver !== fromItem.Driver) {
@@ -268,7 +279,7 @@ function App(props) {
                       compact={groupKey !== 'undefined'}
                       active={item.OrderId === selectedMarkerId}
                       onClick={() => selectMarker(item.OrderId)}
-                      onDrop={handleItemDrop}
+                    // onDrop={handleItemDrop}
                     // onMouseOver={() => selectMarker(item.OrderId)}
                     />)
                   }

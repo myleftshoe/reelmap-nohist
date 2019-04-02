@@ -43,11 +43,7 @@ export const Address = styled.td`
     padding-bottom: 4px;
     background-color: #f0f0;
     font-size: 0.8rem;
-    /* box-shadow: ${props => props.draggingOver ? '0px -1px 0px 0px #FC5185' : '0px 0px 0px 0px #FC5185'}; */
     min-width: ${props => props.minWidth};
-    /* &:hover {
-        box-shadow: ${props => props.draggingOver && '0px -1px 0px 0px #FC5185'};
-    }; */
     transition: box-shadow 0.2s ease 0.2s;
 `
 
