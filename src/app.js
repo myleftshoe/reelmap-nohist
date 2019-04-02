@@ -65,7 +65,7 @@ function App(props) {
 
   // const polygonPoints = items.filter(({ Driver }) => (Driver || 'UNASSIGNED') === selectedDriver).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter(latlng => latlng);
   const selectedItem = store.get(selectedMarkerId);
-  const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
+  const cursor = circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor
 
   // console.log(quickChange, selectedMarkerId, selectedItem, suburb, selectedDriver);
   // console.table(items.sort((a, b) => a.Sequence - b.Sequence), ["Sequence", "OrderId", "City", "PostalCode"]);

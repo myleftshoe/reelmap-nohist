@@ -40,7 +40,7 @@ function Single(props) {
   const filteredItems = Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
   const isFiltered = Boolean(filter && filteredItems.length)
   const selectedItem = store.get(selectedMarkerId);
-  const cursor = quickChange ? circle({ radius: 16, color: colors[quickChange], text: quickChange }).cursor : null
+  const cursor = quickChange ? circle({ radius: 10, color: colors[quickChange], text: quickChange }).cursor : null
 
   function handleMarkerRightClick(id) {
     if (quickChange) {
