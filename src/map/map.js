@@ -2,12 +2,14 @@ import React, { useEffect, useContext } from 'react'
 import { GoogleMapContext, MapBox } from '@googlemap-react/core'
 import ThemeSwitcher from './theme-switcher'
 import styles from './styles/styles'
+import './map.css'
 
 export default function Map(props) {
     const { state: { map } } = useContext(GoogleMapContext);
     useEffect(() => map && map.setOptions({ draggableCursor: props.cursor }));
     return <>
         <MapBox
+            // className='crosshair-cursor'
             apiKey={process.env.REACT_APP_GMAPS}
             opts={{
                 center: { lat: -37.815018, lng: 144.946014 },

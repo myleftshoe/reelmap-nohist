@@ -1,0 +1,5 @@
+.crosshair-cursor [style*='crosshair'] {
+    cursor: url("https://i.stack.imgur.com/mA4e2.jpg?s=48&g=1")24 24, crosshair !important;
+}
+
+  /* cursor: url("https://i.stack.imgur.com/mA4e2.jpg?s=48&g=1")24 24, crosshair !important; */
