@@ -50,22 +50,19 @@ function App(props) {
 
   const sortBy = groupBy.split(',')[0];
 
-  const itemsCollection = collect([...store.values()]).sortBy(sortBy);
+  const items = collect([...store.values()]).sortBy(sortBy);
 
-  const items = itemsCollection.all();
-  const selectedDriverItems = itemsCollection.whereIn('Driver', selectedDrivers).all();
-
-  const filteredItems = Filter.apply(items, ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
+  const filteredItems = Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
   const isFiltered = Boolean(filter && filteredItems.length)
 
   let activeItems = items;
   let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
   if (selectedDrivers.length) {
-    activeItems = selectedDriverItems;
+    activeItems = items.whereIn('Driver', selectedDrivers).all();;
     activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
   }
 
-  const polygonPoints = itemsCollection.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
+  const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
   const selectedItem = store.get(selectedMarkerId);
   const cursor = editMode && regionSelectId ? circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor : null
 
@@ -90,31 +87,10 @@ function App(props) {
         break;
       }
       default: {
-        const ids = itemsCollection.where(type, id).pluck('OrderId').all();
+        const ids = items.where(type, id).pluck('OrderId').all();
         dispatch({ type: 'assign', ids, driver: target })
       }
     }
-  }
-
-  function handleItemDrop(id, e) {
-    const transferredData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    console.log('handleItemDrop', id, transferredData, e.currentTarget);
-    const toItem = store.get(id);
-    const fromItem = store.get(transferredData.id);
-    if (toItem.Driver !== fromItem.Driver) {
-      handleDrop(transferredData, toItem.Driver, e)
-      return
-    }
-    const toIndex = items.findIndex(item => item.OrderId === toItem.OrderId)
-    const fromIndex = items.findIndex(item => item.OrderId === fromItem.OrderId)
-    console.log(fromItem.OrderId, fromIndex, toItem.OrderId, toIndex)
-    const _items = move(items, fromIndex, toIndex);
-    const _items2 = selectedDriverItems.sort((a, b) => a.Sequence - b.Sequence).map((item, index) => {
-      item.Sequence = index + 1;
-      return item;
-    })
-    // console.table(_items2, ['OrderId', 'Street'])
-    // storeFromArray(_items);
   }
 
   function handleGroupHeaderClick(id) {
@@ -148,16 +124,16 @@ function App(props) {
 
   async function autoAssign() {
     const _drivers = selectedDriver ? [selectedDriver] : [...drivers];
-    if (!activeItems.length) return;
+    if (!activeItems.count()) return;
     setWorking(true);
-    const { paths: newPaths, newItems } = await vroom(activeItems, _drivers);
+    const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
     setWorking(false);
   }
 
   function clearAll() {
-    const ids = collect(activeItems).pluck('OrderId').all();
+    const ids = activeItems.pluck('OrderId').all();
     dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
     setPaths(new Map())
   }
@@ -189,7 +165,7 @@ function App(props) {
 
   function handleSelectionComplete(e) {
     console.log(e.bounds);
-    const ids = collect(activeItems).filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
+    const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
     dispatch({ type: 'assign', ids, driver: regionSelectId })
   }
 
