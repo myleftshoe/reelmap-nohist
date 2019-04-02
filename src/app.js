@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { css } from '@emotion/core';
 import { useStore } from 'outstated'
 import dataStore from './stores/mock-data-store'
 import Minibar from './components/minibar'
@@ -19,7 +18,6 @@ import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
 import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
-import { BeatLoader } from 'react-spinners'
 import JobMarker from './map/job-marker'
 import DepotMarker from './map/depot-marker'
 import Route from './map/route';
@@ -28,6 +26,7 @@ import Panes from './components/panes';
 import collect from 'collect.js';
 import CustomControlBar from './map/custom-control-bar';
 import RegionSelectControl from './map/region-select-control';
+import LoadingIndicator from './components/loading-indicator';
 
 const drivers = ['SAM1', 'DRK', 'CHA'];
 const panes = [...drivers, 'UNASSIGNED'];
@@ -225,13 +224,7 @@ function App(props) {
             <Sidebar.NavButton id='reverse' onClick={reverseItems} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
           </>
           }
-          <BeatLoader
-            css={css`margin-top: auto;`}
-            sizeUnit='px'
-            size={6}
-            color={'#FFF'}
-            loading={working}
-          />
+          <LoadingIndicator loading={working} />
         </Sidebar.Navigation>
         <Sidebar.Content>
           <Minibar>
@@ -291,7 +284,6 @@ function App(props) {
         cursor={cursor}
       >
         <DepotMarker
-          key={'depot'}
           id={'depot'}
           position={{ lat: -37.688797, lng: 145.005252 }}
           cursor={cursor}
