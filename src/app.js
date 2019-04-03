@@ -11,7 +11,7 @@ import GoogleMap from './map/map'
 import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
 import { LatLng } from './map/utils'
-import ContouredPolygon from './map/contoured-polygon'
+// import ContouredPolygon from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
@@ -61,7 +61,7 @@ function App(props) {
     activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
   }
 
-  const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
+  // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
   const selectedItem = store.get(selectedMarkerId);
   const cursor = editMode && regionSelectId ? circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor : null
 
@@ -92,11 +92,11 @@ function App(props) {
     }
   }
 
-  function handleGroupHeaderClick(id) {
-    const splitId = id.split(', ');
-    const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-    setSuburb(suburb);
-  }
+  // function handleGroupHeaderClick(id) {
+  //   const splitId = id.split(', ');
+  //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
+  //   setSuburb(suburb);
+  // }
 
   function handleMarkerClick(id) {
     console.log(id, quickChange);
@@ -229,7 +229,7 @@ function App(props) {
                   type={sortBy}
                   items={groupedItems[groupKey]}
                   content={groupKey}
-                  onHeaderClick={handleGroupHeaderClick}
+                  // onHeaderClick={handleGroupHeaderClick}
                   onItemClick={selectMarker}
                   activeItemId={selectedMarkerId}
                   flatten={groupKey === 'undefined'}
@@ -283,10 +283,10 @@ function App(props) {
             />
           }
         </InfoWindow>
-        <ContouredPolygon
+        {/* <ContouredPolygon
           id='polygon'
           points={polygonPoints}
-        />
+        /> */}
         {!isFiltered && activePaths.map(({ path, driver }) =>
           // console.log(path)
           <Route

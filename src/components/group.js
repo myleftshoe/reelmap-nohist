@@ -21,7 +21,7 @@ function Group(props) {
     if (!props.flatten) return (
         <Expandable
             key={props.id}
-            onClick={() => props.onHeaderClick(props.content)}
+            onClick={() => props.onHeaderClick && props.onHeaderClick(props.content)}
             expanded={props.expanded}
             content={
                 <Header draggable id={props.id} type={props.type}>
