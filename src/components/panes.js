@@ -1,36 +1,33 @@
 import React, { useState } from 'react'
 import Pane from './pane';
 
-export default function Panes({ panes, data, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew }) {
+export default function Panes({ panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew }) {
 
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
 
     function handleMaximize(id) {
         setMaximizedPaneId(id);
+        // Wait for pane transition before triggering rerender
         setTimeout(() => onMaximizeEnd(id), 500);
     }
-    console.log(maximizedPaneId);
 
     return _panes.map((id) => {
-        const paneData = data.filter(({ [groupBy]: value }) => value === id || !value);
+        const paneItems = groupBy ? items.where(groupBy, id) : items;
         return (
             <Pane
                 key={id}
                 id={id}
                 title={id}
-                count={paneData.length}
-                countColor={isFiltered && paneData.length ? '#FACF00' : null}
+                count={paneItems.count()}
+                countColor={isFiltered && paneItems.count() ? '#FACF00' : null}
                 onReorder={setPanes}
-                // expanded={paneKey === driver}
                 maximized={maximizedPaneId}
-                // onDrop=  {(_, e) => handleDrop(_, paneKey, e)}
                 onDrop={onDrop}
-                // onMouseOver={() => selectDriver(paneKey)}
                 onMaximize={handleMaximize}
                 onOpenInNew={onOpenInNew}
             >
-                {children(paneData)}
+                {children(paneItems.all())}
             </Pane>
         )
     })

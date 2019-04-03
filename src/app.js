@@ -52,8 +52,8 @@ function App(props) {
 
   const items = collect([...store.values()]).sortBy(sortBy);
 
-  const filteredItems = Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']);
-  const isFiltered = Boolean(filter && filteredItems.length)
+  const filteredItems = collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']));
+  const isFiltered = Boolean(filter && filteredItems.count())
 
   let activeItems = items;
   let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
@@ -222,7 +222,7 @@ function App(props) {
           <Panes
             panes={panes}
             groupBy={'Driver'}
-            data={filteredItems}
+            items={filteredItems}
             isFiltered={isFiltered}
             onDrop={handleDrop}
             onMaximizeEnd={handleMaximizeEnd}
