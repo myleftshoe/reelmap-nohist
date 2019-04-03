@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import Pane from './pane';
 
-export default function Panes({ panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew }) {
+export default function Panes(props) {
+
+    const { panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew } = props;
 
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
