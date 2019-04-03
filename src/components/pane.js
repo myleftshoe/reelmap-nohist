@@ -24,7 +24,6 @@ function Pane(props) {
     }
 
     function handleDragStart(e) {
-        console.log(e.target)
 
         const id = e.target.id;
         const type = e.target.getAttribute('type');
@@ -52,9 +51,7 @@ function Pane(props) {
             const newPaneOrder = move(paneOrder, paneOrder.indexOf(sourcePaneId), paneOrder.indexOf(targetPaneId));
             props.onReorder(newPaneOrder);
         }
-        // else {
         props.onDrop && props.onDrop(transferredData, props.id, e);
-        // }
     }
 
     function handleDragOver(e) {
@@ -66,7 +63,6 @@ function Pane(props) {
     function handleHeaderClick() {
         if (props.maximized === props.id) {
             props.onMaximize(null)
-            // setTimeout(() => props.onMaximize(null), 1000);
             return;
         }
         toggleExpanded();
@@ -95,7 +91,6 @@ function Pane(props) {
         <PaneContainer
             id={props.id}
             type='pane'
-            // draggable
             expanded={_expanded}
             onDragStart={handleDragStart}
             onDrop={handleDrop}
