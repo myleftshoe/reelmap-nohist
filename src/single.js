@@ -8,7 +8,6 @@ import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
 import Panes from './components/panes'
 import Group from './components/group'
-import Badge from './components/badge'
 import Filter from './components/filter'
 import GoogleMap from './map/map'
 import { InfoWindow, Marker, Polyline } from '@googlemap-react/core'
@@ -18,7 +17,7 @@ import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 import collect from 'collect.js';
-import ArrayX from './utils/arrayx';
+import { groupBy2 } from './utils/utils';
 
 function Single(props) {
 
@@ -114,7 +113,7 @@ function Single(props) {
             onMaximizeEnd={selectDriver}
           >
             {items => {
-              const groupedItems = ArrayX.groupBy2(items, sortBy);
+              const groupedItems = groupBy2(items, sortBy);
               const groupKeys = Object.keys(groupedItems);
               return groupKeys.map(groupKey =>
                 <Group

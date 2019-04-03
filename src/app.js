@@ -6,7 +6,7 @@ import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
 import Group from './components/group'
 import Filter from './components/filter'
-import ArrayX from './utils/arrayx'
+import { groupBy2 } from './utils/utils'
 import GoogleMap from './map/map'
 import { InfoWindow } from '@googlemap-react/core'
 // import { labeledIcon } from './map/markers/markers.js'
@@ -41,15 +41,12 @@ function App(props) {
   const [editMode, setEditMode] = useState();
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
-  // const [sortBy, setSortBy] = useState();
   const [groupBy, setGroupBy] = useState('PostalCode,City');
   const [suburb, setSuburb] = useState('');
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
-  const sortBy = groupBy.split(',')[0];
-
-  const items = collect([...store.values()]).sortBy(sortBy);
+  const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
   const filteredItems = collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']));
   const isFiltered = Boolean(filter && filteredItems.count())
@@ -188,13 +185,6 @@ function App(props) {
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
         <Sidebar.Navigation>
-          {/* <Sidebar.NavButton id='City' active={sortBy === 'City'} onClick={setSortBy} tooltip='Sort by suburb'>location_city</Sidebar.NavButton>
-          <Sidebar.NavButton id='PostalCode' active={sortBy === 'PostalCode'} onClick={setSortBy} tooltip='Sort by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id='Sequence' active={sortBy === 'Sequence'} onClick={setSortBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
-          <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton>
-          <Sidebar.NavButton id='reverse' onClick={autoAssign} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
-          <Sidebar.NavButton id='autoassign' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          <Sidebar.NavButton id='avoidtolls' onClick={clearAll} tooltip='Avoid tolls'>toll</Sidebar.NavButton> */}
           <Sidebar.NavButton id='City,PostalCode' active={groupBy === 'City,PostalCode'} onClick={setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
           <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
@@ -220,13 +210,13 @@ function App(props) {
             onOpenInNew={editRoute}
           >
             {items => {
-              const groupedItems = ArrayX.groupBy2(items, groupBy);
+              const groupedItems = groupBy2(items, groupBy);
               const groupKeys = Object.keys(groupedItems);
               return groupKeys.map(groupKey =>
                 <Group
                   key={groupKey}
                   id={groupKey.split(',')[0]}
-                  type={sortBy}
+                  type={groupBy.split(',')[0]}
                   items={groupedItems[groupKey]}
                   content={groupKey}
                   // onHeaderClick={handleGroupHeaderClick}
