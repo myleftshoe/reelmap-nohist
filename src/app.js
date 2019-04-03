@@ -36,7 +36,6 @@ function App(props) {
 
   const [store, dispatch] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
-  const [selectedDriver, selectDriver] = useState();
   const [selectedDrivers, setSelectedDrivers] = useState([]);
   const [regionSelectId, setRegionSelectId] = useState();
   const [editMode, setEditMode] = useState();
@@ -58,7 +57,7 @@ function App(props) {
   let activeItems = items;
   let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
   if (selectedDrivers.length) {
-    activeItems = items.whereIn('Driver', selectedDrivers).all();;
+    activeItems = items.whereIn('Driver', selectedDrivers);
     activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
   }
 
@@ -123,7 +122,7 @@ function App(props) {
   }
 
   async function autoAssign() {
-    const _drivers = selectedDriver ? [selectedDriver] : [...drivers];
+    const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
     if (!activeItems.count()) return;
     setWorking(true);
     const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
@@ -150,9 +149,6 @@ function App(props) {
     dispatch({ type: 'swap-route', from, to })
 
     setPaths(paths);
-  }
-
-  function reverseItems() {
   }
 
   function editRoute(id) {
@@ -205,11 +201,6 @@ function App(props) {
           <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          {selectedDriver && <>
-            {/* <Sidebar.NavButton id='optimize' onClick={autoAssign} tooltip='Optimize route'>timeline</Sidebar.NavButton> */}
-            <Sidebar.NavButton id='reverse' onClick={reverseItems} tooltip='Reverse route'>swap_vert</Sidebar.NavButton>
-          </>
-          }
           <LoadingIndicator loading={working} />
         </Sidebar.Navigation>
         <Sidebar.Content>
@@ -295,9 +286,6 @@ function App(props) {
         <ContouredPolygon
           id='polygon'
           points={polygonPoints}
-        // color={colors[selectedDriver]}
-        // color={!paths.find(({ driver }) => driver === selectedDriver) ? colors[selectedDriver] : 'transparent'}
-        // onClick={() => mapState.map.fitBounds(Bounds.from(polygonPoints))}
         />
         {!isFiltered && activePaths.map(({ path, driver }) =>
           // console.log(path)
