@@ -8,10 +8,20 @@ import { Header, SearchHighlight, Table, Row, Address, Street, CityWithPostCode,
 const minWidth = 300;
 
 function Group(props) {
+    const items = props.items.map(item =>
+        <Group.Item
+            id={item.OrderId}
+            key={item.OrderId}
+            data={item}
+            filter={props.filter}
+            compact={props.content !== 'undefined'}
+            active={item.OrderId === props.activeItemId}
+            onClick={() => props.onItemClick(item.OrderId)}
+        />);
     if (!props.flatten) return (
         <Expandable
             key={props.id}
-            onClick={props.onClick}
+            onClick={() => props.onHeaderClick(props.content)}
             expanded={props.expanded}
             content={
                 <Header draggable id={props.id} type={props.type}>
@@ -20,10 +30,12 @@ function Group(props) {
                 </Header>
             }
         >
-            <Group.Items>{props.children}</Group.Items>
+            <Group.Items>
+                {items}
+            </Group.Items>
         </Expandable>
     );
-    return <Group.Items>{props.children}</Group.Items>
+    return <Group.Items>{items}</Group.Items>
 }
 
 

@@ -236,29 +236,16 @@ function App(props) {
                   key={groupKey}
                   id={groupKey.split(',')[0]}
                   type={sortBy}
+                  items={groupedItems[groupKey]}
                   content={groupKey}
-                  onClick={() => handleGroupHeaderClick(groupKey)}
-                  // flatten={groupKey === 'undefined' || driver}
+                  onHeaderClick={handleGroupHeaderClick}
+                  onItemClick={selectMarker}
+                  activeItemId={selectedMarkerId}
                   flatten={groupKey === 'undefined'}
                   count={groupedItems[groupKey].length}
                   expanded={isFiltered}
                   filter={filter}
-                >
-                  {groupedItems[groupKey].map(item =>
-                    <Group.Item
-                      id={item.OrderId}
-                      key={item.OrderId}
-                      data={item}
-                      filter={filter}
-                      // compact={groupKey !== 'undefined' && !driver}
-                      compact={groupKey !== 'undefined'}
-                      active={item.OrderId === selectedMarkerId}
-                      onClick={() => selectMarker(item.OrderId)}
-                    // onDrop={handleItemDrop}
-                    // onMouseOver={() => selectMarker(item.OrderId)}
-                    />)
-                  }
-                </Group>
+                />
               )
             }}
           </Panes>
