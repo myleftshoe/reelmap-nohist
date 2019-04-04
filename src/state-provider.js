@@ -10,8 +10,6 @@ import { drivers } from './constants'
 
 export default function StateProvider(props) {
 
-    console.log('rendering');
-
     const [store, dispatch] = useStore(dataStore);
 
     const [selectedMarkerId, setSelectedMarkerId] = useState();
