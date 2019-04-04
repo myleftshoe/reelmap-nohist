@@ -17,15 +17,15 @@ import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import { circle } from './svg/cursors'
 import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
-import JobMarker from './map/job-marker'
 import DepotMarker from './map/depot-marker'
-import Route from './map/route';
 // import move from 'lodash-move';
 import Panes from './components/panes';
 import collect from 'collect.js';
 import CustomControlBar from './map/custom-control-bar';
 import RegionSelectControl from './map/region-select-control';
 import LoadingIndicator from './components/loading-indicator';
+import JobMarkers from './map/job-markers';
+import Routes from './map/routes';
 
 const drivers = ['SAM1', 'DRK', 'CHA'];
 const panes = [...drivers, 'UNASSIGNED'];
@@ -242,52 +242,35 @@ function App(props) {
           position={{ lat: -37.688797, lng: 145.005252 }}
           cursor={cursor}
         />
-        {activeItems.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
-          // if (!GeocodedAddress) return null;
-          const label = mapEditMode.on ? null : Sequence;
-          const driver = Driver || 'UNASSIGNED'
-          return <JobMarker
-            key={id}
-            id={id}
-            label={label}
-            position={GeocodedAddress}
-            color={colors[driver]}
-            cursor={cursor}
-            big={selectedMarkerId === id}
-            onClick={() => handleMarkerClick(id)}
-            onRightClick={() => handleMarkerRightClick(id)}
-            onMouseOver={() => selectMarker(id)}
-          />
-        })}
-        <InfoWindow
-          anchorId={selectedMarkerId}
-          visible={selectedMarkerId}
-          onCloseClick={() => selectMarker(null)}
-          opts={{ disableAutoPan: true }}
-        >
-          {selectedMarkerId &&
+        <JobMarkers
+          items={activeItems}
+          selectedMarkerId={selectedMarkerId}
+          cursor={cursor}
+          showLabel={!mapEditMode.on}
+          onMarkerClick={handleMarkerClick}
+          onMarkerRightClick={handleMarkerRightClick}
+          onMarkerMouseOver={selectMarker}
+        />
+        {selectedMarkerId &&
+          <InfoWindow
+            anchorId={selectedMarkerId}
+            visible={selectedMarkerId}
+            onCloseClick={() => selectMarker(null)}
+            opts={{ disableAutoPan: true }}
+          >
             <MarkerInfoWindowContent
               item={selectedItem}
               color={colors[selectedItem.Driver]}
               onDriverChange={reassignItem}
               dropDownValues={colors}
             />
-          }
-        </InfoWindow>
+          </InfoWindow>
+        }
         {/* <ContouredPolygon
           id='polygon'
           points={polygonPoints}
         /> */}
-        {!isFiltered && activePaths.map(({ path, driver }) =>
-          // console.log(path)
-          <Route
-            key={`Route.${driver}`}
-            id={`Route.${driver}`}
-            path={path}
-            color={colors[driver]}
-            onRightClick={() => reassignRoute(driver)}
-          />
-        )}
+        <Routes hidden={isFiltered} paths={activePaths} onRightClick={reassignRoute} />
         {/* <SuburbBoundary suburb={suburb} /> */}
         {mapEditMode.on &&
           <CustomControlBar small>
