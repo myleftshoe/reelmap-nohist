@@ -153,18 +153,18 @@ export default function StateProvider(props) {
     }
 
     const state = {
-        selectedMarkerId, setSelectedMarkerId,
-        selectedDrivers, setSelectedDrivers,
-        mapEditMode, setMapEditMode,
-        quickChange, setQuickChange,
         filter, setFilter,
         groupBy, setGroupBy,
-        working, setWorking,
+        mapEditMode, //setMapEditMode,
+        quickChange, //setQuickChange,
+        selectedDrivers, //setSelectedDrivers,
+        selectedMarkerId, setSelectedMarkerId,
+        working, //setWorking,
         // derived
-        filteredItems,
-        isFiltered,
         activeItems,
         activePaths,
+        filteredItems,
+        isFiltered,
         selectedItem,
     };
 
