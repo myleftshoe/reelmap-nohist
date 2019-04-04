@@ -4,7 +4,7 @@ import Pane from './pane';
 export default function Panes(props) {
 
     const { panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew } = props;
-
+    console.log(items)
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
 
