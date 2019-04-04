@@ -4,7 +4,7 @@ import CustomControlBar from './custom-control-bar';
 import useToggle from '../hooks/useToggle';
 
 
-export default function RegionSelectControl({ id, small, title, onSelectionComplete, clearOnComplete = false, color, onClick, active }) {
+export default function RegionSelectControl({ id, small, title, onSelectionComplete, clearOnComplete = false, color, onClick, active, hidden }) {
     const [selectMode, toggleSelectMode] = useToggle(false);
     function handleClick(e) {
         if (typeof active === 'boolean')
@@ -20,7 +20,6 @@ export default function RegionSelectControl({ id, small, title, onSelectionCompl
     const _selectMode = typeof active === 'boolean' ? active : selectMode;
 
     return <>
-        <CustomControlBar.IconButton id={id} small={small} title={title || 'Region select tool'} active={_selectMode} onClick={handleClick}>crop_3_2</CustomControlBar.IconButton>
         <DrawingManager opts={{
             drawingControl: false,
             drawingMode: _selectMode ? 'rectangle' : null,
@@ -33,5 +32,6 @@ export default function RegionSelectControl({ id, small, title, onSelectionCompl
             }
         }} onRectangleComplete={handleShapeComplete}
         />
+        {!hidden && <CustomControlBar.IconButton id={id} small={small} title={title || 'Region select tool'} active={_selectMode} onClick={handleClick}>crop_3_2</CustomControlBar.IconButton> }
     </>
 }

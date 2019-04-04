@@ -33,12 +33,10 @@ const panes = [...drivers, 'UNASSIGNED'];
 function App(props) {
 
   console.log('rendering')
-
   const [store, dispatch] = useStore(dataStore)
   const [selectedMarkerId, selectMarker] = useState();
   const [selectedDrivers, setSelectedDrivers] = useState([]);
-  const [regionSelectId, setRegionSelectId] = useState();
-  const [editMode, setEditMode] = useState();
+  const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
   const [groupBy, setGroupBy] = useState('PostalCode,City');
@@ -60,8 +58,7 @@ function App(props) {
 
   // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
   const selectedItem = store.get(selectedMarkerId);
-  const cursor = editMode && regionSelectId ? circle({ radius: 10, color: colors[regionSelectId], text: quickChange }).cursor : null
-
+  const cursor = mapEditMode.tool ? circle({ radius: 10, color: colors[mapEditMode.id], text: quickChange }).cursor : null
 
   function handleDrop(transferredData, target, e) {
     const { type, id, selected } = transferredData;
@@ -97,8 +94,8 @@ function App(props) {
 
   function handleMarkerClick(id) {
     console.log(id, quickChange);
-    if (regionSelectId) {
-      dispatch({ type: 'assign', ids: [id], driver: regionSelectId });
+    if (mapEditMode.id) {
+      dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
       return;
     }
     selectMarker(id)
@@ -122,6 +119,7 @@ function App(props) {
     const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
     if (!activeItems.count()) return;
     setWorking(true);
+    setMapEditMode({ ...mapEditMode, on: false })
     const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
     newPaths.forEach((path, driver) => paths.set(driver, path));
     setPaths(paths);
@@ -159,27 +157,31 @@ function App(props) {
   function handleSelectionComplete(e) {
     console.log(e.bounds);
     const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
-    dispatch({ type: 'assign', ids, driver: regionSelectId })
+    dispatch({ type: 'assign', ids, driver: mapEditMode.id })
   }
 
   function handleSelectionChange(ids) {
-    console.log(ids)
-    setSelectedDrivers(ids);
-    // setRegionSelectId(id);
-    // !editMode && selectDriver(id)
-  }
-
-  function handleEditControlSelect(id) {
-    setEditMode(Boolean(id))
-    console.log(id)
-    // setRegionSelectId(id);
-    // id && selectDriver(id)
+    setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
   }
 
   function handleMaximizeEnd(id) {
+    setMapEditMode({ on: false })
     setSelectedDrivers(id ? [id] : [])
   }
 
+  function handleEditModeClick() {
+    setPaths(new Map())
+    setMapEditMode({ on: true })
+  }
+
+  function handleMapRightClick() {
+    console.log('handleMapRightClick')
+    if (!mapEditMode.id) return;
+    const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
+    setMapEditMode({ ...mapEditMode, tool })
+  }
+
+  console.log(mapEditMode)
   return (
 
     <Resizable split='vertical' {...resizableProps}>
@@ -189,6 +191,7 @@ function App(props) {
           <Sidebar.NavButton id='PostalCode,City' active={groupBy === 'PostalCode,City'} onClick={setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
           <Sidebar.NavButton id='OrderId,' active={groupBy === 'OrderId,'} onClick={setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
           <Sidebar.NavButton id='Sequence,' active={groupBy === 'Sequence,'} onClick={setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='editmode' onClick={handleEditModeClick} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           <LoadingIndicator loading={working} />
@@ -234,7 +237,7 @@ function App(props) {
       </Sidebar >
       <GoogleMap
         onClick={() => selectMarker(null)}
-        onRightClick={() => setQuickChange(null)}
+        onRightClick={handleMapRightClick}
         cursor={cursor}
       >
         <DepotMarker
@@ -244,11 +247,13 @@ function App(props) {
         />
         {activeItems.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           // if (!GeocodedAddress) return null;
+          console.log(mapEditMode.on)
+          const label = mapEditMode.on ? null : Sequence;
           const driver = Driver || 'UNASSIGNED'
           return <JobMarker
             key={id}
             id={id}
-            label={Sequence}
+            label={label}
             position={GeocodedAddress}
             color={colors[driver]}
             cursor={cursor}
@@ -288,17 +293,24 @@ function App(props) {
           />
         )}
         {/* <SuburbBoundary suburb={suburb} /> */}
-        <CustomControlBar small>
-          <CustomControlBar.Select multiple onSelectionChanged={handleSelectionChange}>
-            {drivers.map(driver =>
-              <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>stop</CustomControlBar.IconButton>
-            )}
-          </CustomControlBar.Select>
-          <CustomControlBar.ButtonGroup onSelectionChanged={handleEditControlSelect}>
-            <CustomControlBar.IconButton id='markerSelectTool' title='Marker select tool'>fiber_manual_record</CustomControlBar.IconButton>
-            <RegionSelectControl id='regionSelectTool' title='Region select tool' onSelectionComplete={handleSelectionComplete} clearOnComplete color={colors[regionSelectId]} />
-          </CustomControlBar.ButtonGroup>
-        </CustomControlBar>
+        {mapEditMode.on &&
+          <CustomControlBar small>
+            <CustomControlBar.Select onSelectionChanged={handleSelectionChange}>
+              {drivers.map(driver =>
+                <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
+              )}
+            </CustomControlBar.Select>
+            <RegionSelectControl
+              id='regionSelectTool'
+              title='Region select tool'
+              hidden
+              active={mapEditMode.tool === 'rectangle'}
+              onSelectionComplete={handleSelectionComplete}
+              clearOnComplete
+              color={colors[mapEditMode.id]}
+            />
+          </CustomControlBar>
+        }
       </GoogleMap>
     </Resizable >
 
