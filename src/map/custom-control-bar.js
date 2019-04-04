@@ -47,7 +47,6 @@ CustomControlBar.ButtonGroup = ({ onSelectionChanged, children, small, vertical 
 }
 
 CustomControlBar.Select = ({ onSelectionChanged, children, small, vertical, multiple }) => {
-    console.log(children);
     const [selected, setSelected] = useState(new Set());
     function handleClick(child, e) {
         const id = e.target.id;

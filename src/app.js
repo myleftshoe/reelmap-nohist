@@ -20,7 +20,7 @@ import vroom from './map/services/vroom2'
 import JobMarker from './map/job-marker'
 import DepotMarker from './map/depot-marker'
 import Route from './map/route';
-import move from 'lodash-move';
+// import move from 'lodash-move';
 import Panes from './components/panes';
 import collect from 'collect.js';
 import CustomControlBar from './map/custom-control-bar';
@@ -40,7 +40,7 @@ function App(props) {
   const [quickChange, setQuickChange] = useState();
   const [filter, setFilter] = useState('');
   const [groupBy, setGroupBy] = useState('PostalCode,City');
-  const [suburb, setSuburb] = useState('');
+  // const [suburb, setSuburb] = useState('');
   const [paths, setPaths] = useState(new Map());
   const [working, setWorking] = useState(false);
 
@@ -93,7 +93,6 @@ function App(props) {
   // }
 
   function handleMarkerClick(id) {
-    console.log(id, quickChange);
     if (mapEditMode.id) {
       dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
       return;
@@ -175,13 +174,11 @@ function App(props) {
   }
 
   function handleMapRightClick() {
-    console.log('handleMapRightClick')
     if (!mapEditMode.id) return;
     const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
     setMapEditMode({ ...mapEditMode, tool })
   }
 
-  console.log(mapEditMode)
   return (
 
     <Resizable split='vertical' {...resizableProps}>
