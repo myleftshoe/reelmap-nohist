@@ -84,7 +84,7 @@ export default function StateProvider(props) {
             switch (type) {
                 case 'item': {
                     const fromItem = store.get(id);
-                    const toItem = store.get(e.tarid);
+                    const toItem = store.get(e.target.id);
                     if (toItem && toItem.Driver === fromItem.Driver) {
                     }
                     else {
