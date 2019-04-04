@@ -155,6 +155,7 @@ export default function StateProvider(props) {
     }
 
     const state = {
+        // getters
         selectedMarkerId,
         selectedDrivers,
         mapEditMode,
@@ -163,11 +164,7 @@ export default function StateProvider(props) {
         groupBy,
         working,
         filteredItems,
-        isFiltered,
-        activeItems,
-        activePaths,
-        selectedItem,
-        //
+        // setters
         setSelectedMarkerId,
         setSelectedDrivers,
         setMapEditMode,
@@ -175,6 +172,12 @@ export default function StateProvider(props) {
         setFilter,
         setGroupBy,
         setWorking,
+        // derived
+        isFiltered,
+        activeItems,
+        activePaths,
+        selectedItem,
+
     };
 
 
