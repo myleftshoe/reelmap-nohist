@@ -38,7 +38,7 @@ export default function StateProvider(props) {
     const selectedItem = store.get(selectedMarkerId);
 
 
-    const dispatcher = {
+    const _dispatch = {
 
         async autoAssign() {
             const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
@@ -168,6 +168,7 @@ export default function StateProvider(props) {
         selectedItem,
     };
 
+    const dispatcher = type => _dispatch[type];
 
     return <>{props.children([state, dispatcher])}</>
 }

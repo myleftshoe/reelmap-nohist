@@ -38,9 +38,9 @@ function App(props) {
               <Sidebar.NavButton id='PostalCode,City' active={state.groupBy === 'PostalCode,City'} onClick={state.setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
               <Sidebar.NavButton id='OrderId,' active={state.groupBy === 'OrderId,'} onClick={state.setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
               <Sidebar.NavButton id='Sequence,' active={state.groupBy === 'Sequence,'} onClick={state.setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
-              <Sidebar.NavButton id='editmode' onClick={dispatch['EditModeClick']} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
-              <Sidebar.NavButton id='autoassign' onClick={dispatch['autoAssign']} tooltip='Auto assign'>timeline</Sidebar.NavButton>
-              <Sidebar.NavButton id='clearall' onClick={dispatch['clearAll']} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+              <Sidebar.NavButton id='editmode' onClick={dispatch('EditModeClick')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
+              <Sidebar.NavButton id='autoassign' onClick={dispatch('autoAssign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
+              <Sidebar.NavButton id='clearall' onClick={dispatch('clearAll')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
               <LoadingIndicator loading={state.working} />
             </Sidebar.Navigation>
             <Sidebar.Content>
@@ -55,8 +55,8 @@ function App(props) {
                 groupBy={'Driver'}
                 items={state.filteredItems}
                 isFiltered={state.isFiltered}
-                onDrop={dispatch['Drop']}
-                onMaximizeEnd={dispatch['MaximizeEnd']}
+                onDrop={dispatch('Drop')}
+                onMaximizeEnd={dispatch('MaximizeEnd')}
                 onOpenInNew={openInNew}
               >
                 {items => {
@@ -69,7 +69,7 @@ function App(props) {
                       type={state.groupBy.split(',')[0]}
                       items={groupedItems[groupKey]}
                       content={groupKey}
-                      // onHeaderClick={dispatch['GroupHeaderClick']}
+                      // onHeaderClick={dispatch('GroupHeaderClick')}
                       onItemClick={state.setSelectMarker}
                       activeItemId={state.selectedMarkerId}
                       flatten={groupKey === 'undefined'}
@@ -84,7 +84,7 @@ function App(props) {
           </Sidebar >
           <GoogleMap
             onClick={() => state.setSelectedMarkerId(null)}
-            onRightClick={dispatch['MapRightClick']}
+            onRightClick={dispatch('MapRightClick')}
             cursor={cursor}
           >
             <DepotMarker
@@ -97,8 +97,8 @@ function App(props) {
               selectedMarkerId={state.selectedMarkerId}
               cursor={cursor}
               showLabel={!state.mapEditMode.on}
-              onMarkerClick={dispatch['MarkerClick']}
-              onMarkerRightClick={dispatch['MarkerRightClick']}
+              onMarkerClick={dispatch('MarkerClick')}
+              onMarkerRightClick={dispatch('MarkerRightClick')}
               onMarkerMouseOver={state.setSelectedMarkerId}
             />
             {state.selectedMarkerId &&
@@ -111,7 +111,7 @@ function App(props) {
                 <MarkerInfoWindowContent
                   item={state.selectedItem}
                   color={colors[state.selectedItem.Driver]}
-                  onDriverChange={dispatch['reassignItem']}
+                  onDriverChange={dispatch('reassignItem')}
                   dropDownValues={colors}
                 />
               </InfoWindow>
@@ -120,11 +120,11 @@ function App(props) {
           id='polygon'
           points={polygonPoints}
         /> */}
-            <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch['reassignRoute']} />
+            <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassignRoute')} />
             {/* <SuburbBoundary suburb={suburb} /> */}
             {state.mapEditMode.on &&
               <CustomControlBar small>
-                <CustomControlBar.Select onSelectionChanged={dispatch['SelectionChange']}>
+                <CustomControlBar.Select onSelectionChanged={dispatch('SelectionChange')}>
                   {drivers.map(driver =>
                     <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
                   )}
@@ -134,7 +134,7 @@ function App(props) {
                   title='Region select tool'
                   hidden
                   active={state.mapEditMode.tool === 'rectangle'}
-                  onSelectionComplete={dispatch['SelectionComplete']}
+                  onSelectionComplete={dispatch('SelectionComplete')}
                   clearOnComplete
                   color={colors[state.mapEditMode.id]}
                 />
