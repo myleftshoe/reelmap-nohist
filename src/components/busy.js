@@ -2,13 +2,13 @@ import React from 'react'
 import { css } from '@emotion/core';
 import { BeatLoader } from 'react-spinners'
 
-const LoadingIndicator = ({ loading }) =>
+const Busy = ({ busy }) =>
     <BeatLoader
         css={css`margin-top: auto;`}
         sizeUnit='px'
         size={6}
         color={'#FFF'}
-        loading={loading}
+        loading={busy}
     />
 
-export default LoadingIndicator;
+export default Busy;

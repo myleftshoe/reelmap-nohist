@@ -1,26 +1,26 @@
 import React from 'react'
 import StateProvider from './state-provider';
-import Minibar from './components/minibar'
-import Resizable from './components/resizable'
-import Sidebar from './components/sidebar'
+import Busy from './components/busy';
 import Group from './components/group'
 import Filter from './components/filter'
-import { groupBy2 } from './utils/utils'
+import Minibar from './components/minibar'
+import Panes from './components/panes';
+import Resizable from './components/resizable'
+import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
-import { InfoWindow } from '@googlemap-react/core'
+import CustomControlBar from './map/custom-control-bar';
+import DepotMarker from './map/depot-marker'
+import JobMarkers from './map/job-markers';
+import MarkerInfoWindowContent from './map/marker-infowindow-content'
+import RegionSelectControl from './map/region-select-control';
+import Routes from './map/routes';
 // import { labeledIcon } from './map/markers/markers.js'
 // import ContouredPolygon from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
-import MarkerInfoWindowContent from './map/marker-infowindow-content'
+import { InfoWindow } from '@googlemap-react/core'
 import { colors, resizableProps, drivers, panes } from './constants'
-import DepotMarker from './map/depot-marker'
-import Panes from './components/panes';
-import CustomControlBar from './map/custom-control-bar';
-import RegionSelectControl from './map/region-select-control';
-import LoadingIndicator from './components/loading-indicator';
-import JobMarkers from './map/job-markers';
-import Routes from './map/routes';
 import { circle } from './svg/cursors'
+import { groupBy2 } from './utils/utils'
 
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
@@ -41,7 +41,7 @@ function App(props) {
               <Sidebar.NavButton id='editmode' onClick={dispatch('EditModeClick')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
               <Sidebar.NavButton id='autoassign' onClick={dispatch('autoAssign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
               <Sidebar.NavButton id='clearall' onClick={dispatch('clearAll')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-              <LoadingIndicator loading={state.working} />
+              <Busy busy={state.working} />
             </Sidebar.Navigation>
             <Sidebar.Content>
               <Minibar>
