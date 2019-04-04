@@ -32,7 +32,7 @@ S.ButtonBase = ({ vertical, color, active = false }) => css`
         ? 'border-top: 1px solid #00000015'
         : 'border-left: 1px solid #00000015'
     };
-    :first-child {
+    :first-of-type {
         border-left: none;
         border-top: none;
     }

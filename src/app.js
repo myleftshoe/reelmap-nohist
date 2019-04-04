@@ -247,7 +247,6 @@ function App(props) {
         />
         {activeItems.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
           // if (!GeocodedAddress) return null;
-          console.log(mapEditMode.on)
           const label = mapEditMode.on ? null : Sequence;
           const driver = Driver || 'UNASSIGNED'
           return <JobMarker
