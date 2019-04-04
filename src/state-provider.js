@@ -3,14 +3,10 @@ import { useStore } from 'outstated'
 import dataStore from './stores/mock-data-store'
 import Filter from './components/filter'
 import { LatLng } from './map/utils'
-import { circle } from './svg/cursors'
-import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
+import { drivers } from './constants'
 
-
-const drivers = ['SAM1', 'DRK', 'CHA'];
-const panes = [...drivers, 'UNASSIGNED'];
 
 export default function StateProvider(props) {
 
@@ -42,11 +38,9 @@ export default function StateProvider(props) {
 
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
     const selectedItem = store.get(selectedMarkerId);
-    const cursor = mapEditMode.tool ? circle({ radius: 10, color: colors[mapEditMode.id], text: quickChange }).cursor : null
 
 
-
-    const handle = {
+    const dispatcher = {
 
         async autoAssign() {
             const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
@@ -79,18 +73,9 @@ export default function StateProvider(props) {
             setPaths(paths);
         },
 
-        editRoute(id) {
-            window.open(`http://localhost:3006/${id}`);
-            // if (driver === id)
-            //   props.history.goBack();
-            // else
-            //   props.history.push(`/${id}`);
-        },
-
         reassignItem(id, driver) {
             dispatch({ type: 'assign', ids: [id], driver })
         },
-
 
         Drop(transferredData, target, e) {
             const { type, id, selected } = transferredData;
@@ -108,7 +93,7 @@ export default function StateProvider(props) {
                     break;
                 }
                 case 'header': {
-                    handle.reassignRoute(target, id);
+                    this.reassignRoute(target, id);
                     break;
                 }
                 default: {
@@ -169,7 +154,7 @@ export default function StateProvider(props) {
         },
     }
 
-    const ui = {
+    const state = {
         selectedMarkerId,
         selectedDrivers,
         mapEditMode,
@@ -182,7 +167,6 @@ export default function StateProvider(props) {
         activeItems,
         activePaths,
         selectedItem,
-        cursor,
         //
         setSelectedMarkerId,
         setSelectedDrivers,
@@ -193,7 +177,6 @@ export default function StateProvider(props) {
         setWorking,
     };
 
-    const constants = { drivers, panes }
 
-    return <>{props.children([ui, handle, constants])}</>
+    return <>{props.children([state, dispatcher])}</>
 }

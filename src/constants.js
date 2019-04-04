@@ -10,3 +10,7 @@ export const resizableProps = {
     maxSize: 874,
     defaultSize: 360,
 }
+
+export const drivers = ['SAM1', 'DRK', 'CHA'];
+
+export const panes = [...drivers, 'UNASSIGNED'];
