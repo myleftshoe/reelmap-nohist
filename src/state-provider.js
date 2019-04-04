@@ -8,7 +8,9 @@ import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 
+
 const drivers = ['SAM1', 'DRK', 'CHA'];
+const panes = [...drivers, 'UNASSIGNED'];
 
 export default function StateProvider(props) {
 
@@ -191,5 +193,7 @@ export default function StateProvider(props) {
         setWorking,
     };
 
-    return <>{props.children([ui, handle])}</>
+    const constants = { drivers, panes }
+
+    return <>{props.children([ui, handle, constants])}</>
 }
