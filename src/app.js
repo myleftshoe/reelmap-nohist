@@ -29,22 +29,22 @@ function App(props) {
 
 
   return (
-    <StateProvider>{(get, set, handle) =>
+    <StateProvider>{([ui, handle]) =>
       <Resizable split='vertical' {...resizableProps}>
         <Sidebar>
           <Sidebar.Navigation>
-            <Sidebar.NavButton id='City,PostalCode' active={get.groupBy === 'City,PostalCode'} onClick={set.groupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
-            <Sidebar.NavButton id='PostalCode,City' active={get.groupBy === 'PostalCode,City'} onClick={set.groupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-            <Sidebar.NavButton id='OrderId,' active={get.groupBy === 'OrderId,'} onClick={set.groupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
-            <Sidebar.NavButton id='Sequence,' active={get.groupBy === 'Sequence,'} onClick={set.groupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
+            <Sidebar.NavButton id='City,PostalCode' active={ui.groupBy === 'City,PostalCode'} onClick={ui.setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
+            <Sidebar.NavButton id='PostalCode,City' active={ui.groupBy === 'PostalCode,City'} onClick={ui.setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
+            <Sidebar.NavButton id='OrderId,' active={ui.groupBy === 'OrderId,'} onClick={ui.setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
+            <Sidebar.NavButton id='Sequence,' active={ui.groupBy === 'Sequence,'} onClick={ui.setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
             <Sidebar.NavButton id='editmode' onClick={handle.EditModeClick} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
             <Sidebar.NavButton id='autoassign' onClick={handle.autoAssign} tooltip='Auto assign'>timeline</Sidebar.NavButton>
             <Sidebar.NavButton id='clearall' onClick={handle.clearAll} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-            <LoadingIndicator loading={get.working} />
+            <LoadingIndicator loading={ui.working} />
           </Sidebar.Navigation>
           <Sidebar.Content>
             <Minibar>
-              <Filter onChange={set.filter} />
+              <Filter onChange={ui.setFilter} />
               {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
@@ -52,29 +52,29 @@ function App(props) {
             <Panes
               panes={panes}
               groupBy={'Driver'}
-              items={get.filteredItems}
-              isFiltered={get.isFiltered}
+              items={ui.filteredItems}
+              isFiltered={ui.isFiltered}
               onDrop={handle.Drop}
               onMaximizeEnd={handle.MaximizeEnd}
               onOpenInNew={handle.editRoute}
             >
               {items => {
-                const groupedItems = groupBy2(items, get.groupBy);
+                const groupedItems = groupBy2(items, ui.groupBy);
                 const groupKeys = Object.keys(groupedItems);
                 return groupKeys.map(groupKey =>
                   <Group
                     key={groupKey}
                     id={groupKey.split(',')[0]}
-                    type={get.groupBy.split(',')[0]}
+                    type={ui.groupBy.split(',')[0]}
                     items={groupedItems[groupKey]}
                     content={groupKey}
                     // onHeaderClick={handle.GroupHeaderClick}
-                    onItemClick={set.selectMarker}
-                    activeItemId={get.selectedMarkerId}
+                    onItemClick={ui.setSelectMarker}
+                    activeItemId={ui.selectedMarkerId}
                     flatten={groupKey === 'undefined'}
                     count={groupedItems[groupKey].length}
-                    expanded={get.isFiltered}
-                    filter={get.filter}
+                    expanded={ui.isFiltered}
+                    filter={ui.filter}
                   />
                 )
               }}
@@ -82,34 +82,34 @@ function App(props) {
           </Sidebar.Content>
         </Sidebar >
         <GoogleMap
-          onClick={() => set.selectMarker(null)}
+          onClick={() => ui.setSelectedMarkerId(null)}
           onRightClick={handle.MapRightClick}
-          cursor={get.cursor}
+          cursor={ui.cursor}
         >
           <DepotMarker
             id={'depot'}
             position={{ lat: -37.688797, lng: 145.005252 }}
-            cursor={get.cursor}
+            cursor={ui.cursor}
           />
           <JobMarkers
-            items={get.activeItems}
-            selectedMarkerId={get.selectedMarkerId}
-            cursor={get.cursor}
-            showLabel={!get.mapEditMode.on}
+            items={ui.activeItems}
+            selectedMarkerId={ui.selectedMarkerId}
+            cursor={ui.cursor}
+            showLabel={!ui.mapEditMode.on}
             onMarkerClick={handle.MarkerClick}
             onMarkerRightClick={handle.MarkerRightClick}
-            onMarkerMouseOver={set.selectMarker}
+            onMarkerMouseOver={ui.setSelectedMarkerId}
           />
-          {get.selectedMarkerId &&
+          {ui.selectedMarkerId &&
             <InfoWindow
-              anchorId={get.selectedMarkerId}
-              visible={get.selectedMarkerId}
-              onCloseClick={() => set.selectMarker(null)}
+              anchorId={ui.selectedMarkerId}
+              visible={ui.selectedMarkerId}
+              onCloseClick={() => ui.setSelectedMarkerId(null)}
               opts={{ disableAutoPan: true }}
             >
               <MarkerInfoWindowContent
-                item={get.selectedItem}
-                color={colors[get.selectedItem.Driver]}
+                item={ui.selectedItem}
+                color={colors[ui.selectedItem.Driver]}
                 onDriverChange={handle.reassignItem}
                 dropDownValues={colors}
               />
@@ -119,9 +119,9 @@ function App(props) {
           id='polygon'
           points={polygonPoints}
         /> */}
-          <Routes hidden={get.isFiltered} paths={get.activePaths} onRightClick={handle.reassignRoute} />
+          <Routes hidden={ui.isFiltered} paths={ui.activePaths} onRightClick={handle.reassignRoute} />
           {/* <SuburbBoundary suburb={suburb} /> */}
-          {get.mapEditMode.on &&
+          {ui.mapEditMode.on &&
             <CustomControlBar small>
               <CustomControlBar.Select onSelectionChanged={handle.SelectionChange}>
                 {drivers.map(driver =>
@@ -132,10 +132,10 @@ function App(props) {
                 id='regionSelectTool'
                 title='Region select tool'
                 hidden
-                active={get.mapEditMode.tool === 'rectangle'}
+                active={ui.mapEditMode.tool === 'rectangle'}
                 onSelectionComplete={handle.SelectionComplete}
                 clearOnComplete
-                color={colors[get.mapEditMode.id]}
+                color={colors[ui.mapEditMode.id]}
               />
             </CustomControlBar>
           }

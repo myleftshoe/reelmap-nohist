@@ -16,52 +16,49 @@ export default function StateProvider(props) {
 
     const [store, dispatch] = useStore(dataStore);
 
-    const get = {};
-    const set = {};
-
-    [get.selectedMarkerId, set.selectMarker] = useState();
-    [get.selectedDrivers, set.selectedDrivers] = useState([]);
-    [get.mapEditMode, set.mapEditMode] = useState({ on: true, id: null, tool: null });
-    [get.quickChange, set.quickChange] = useState();
-    [get.filter, set.filter] = useState('');
-    [get.groupBy, set.groupBy] = useState('PostalCode,City');
+    const [selectedMarkerId, setSelectedMarkerId] = useState();
+    const [selectedDrivers, setSelectedDrivers] = useState([]);
+    const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
+    const [quickChange, setQuickChange] = useState();
+    const [filter, setFilter] = useState('');
+    const [groupBy, setGroupBy] = useState('PostalCode,City');
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
-    [get.working, set.working] = useState(false);
+    const [working, setWorking] = useState(false);
 
-    const items = collect([...store.values()]).sortBy(get.groupBy.split(',')[0]);
+    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
-    get.filteredItems = collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']));
-    get.isFiltered = Boolean(get.filter && get.filteredItems.count())
+    const filteredItems = collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']));
+    const isFiltered = Boolean(filter && filteredItems.count())
 
-    get.activeItems = items;
-    get.activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
-    if (get.selectedDrivers.length) {
-        get.activeItems = items.whereIn('Driver', get.selectedDrivers);
-        get.activePaths = get.selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
+    let activeItems = items;
+    let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
+    if (selectedDrivers.length) {
+        activeItems = items.whereIn('Driver', selectedDrivers);
+        activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
     }
 
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
-    get.selectedItem = store.get(get.selectedMarkerId);
-    get.cursor = get.mapEditMode.tool ? circle({ radius: 10, color: colors[get.mapEditMode.id], text: get.quickChange }).cursor : null
+    const selectedItem = store.get(selectedMarkerId);
+    const cursor = mapEditMode.tool ? circle({ radius: 10, color: colors[mapEditMode.id], text: quickChange }).cursor : null
 
 
 
     const handle = {
 
         async autoAssign() {
-            const _drivers = get.selectedDrivers.length ? get.selectedDrivers : [...drivers];
-            if (!get.activeItems.count()) return;
-            set.working(true);
-            set.mapEditMode({ ...get.mapEditMode, on: false })
-            const { paths: newPaths, newItems } = await vroom(get.activeItems.all(), _drivers);
+            const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+            if (!activeItems.count()) return;
+            setWorking(true);
+            setMapEditMode({ ...mapEditMode, on: false })
+            const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
             newPaths.forEach((path, driver) => paths.set(driver, path));
             setPaths(paths);
-            set.working(false);
+            setWorking(false);
         },
 
         clearAll() {
-            const ids = get.activeItems.pluck('OrderId').all();
+            const ids = activeItems.pluck('OrderId').all();
             dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
             setPaths(new Map())
         },
@@ -100,7 +97,7 @@ export default function StateProvider(props) {
             switch (type) {
                 case 'item': {
                     const fromItem = store.get(id);
-                    const toItem = store.get(e.target.id);
+                    const toItem = store.get(e.tarid);
                     if (toItem && toItem.Driver === fromItem.Driver) {
                     }
                     else {
@@ -126,48 +123,73 @@ export default function StateProvider(props) {
         // },
 
         MarkerClick(id) {
-            if (get.mapEditMode.id) {
-                dispatch({ type: 'assign', ids: [id], driver: get.mapEditMode.id });
+            if (mapEditMode.id) {
+                dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
                 return;
             }
-            set.selectMarker(id)
+            setSelectedMarkerId(id)
         },
 
         MarkerRightClick(id) {
-            if (get.quickChange) {
-                const next = get.quickChange + 1;
+            if (quickChange) {
+                const next = quickChange + 1;
                 store.get(id).Sequence = next;
-                set.quickChange(next)
+                setQuickChange(next)
                 return;
             }
-            set.quickChange(store.get(id).Sequence);
+            setQuickChange(store.get(id).Sequence);
         },
 
         SelectionComplete(e) {
             console.log(e.bounds);
-            const ids = get.activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
-            dispatch({ type: 'assign', ids, driver: get.mapEditMode.id })
+            const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
+            dispatch({ type: 'assign', ids, driver: mapEditMode.id })
         },
 
         SelectionChange(ids) {
-            set.mapEditMode({ ...get.mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
+            setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
         },
 
         MaximizeEnd(id) {
-            set.mapEditMode({ on: false })
-            set.selectedDrivers(id ? [id] : [])
+            setMapEditMode({ on: false })
+            setSelectedDrivers(id ? [id] : [])
         },
 
         EditModeClick() {
             setPaths(new Map())
-            set.mapEditMode({ on: true })
+            setMapEditMode({ on: true })
         },
 
         MapRightClick() {
-            if (!get.mapEditMode.id) return;
-            const tool = get.mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
-            set.mapEditMode({ ...get.mapEditMode, tool })
+            if (!mapEditMode.id) return;
+            const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
+            setMapEditMode({ ...mapEditMode, tool })
         },
     }
-    return <>{props.children(get, set, handle)}</>
+
+    const ui = {
+        selectedMarkerId,
+        selectedDrivers,
+        mapEditMode,
+        quickChange,
+        filter,
+        groupBy,
+        working,
+        filteredItems,
+        isFiltered,
+        activeItems,
+        activePaths,
+        selectedItem,
+        cursor,
+        //
+        setSelectedMarkerId,
+        setSelectedDrivers,
+        setMapEditMode,
+        setQuickChange,
+        setFilter,
+        setGroupBy,
+        setWorking,
+    };
+
+    return <>{props.children([ui, handle])}</>
 }
