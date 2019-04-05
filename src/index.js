@@ -1,31 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Route, Switch } from "react-router-dom"
+import { createBrowserHistory } from 'history'
 import './index.css';
-// import App from './app';
 import * as serviceWorker from './serviceWorker';
 import { GoogleMapProvider } from '@googlemap-react/core';
-import { Provider } from 'outstated';
+import { Provider as DataProvider } from 'outstated';
 import dataStore from './stores/mock-data-store';
-import Routes from "./routes"
-import { Router } from "react-router-dom"
-import { createBrowserHistory } from 'history'
+import AppContainer from './app-container';
+import Single from "./single"
+
 const history = createBrowserHistory()
 
-function AppContainer({ store }) {
-    return (
-        <GoogleMapProvider>
-            <Provider stores={[store]}>
-                {/* <App /> */}
-                <Router history={history}>
-                    <Routes />
-                </Router>
-            </Provider>
-        </GoogleMapProvider>
-    )
-}
-
 ReactDOM.render(
-    <AppContainer store={dataStore} />,
+    <GoogleMapProvider>
+        <DataProvider stores={[dataStore]}>
+            <Router history={history}>
+                <Switch>
+                    <Route path="/:id" component={Single} />
+                    <Route path="/" component={AppContainer} />
+                </Switch>
+            </Router>
+        </DataProvider>
+    </GoogleMapProvider>
+    ,
     document.getElementById('root')
 );
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './stores/mock-data-store'
 import Filter from './components/filter'
@@ -28,13 +28,17 @@ export default function StateProvider(props) {
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
-    const filteredItems = collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes']));
+    const filteredItems = useMemo(() => collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes'])), [items]);
     const isFiltered = Boolean(filter && filteredItems.count())
 
-    let activeItems = items;
+    const activeItems = useMemo(
+        () => selectedDrivers.length ? items.whereIn('Driver', selectedDrivers) : items,
+        [items, selectedDrivers]
+    );
+
     let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
     if (selectedDrivers.length) {
-        activeItems = items.whereIn('Driver', selectedDrivers);
+        // activeItems = useMemo(() => items.whereIn('Driver', selectedDrivers), [items, selectedDrivers]);
         activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
     }
 
