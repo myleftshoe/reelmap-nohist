@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import StateProvider from './state-provider';
 import Busy from './components/busy';
 import Group from './components/group'
 import Filter from './components/filter'
