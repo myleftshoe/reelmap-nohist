@@ -20,7 +20,6 @@ import Routes from './map/routes';
 import { InfoWindow } from '@googlemap-react/core'
 import { colors, resizableProps, drivers, panes } from './constants'
 import { circle } from './svg/cursors'
-import { groupBy2 } from './utils/utils'
 
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
@@ -60,7 +59,8 @@ function App(props) {
                 onOpenInNew={openInNew}
               >
                 {items => {
-                  const groupedItems = groupBy2(items, state.groupBy);
+                  // const groupedItems = groupBy2(items, state.groupBy);
+                  const groupedItems = dispatch('groupItems')({ items, by: state.groupBy });
                   const groupKeys = Object.keys(groupedItems);
                   return groupKeys.map(groupKey =>
                     <Group

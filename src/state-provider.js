@@ -6,6 +6,7 @@ import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
+import { groupBy2 } from './utils/utils';
 
 
 export default function StateProvider(props) {
@@ -39,6 +40,10 @@ export default function StateProvider(props) {
 
 
     const _dispatch = {
+
+        groupItems({ items, by }) {
+            return groupBy2(items, by);
+        },
 
         async autoAssign() {
             const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
@@ -91,7 +96,7 @@ export default function StateProvider(props) {
                     break;
                 }
                 case 'header': {
-                    this.reassignRoute(target, id);
+                    _dispatch.reassignRoute(target, id);
                     break;
                 }
                 default: {
