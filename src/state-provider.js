@@ -49,7 +49,7 @@ export default function StateProvider(props) {
             const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
             if (!activeItems.count()) return;
             setWorking(true);
-            setMapEditMode({ ...mapEditMode, on: false })
+            setMapEditMode({ on: false, id: null, tool: null })
             const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
             newPaths.forEach((path, driver) => paths.set(driver, path));
             setPaths(paths);
@@ -141,7 +141,7 @@ export default function StateProvider(props) {
         },
 
         MaximizeEnd(id) {
-            setMapEditMode({ on: false })
+            setMapEditMode({ on: false, id: null, tool: null })
             setSelectedDrivers(id ? [id] : [])
         },
 

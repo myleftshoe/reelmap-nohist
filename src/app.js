@@ -70,7 +70,7 @@ function App(props) {
                       items={groupedItems[groupKey]}
                       content={groupKey}
                       // onHeaderClick={dispatch('GroupHeaderClick')}
-                      onItemClick={state.setSelectMarker}
+                      onItemClick={state.setSelectedMarkerId}
                       activeItemId={state.selectedMarkerId}
                       flatten={groupKey === 'undefined'}
                       count={groupedItems[groupKey].length}
