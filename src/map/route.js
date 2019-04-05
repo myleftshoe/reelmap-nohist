@@ -1,14 +1,16 @@
 /* global google */
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import RoutePolyline from './route-polyline';
 import RoutePolygon from './route-polygon';
 import { GoogleMapContext } from '@googlemap-react/core'
 import { Bounds } from './utils'
 
 export default function Route({ id, path, color, fitBounds = true, ...eventProps }) {
-    const { state: { map } } = useContext(GoogleMapContext);
-    const points = google.maps.geometry.encoding.decodePath(path)
-        .map(point => point.toJSON());
+    const mapContext = useContext(GoogleMapContext);
+    console.log(mapContext);
+    const { map } = mapContext.state;
+    const points = useMemo(() => google.maps.geometry.encoding.decodePath(path)
+        .map(point => point.toJSON()), [path]);
     // console.log(points)
     return <React.Fragment>
         <RoutePolyline
