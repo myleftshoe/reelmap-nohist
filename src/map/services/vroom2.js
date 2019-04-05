@@ -38,7 +38,7 @@ export default async function vroom(items = [], drivers = []) {
         location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude],
         // amount: [1],
         skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0],
-        service: 300
+        service: 120 //2 mins
     }));
 
     // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
@@ -78,6 +78,6 @@ export default async function vroom(items = [], drivers = []) {
 
     const paths = new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
 
-    return { paths, items: newItems };
+    return { paths, items: newItems, solution };
     // return new Items(newItems);
 }

@@ -22,6 +22,9 @@ export default function StateProvider(props) {
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
     const [working, setWorking] = useState(false);
+    const [solutions, setSolutions] = useState([]);
+
+    console.log(solutions)
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
@@ -50,9 +53,10 @@ export default function StateProvider(props) {
             if (!activeItems.count()) return;
             setWorking(true);
             setMapEditMode({ on: false, id: null, tool: null })
-            const { paths: newPaths, newItems } = await vroom(activeItems.all(), _drivers);
+            const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
             newPaths.forEach((path, driver) => paths.set(driver, path));
             setPaths(paths);
+            setSolutions([solution, ...solutions]);
             setWorking(false);
         },
 
@@ -165,6 +169,7 @@ export default function StateProvider(props) {
         selectedDrivers, //setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
         working, //setWorking,
+        solutions,
         // derived
         activeItems,
         activePaths,

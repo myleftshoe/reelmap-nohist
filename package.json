@@ -6,6 +6,7 @@
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.7",
     "@googlemap-react/core": "^0.1.1-alpha.1",
+    "collect.js": "^4.6.5",
     "hull.js": "^0.2.10",
     "lodash-move": "^1.1.1",
     "outstated": "^2.0.1",
@@ -18,7 +19,8 @@
     "react-spinners": "^0.5.3",
     "react-split-pane": "^0.1.85",
     "react-spring": "^5.9.2",
-    "react-tippy": "^1.2.3"
+    "react-tippy": "^1.2.3",
+    "react-toastify": "^5.0.0-rc.6"
   },
   "main": "src/main.js",
   "scripts": {

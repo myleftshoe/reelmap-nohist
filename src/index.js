@@ -18,7 +18,7 @@ function AppContainer({ store }) {
                 {/* <App /> */}
                 <Router history={history}>
                     <Routes />
-                </Router>,
+                </Router>
             </Provider>
         </GoogleMapProvider>
     )
