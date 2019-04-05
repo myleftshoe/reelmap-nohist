@@ -39,7 +39,7 @@ export default function StateProvider(props) {
     const selectedItem = store.get(selectedMarkerId);
 
 
-    const _dispatch = {
+    const actions = {
 
         groupItems({ items, by }) {
             return groupBy2(items, by);
@@ -96,7 +96,7 @@ export default function StateProvider(props) {
                     break;
                 }
                 case 'header': {
-                    _dispatch.reassignRoute(target, id);
+                    actions.reassignRoute(target, id);
                     break;
                 }
                 default: {
@@ -173,7 +173,7 @@ export default function StateProvider(props) {
         selectedItem,
     };
 
-    const dispatcher = type => _dispatch[type];
+    const dispatcher = type => actions[type];
 
     return <>{props.children([state, dispatcher])}</>
 }
