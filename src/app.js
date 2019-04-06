@@ -9,45 +9,26 @@ import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
 import CustomControlBar from './map/custom-control-bar';
 import DepotMarker from './map/depot-marker'
-import JobMarkers from './map/job-markers';
+import JobMarkers from './map/job-markers'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
-import RegionSelectControl from './map/region-select-control';
-import Routes from './map/routes';
-import { toast, Bounce, Slide, Flip, Zoom } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import RegionSelectControl from './map/region-select-control'
+import Routes from './map/routes'
 // import { labeledIcon } from './map/markers/markers.js'
 // import ContouredPolygon from './map/contoured-polygon'
 // import SuburbBoundary from './map/suburb-boundary'
 import { InfoWindow } from '@googlemap-react/core'
 import { colors, resizableProps, drivers, panes } from './constants'
 import { circle } from './svg/cursors'
-import Solution from './components/solution';
+import useToast from './hooks/useToast'
+import useCursor from './hooks/useCursor'
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
-toast.configure({
-  position: 'bottom-left',
-  transition: Bounce,
-  autoClose: false,
-  newestOnTop: true,
-  closeOnClick: true,
-  pauseOnVisibilityChange: true,
-  draggable: true,
-})
 
 function App({ state, dispatch }) {
   console.log('rendering', state);
-
-  function showToast() {
-    if (state.solutions.length) {
-      const { distance, duration, service } = state.solutions[0].summary;
-      toast.success(<Solution distance={distance} duration={duration} service={service} />)
-      // state.setSolution(null);
-    }
-  }
-  useEffect(showToast, [state.solutions]);
-
-  const cursor = state.mapEditMode.tool ? circle({ radius: 10, color: colors[state.mapEditMode.id], text: state.quickChange }).cursor : null;
+  useToast(state.solutions);
+  const cursor = useCursor({shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label:''});
   return (
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
