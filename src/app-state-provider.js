@@ -46,123 +46,120 @@ export default function StateProvider(props) {
     const selectedItem = store.get(selectedMarkerId);
 
 
-    const actions = {
+    function groupItems({ items, by }) {
+        return groupBy2(items, by);
+    }
 
-        groupItems({ items, by }) {
-            return groupBy2(items, by);
-        },
+    async function autoAssign() {
+        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+        if (!activeItems.count()) return;
+        setWorking(true);
+        setMapEditMode({ on: false, id: null, tool: null })
+        const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
+        newPaths.forEach((path, driver) => paths.set(driver, path));
+        setPaths(paths);
+        setSolutions([solution, ...solutions]);
+        setWorking(false);
+    }
 
-        async autoAssign() {
-            const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-            if (!activeItems.count()) return;
-            setWorking(true);
-            setMapEditMode({ on: false, id: null, tool: null })
-            const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
-            newPaths.forEach((path, driver) => paths.set(driver, path));
-            setPaths(paths);
-            setSolutions([solution, ...solutions]);
-            setWorking(false);
-        },
+    function clearAll() {
+        const ids = activeItems.pluck('OrderId').all();
+        dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
+        setPaths(new Map())
+    }
 
-        clearAll() {
-            const ids = activeItems.pluck('OrderId').all();
-            dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
-            setPaths(new Map())
-        },
+    function reassignRoute(from, to) {
+        const toPath = paths.get(to);
+        const fromPath = paths.get(from);
 
-        reassignRoute(from, to) {
-            const toPath = paths.get(to);
-            const fromPath = paths.get(from);
+        if (!toPath || !fromPath) return;
 
-            if (!toPath || !fromPath) return;
+        paths.set(to, fromPath);
+        paths.set(from, toPath);
 
-            paths.set(to, fromPath);
-            paths.set(from, toPath);
+        dispatch({ type: 'swap-route', from, to })
 
-            dispatch({ type: 'swap-route', from, to })
+        setPaths(paths);
+    }
 
-            setPaths(paths);
-        },
+    function reassignItem(id, driver) {
+        dispatch({ type: 'assign', ids: [id], driver })
+    }
 
-        reassignItem(id, driver) {
-            dispatch({ type: 'assign', ids: [id], driver })
-        },
+    function Drop(transferredData, target, e) {
+        const { type, id, selected } = transferredData;
+        console.log('Drop', transferredData, target, e.currentTarget, e.target);
 
-        Drop(transferredData, target, e) {
-            const { type, id, selected } = transferredData;
-            console.log('Drop', transferredData, target, e.currentTarget, e.target);
-
-            switch (type) {
-                case 'item': {
-                    const fromItem = store.get(id);
-                    const toItem = store.get(e.target.id);
-                    if (toItem && toItem.Driver === fromItem.Driver) {
-                    }
-                    else {
-                        dispatch({ type: 'assign', ids: selected, driver: target });
-                    }
-                    break;
+        switch (type) {
+            case 'item': {
+                const fromItem = store.get(id);
+                const toItem = store.get(e.target.id);
+                if (toItem && toItem.Driver === fromItem.Driver) {
                 }
-                case 'header': {
-                    actions.reassignRoute(target, id);
-                    break;
+                else {
+                    dispatch({ type: 'assign', ids: selected, driver: target });
                 }
-                default: {
-                    const ids = items.where(type, id).pluck('OrderId').all();
-                    dispatch({ type: 'assign', ids, driver: target })
-                }
+                break;
             }
-        },
-
-        // function GroupHeaderClick(id) {
-        //   const splitId = id.split(', ');
-        //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-        //   setSuburb(suburb);
-        // },
-
-        MarkerClick(id) {
-            if (mapEditMode.id) {
-                dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
-                return;
+            case 'header': {
+                actions.reassignRoute(target, id);
+                break;
             }
-            setSelectedMarkerId(id)
-        },
-
-        MarkerRightClick(id) {
-            if (quickChange) {
-                const next = quickChange + 1;
-                store.get(id).Sequence = next;
-                setQuickChange(next)
-                return;
+            default: {
+                const ids = items.where(type, id).pluck('OrderId').all();
+                dispatch({ type: 'assign', ids, driver: target })
             }
-            setQuickChange(store.get(id).Sequence);
-        },
+        }
+    }
 
-        SelectionComplete(e) {
-            console.log(e.bounds);
-            const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
-            dispatch({ type: 'assign', ids, driver: mapEditMode.id })
-        },
+    // function GroupHeaderClick(id) {
+    //   const splitId = id.split(', ');
+    //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
+    //   setSuburb(suburb);
+    // }
 
-        SelectionChange(ids) {
-            setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
-        },
+    function MarkerClick(id) {
+        if (mapEditMode.id) {
+            dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
+            return;
+        }
+        setSelectedMarkerId(id)
+    }
 
-        MaximizeEnd(id) {
-            setMapEditMode({ on: false, id: null, tool: null })
-            setSelectedDrivers(id ? [id] : [])
-        },
+    function MarkerRightClick(id) {
+        if (quickChange) {
+            const next = quickChange + 1;
+            store.get(id).Sequence = next;
+            setQuickChange(next)
+            return;
+        }
+        setQuickChange(store.get(id).Sequence);
+    }
 
-        EditModeClick() {
-            setPaths(new Map())
-            setMapEditMode({ on: true })
-        },
+    function SelectionComplete(e) {
+        console.log(e.bounds);
+        const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
+        dispatch({ type: 'assign', ids, driver: mapEditMode.id })
+    }
 
-        MapRightClick() {
-            if (!mapEditMode.id) return;
-            const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
-            setMapEditMode({ ...mapEditMode, tool })
-        },
+    function SelectionChange(ids) {
+        setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
+    }
+
+    function MaximizeEnd(id) {
+        setMapEditMode({ on: false, id: null, tool: null })
+        setSelectedDrivers(id ? [id] : [])
+    }
+
+    function EditModeClick() {
+        setPaths(new Map())
+        setMapEditMode({ on: true })
+    }
+
+    function MapRightClick() {
+        if (!mapEditMode.id) return;
+        const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
+        setMapEditMode({ ...mapEditMode, tool })
     }
 
     const state = {
@@ -181,6 +178,22 @@ export default function StateProvider(props) {
         isFiltered,
         selectedItem,
     };
+
+    const actions = {
+        'group-items': groupItems,
+        'auto-assign': autoAssign,
+        'clear-all': clearAll,
+        'reassign-item': reassignItem,
+        'reassign-route': reassignRoute,
+        'drop': Drop,
+        'marker-click': MarkerClick,
+        'marker-rightclick': MarkerRightClick,
+        'selection-complete': SelectionComplete,
+        'selection-change': SelectionChange,
+        'maximize-end': MaximizeEnd,
+        'editmode-click': EditModeClick,
+        'map-rightclick': MapRightClick,
+    }
 
     const dispatcher = type => actions[type];
 

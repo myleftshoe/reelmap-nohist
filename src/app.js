@@ -37,9 +37,9 @@ function App({ state, dispatch }) {
           <Sidebar.NavButton id='PostalCode,City' active={state.groupBy === 'PostalCode,City'} onClick={state.setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
           <Sidebar.NavButton id='OrderId,' active={state.groupBy === 'OrderId,'} onClick={state.setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
           <Sidebar.NavButton id='Sequence,' active={state.groupBy === 'Sequence,'} onClick={state.setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
-          <Sidebar.NavButton id='editmode' onClick={dispatch('EditModeClick')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
-          <Sidebar.NavButton id='autoassign' onClick={dispatch('autoAssign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
-          <Sidebar.NavButton id='clearall' onClick={dispatch('clearAll')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+          <Sidebar.NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
+          <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
+          <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           <Busy busy={state.working} />
         </Sidebar.Navigation>
         <Sidebar.Content>
@@ -54,13 +54,13 @@ function App({ state, dispatch }) {
             groupBy={'Driver'}
             items={state.filteredItems}
             isFiltered={state.isFiltered}
-            onDrop={dispatch('Drop')}
-            onMaximizeEnd={dispatch('MaximizeEnd')}
+            onDrop={dispatch('drop')}
+            onMaximizeEnd={dispatch('maximize-end')}
             onOpenInNew={openInNew}
           >
             {items => {
               // const groupedItems = groupBy2(items, state.groupBy);
-              const groupedItems = dispatch('groupItems')({ items, by: state.groupBy });
+              const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
               const groupKeys = Object.keys(groupedItems);
               return groupKeys.map(groupKey =>
                 <Group
@@ -84,7 +84,7 @@ function App({ state, dispatch }) {
       </Sidebar >
       <GoogleMap
         onClick={() => state.setSelectedMarkerId(null)}
-        onRightClick={dispatch('MapRightClick')}
+        onRightClick={dispatch('map-rightclick')}
         cursor={cursor}
       >
         <DepotMarker
@@ -97,8 +97,8 @@ function App({ state, dispatch }) {
           selectedMarkerId={state.selectedMarkerId}
           cursor={cursor}
           showLabel={!state.mapEditMode.on}
-          onMarkerClick={dispatch('MarkerClick')}
-          onMarkerRightClick={dispatch('MarkerRightClick')}
+          onMarkerClick={dispatch('marker-click')}
+          onMarkerRightClick={dispatch('marker-rightclick')}
           onMarkerMouseOver={state.setSelectedMarkerId}
         />
         {state.selectedMarkerId &&
@@ -111,7 +111,7 @@ function App({ state, dispatch }) {
             <MarkerInfoWindowContent
               item={state.selectedItem}
               color={colors[state.selectedItem.Driver]}
-              onDriverChange={dispatch('reassignItem')}
+              onDriverChange={dispatch('reassign-item')}
               dropDownValues={colors}
             />
           </InfoWindow>
@@ -120,11 +120,11 @@ function App({ state, dispatch }) {
           id='polygon'
           points={polygonPoints}
         /> */}
-        <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassignRoute')} />
+        <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassign-route')} />
         {/* <SuburbBoundary suburb={suburb} /> */}
         {state.mapEditMode.on &&
           <CustomControlBar small>
-            <CustomControlBar.Select onSelectionChanged={dispatch('SelectionChange')}>
+            <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
               {drivers.map(driver =>
                 <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
               )}
@@ -134,7 +134,7 @@ function App({ state, dispatch }) {
               title='Region select tool'
               hidden
               active={state.mapEditMode.tool === 'rectangle'}
-              onSelectionComplete={dispatch('SelectionComplete')}
+              onSelectionComplete={dispatch('selection-complete')}
               clearOnComplete
               color={colors[state.mapEditMode.id]}
             />
