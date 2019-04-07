@@ -199,6 +199,22 @@ export default function StateProvider(props) {
             // newPaths.forEach((path, driver) => paths.set(driver, path));
             setPaths(paths);
         },
+        'remove-snapshot': id => {
+            solutions.delete(id);
+            dispatch({ type: 'remove-snapshot', id });
+            // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+            // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+            // // newPaths.forEach((path, driver) => paths.set(driver, path));
+            // setPaths(paths);
+        },
+        'clear-history': () => {
+            solutions.clear();
+            dispatch({ type: 'clear-snapshots' });
+            // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+            // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+            // // newPaths.forEach((path, driver) => paths.set(driver, path));
+            // setPaths(paths);
+        },
         'group-items': groupItems,
         'auto-assign': autoAssign,
         'clear-all': clearAll,

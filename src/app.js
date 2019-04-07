@@ -51,32 +51,41 @@ function App({ state, dispatch }) {
           <Busy busy={state.working} />
         </Sidebar.Navigation>
         {state.sidebarContent === 'history' ?
-          <Sidebar.Content>{
-            [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
-              console.log('pane.js', index);
-              return <Pane
-                id={key}
-                key={key}
-                title={index > 0 ? `History ${index}` : 'Current'}
-                expanded={!Boolean(index)}
-                count={formattedDuration(summary.duration + summary.service)}
-              >
-                <Expandable key={'totals'} expanded={true} content={<p />}>
-                  <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
-                </Expandable>
-                {routes.map(route =>
-                  <Expandable key={route.vehicle} expanded={true} content={
-                    <Header id={route.vehicle}>
-                      <div>{drivers[route.vehicle]}</div>
-                      <div>{formattedDuration(route.duration + route.service)}</div>
-                    </Header>
-                  }>
-                    <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
+          <Sidebar.Content>
+            <Minibar>
+              <Minibar.Button visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
+            </Minibar>
+            {
+              [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
+                console.log('pane.js', index);
+                return <Pane
+                  id={key}
+                  key={key}
+                  title={index > 0 ? `History ${index}` : 'Current'}
+                  expanded={!Boolean(index)}
+                  count={formattedDuration(summary.duration + summary.service)}
+                  onMaximize={dispatch('apply-snapshot')}
+                  onOpenInNew={dispatch('remove-snapshot')}
+                >
+                  <Expandable key={'totals'} expanded={true} content={<p />}>
+                    <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
                   </Expandable>
-                )}
-              </Pane>
-            })
-          }
+                  {routes.map(route =>
+                    <Expandable key={route.vehicle} expanded={true} content={
+                      <Header id={route.vehicle}>
+                        <div>{drivers[route.vehicle]}</div>
+                        <div>{formattedDuration(route.duration + route.service)}</div>
+                      </Header>
+                    }>
+                      <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
+                    </Expandable>
+                  )}
+                </Pane>
+              })
+            }
+            {!state.solutions.size &&
+              <div style={{ display: 'flex', alignSelf: 'center' }}>History cleared!</div>
+            }
           </Sidebar.Content>
           : <Sidebar.Content>
             <Minibar>

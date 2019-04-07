@@ -40,6 +40,15 @@ export default function reducer(state, action) {
             state = JSON.parse(snapshots.current.get(action.id));
             break;
         }
+        case 'remove-snapshot': {
+            console.log(action.id)
+            snapshots.current.delete(action.id);
+            break;
+        }
+        case 'clear-snapshots': {
+            snapshots.current = new Map();
+            break;
+        }
         default: { }
     }
 
