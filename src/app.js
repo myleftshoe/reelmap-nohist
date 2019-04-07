@@ -62,13 +62,7 @@ function App({ state, dispatch }) {
                 expanded={!Boolean(index)}
                 count={formattedDuration(summary.duration + summary.service)}
               >
-                <Expandable
-                  key={'totals'}
-                  expanded={true}
-                  content={<p />
-
-                  }
-                >
+                <Expandable key={'totals'} expanded={true} content={<p />}>
                   <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
                 </Expandable>
                 {routes.map(route => <Expandable
