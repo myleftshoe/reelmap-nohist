@@ -55,17 +55,18 @@ function App({ state, dispatch }) {
           <Sidebar.Content>{
             [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
               console.log('pane.js', index);
-              return <Pane id={key} key={key} title={index > 0 ? `History ${index}` : 'Current'} expanded={!Boolean(index)}>
+              return <Pane
+                id={key}
+                key={key}
+                title={index > 0 ? `History ${index}` : 'Current'}
+                expanded={!Boolean(index)}
+                count={formattedDuration(summary.duration + summary.service)}
+              >
                 <Expandable
                   key={'totals'}
-                  // onClick={() => props.onHeaderClick && props.onHeaderClick(props.content)}
                   expanded={true}
-                  content={
-                    <Header id={'totals'}>
-                      <div>Totals</div>
-                      <div>{formattedDuration(summary.duration + summary.service)}</div>
-                      {/* <Badge>{props.count}</Badge> */}
-                    </Header>
+                  content={<p />
+
                   }
                 >
                   <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
