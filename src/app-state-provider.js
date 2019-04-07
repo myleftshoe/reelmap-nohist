@@ -208,14 +208,8 @@ export default function StateProvider(props) {
             // setPaths(paths);
         },
         'clear-history': () => {
-            const current = [...solutions].pop();
-            setSolutions(new Map([current]));
-            // solutions.clear();
-            dispatch({ type: 'clear-snapshots' });
-            // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-            // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-            // // newPaths.forEach((path, driver) => paths.set(driver, path));
-            // setPaths(paths);
+            setSolutions(new Map());
+            // dispatch({ type: 'clear-snapshots' });
         },
         'group-items': groupItems,
         'auto-assign': autoAssign,

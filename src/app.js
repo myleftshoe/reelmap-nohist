@@ -25,6 +25,7 @@ import Solution from './components/solution';
 import formattedDuration from './utils/formatted-duration';
 import Expandable from './components/expandable';
 import { Header } from './components/group.sc';
+import TextButton from './components/text-button';
 // import TextButton from './components/text-button';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
@@ -53,47 +54,36 @@ function App({ state, dispatch }) {
         </Sidebar.Navigation>
         {state.sidebarContent === 'history' ?
           <Sidebar.Content>
-            <Minibar>
-              <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
-            </Minibar>
+            {state.solutions.size
+              ? <Minibar>
+                {/* <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button> */}
+                <TextButton color='#fff7' title='Clear history' visible onClick={dispatch('clear-history')}>Clear all</TextButton>
+              </Minibar>
+              : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>History cleared!</div>
+            }
             {
               [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
                 console.log('pane.js', index);
-                return <Pane
-                  id={key}
-                  key={key}
-                  title={index > 0 ? `History ${index}` : 'Current'}
-                  expanded={!Boolean(index)}
-                  count={formattedDuration(summary.duration + summary.service)}
-                  onMaximize={dispatch('apply-snapshot')}
-                  onOpenInNew={dispatch('remove-snapshot')}
-                >
-                  {Boolean(index) && <>
-                    <Minibar>
-                      <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
-                      <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
-                    </Minibar>
-                    {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
-                  </>
-                  }
-                  <Expandable key={'totals'} expanded={true} content={<p />}>
+                return <div style={{ backgroundColor: '#0003', margin: '4px 12px 4px 8px', paddingBottom: 8 }}>
+                  <Minibar>
+                    <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
+                    <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>clear</Minibar.Button>
+                  </Minibar>
+                  {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
+                  <Expandable key={'totals'} expanded={false} content={
                     <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
-                  </Expandable>
-                  {routes.map(route =>
-                    <Expandable key={route.vehicle} expanded={true} content={
+                  } >
+                    {routes.map(route => <>
                       <Header id={route.vehicle}>
                         <div>{drivers[route.vehicle]}</div>
                         <div>{formattedDuration(route.duration + route.service)}</div>
                       </Header>
-                    }>
                       <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
-                    </Expandable>
-                  )}
-                </Pane>
+                    </>
+                    )}
+                  </Expandable>
+                </div>
               })
-            }
-            {!state.solutions.size &&
-              <div style={{ display: 'flex', alignSelf: 'center' }}>History cleared!</div>
             }
           </Sidebar.Content>
           : <Sidebar.Content>
