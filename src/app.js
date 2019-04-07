@@ -51,9 +51,9 @@ function App({ state, dispatch }) {
           }
           <Busy busy={state.working} />
         </Sidebar.Navigation>
-        <Sidebar.Content>
-          {state.sidebarContent === 'history'
-            ? [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
+        {state.sidebarContent === 'history' ?
+          <Sidebar.Content>{
+            [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
               console.log('pane.js', index);
               return <Pane id={key} key={key} title={index > 0 ? `History ${index}` : 'Current'} expanded={!Boolean(index)}>
                 <Expandable
@@ -86,51 +86,50 @@ function App({ state, dispatch }) {
                 </Expandable>
                 )}
               </Pane>
-            }
-
-            )
-            : <>
-              <Minibar>
-                <Filter onChange={state.setFilter} />
-                {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
+            })
+          }
+          </Sidebar.Content>
+          : <Sidebar.Content>
+            <Minibar>
+              <Filter onChange={state.setFilter} />
+              {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
-              </Minibar>
+            </Minibar>
+            <Panes
+              panes={panes}
+              groupBy={'Driver'}
+              items={state.filteredItems}
+              isFiltered={state.isFiltered}
+              onDrop={dispatch('drop')}
+              onMaximizeEnd={dispatch('maximize-end')}
+              onOpenInNew={openInNew}
+            >
+              {items => {
+                // const groupedItems = groupBy2(items, state.groupBy);
+                const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
+                const groupKeys = Object.keys(groupedItems);
+                return groupKeys.map(groupKey =>
+                  <Group
+                    key={groupKey}
+                    id={groupKey.split(',')[0]}
+                    type={state.groupBy.split(',')[0]}
+                    items={groupedItems[groupKey]}
+                    content={groupKey}
+                    // onHeaderClick={dispatch('GroupHeaderClick')}
+                    onItemClick={state.setSelectedMarkerId}
+                    activeItemId={state.selectedMarkerId}
+                    flatten={groupKey === 'undefined'}
+                    count={groupedItems[groupKey].length}
+                    expanded={state.isFiltered}
+                    filter={state.filter}
+                  />
+                )
+              }}
+            </Panes>
 
-              <Panes
-                panes={panes}
-                groupBy={'Driver'}
-                items={state.filteredItems}
-                isFiltered={state.isFiltered}
-                onDrop={dispatch('drop')}
-                onMaximizeEnd={dispatch('maximize-end')}
-                onOpenInNew={openInNew}
-              >
-                {items => {
-                  // const groupedItems = groupBy2(items, state.groupBy);
-                  const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
-                  const groupKeys = Object.keys(groupedItems);
-                  return groupKeys.map(groupKey =>
-                    <Group
-                      key={groupKey}
-                      id={groupKey.split(',')[0]}
-                      type={state.groupBy.split(',')[0]}
-                      items={groupedItems[groupKey]}
-                      content={groupKey}
-                      // onHeaderClick={dispatch('GroupHeaderClick')}
-                      onItemClick={state.setSelectedMarkerId}
-                      activeItemId={state.selectedMarkerId}
-                      flatten={groupKey === 'undefined'}
-                      count={groupedItems[groupKey].length}
-                      expanded={state.isFiltered}
-                      filter={state.filter}
-                    />
-                  )
-                }}
-              </Panes>
-            </>
-          }
-        </Sidebar.Content>
+          </Sidebar.Content>
+        }
       </Sidebar >
       <GoogleMap
         onClick={() => state.setSelectedMarkerId(null)}
