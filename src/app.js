@@ -4,6 +4,7 @@ import Group from './components/group'
 import Filter from './components/filter'
 import Minibar from './components/minibar'
 import Panes from './components/panes';
+import Pane from './components/pane';
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
@@ -21,14 +22,19 @@ import { colors, resizableProps, drivers, panes } from './constants'
 import { circle } from './svg/cursors'
 import useToast from './hooks/useToast'
 import useCursor from './hooks/useCursor'
+import Solution from './components/solution';
+import formattedDuration from './utils/formatted-duration';
+import Expandable from './components/expandable';
+import { Header } from './components/group.sc';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 
 function App({ state, dispatch }) {
-  console.log('rendering', state.currentSolutionId, state.solutions.get(state.currentSolutionId));
+  console.log(state.sidebarContent)
+  console.log('rendering', state.solutions);
   useToast(state.currentSolutionId, state.solutions.get(state.currentSolutionId), dispatch('apply-snapshot'));
-  const cursor = useCursor({shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label:''});
+  const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: '' });
   return (
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
@@ -40,46 +46,90 @@ function App({ state, dispatch }) {
           <Sidebar.NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
+          {Boolean(state.solutions.size) &&
+            <Sidebar.NavButton active={state.sidebarContent === 'history'} id='history' onClick={() => state.setSidebarContent(state.sidebarContent === 'history' ? 'drivers' : 'history')} tooltip='History'>history</Sidebar.NavButton>
+          }
           <Busy busy={state.working} />
         </Sidebar.Navigation>
         <Sidebar.Content>
-          <Minibar>
-            <Filter onChange={state.setFilter} />
-            {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
+          {state.sidebarContent === 'history'
+            ? [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
+              console.log('pane.js', index);
+              return <Pane id={key} key={key} title={index > 0 ? `History ${index}` : 'Current'} expanded={!Boolean(index)}>
+                <Expandable
+                  key={'totals'}
+                  // onClick={() => props.onHeaderClick && props.onHeaderClick(props.content)}
+                  expanded={true}
+                  content={
+                    <Header id={'totals'}>
+                      <div>Totals</div>
+                      <div>{formattedDuration(summary.duration + summary.service)}</div>
+                      {/* <Badge>{props.count}</Badge> */}
+                    </Header>
+                  }
+                >
+                  <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
+                </Expandable>
+                {routes.map(route => <Expandable
+                  key={route.vehicle}
+                  // onClick={() => props.onHeaderClick && props.onHeaderClick(props.content)}
+                  expanded={true}
+                  content={
+                    <Header id={route.vehicle}>
+                      <div>{drivers[route.vehicle]}</div>
+                      <div>{formattedDuration(route.duration + route.service)}</div>
+                      {/* <Badge>{props.count}</Badge> */}
+                    </Header>
+                  }
+                >
+                  <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
+                </Expandable>
+                )}
+              </Pane>
+            }
+
+            )
+            : <>
+              <Minibar>
+                <Filter onChange={state.setFilter} />
+                {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
             <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
-          </Minibar>
-          <Panes
-            panes={panes}
-            groupBy={'Driver'}
-            items={state.filteredItems}
-            isFiltered={state.isFiltered}
-            onDrop={dispatch('drop')}
-            onMaximizeEnd={dispatch('maximize-end')}
-            onOpenInNew={openInNew}
-          >
-            {items => {
-              // const groupedItems = groupBy2(items, state.groupBy);
-              const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
-              const groupKeys = Object.keys(groupedItems);
-              return groupKeys.map(groupKey =>
-                <Group
-                  key={groupKey}
-                  id={groupKey.split(',')[0]}
-                  type={state.groupBy.split(',')[0]}
-                  items={groupedItems[groupKey]}
-                  content={groupKey}
-                  // onHeaderClick={dispatch('GroupHeaderClick')}
-                  onItemClick={state.setSelectedMarkerId}
-                  activeItemId={state.selectedMarkerId}
-                  flatten={groupKey === 'undefined'}
-                  count={groupedItems[groupKey].length}
-                  expanded={state.isFiltered}
-                  filter={state.filter}
-                />
-              )
-            }}
-          </Panes>
+              </Minibar>
+
+              <Panes
+                panes={panes}
+                groupBy={'Driver'}
+                items={state.filteredItems}
+                isFiltered={state.isFiltered}
+                onDrop={dispatch('drop')}
+                onMaximizeEnd={dispatch('maximize-end')}
+                onOpenInNew={openInNew}
+              >
+                {items => {
+                  // const groupedItems = groupBy2(items, state.groupBy);
+                  const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
+                  const groupKeys = Object.keys(groupedItems);
+                  return groupKeys.map(groupKey =>
+                    <Group
+                      key={groupKey}
+                      id={groupKey.split(',')[0]}
+                      type={state.groupBy.split(',')[0]}
+                      items={groupedItems[groupKey]}
+                      content={groupKey}
+                      // onHeaderClick={dispatch('GroupHeaderClick')}
+                      onItemClick={state.setSelectedMarkerId}
+                      activeItemId={state.selectedMarkerId}
+                      flatten={groupKey === 'undefined'}
+                      count={groupedItems[groupKey].length}
+                      expanded={state.isFiltered}
+                      filter={state.filter}
+                    />
+                  )
+                }}
+              </Panes>
+            </>
+          }
         </Sidebar.Content>
       </Sidebar >
       <GoogleMap

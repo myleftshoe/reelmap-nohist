@@ -17,7 +17,7 @@ import { colors, resizableProps } from './constants'
 import vroom from './map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 import collect from 'collect.js';
-import { groupBy2 } from './utils/utils';
+import groupBy2 from './utils/groupby2';
 
 function Single(props) {
 

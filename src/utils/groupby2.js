@@ -1,4 +1,4 @@
-export function groupBy2(arr, keys) {
+export default function groupBy2(arr, keys) {
     const [key1, key2] = keys.split(',');
     const groups = {};
     arr.forEach(o => {

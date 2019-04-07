@@ -6,7 +6,7 @@ import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
-import { groupBy2 } from './utils/utils';
+import groupBy2 from './utils/groupby2';
 
 
 export default function StateProvider(props) {
@@ -24,6 +24,7 @@ export default function StateProvider(props) {
     const [working, setWorking] = useState(false);
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
+    const [sidebarContent, setSidebarContent] = useState('drivers');
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
@@ -169,6 +170,7 @@ export default function StateProvider(props) {
         setMapEditMode({ ...mapEditMode, tool })
     }
 
+
     const state = {
         filter, setFilter,
         groupBy, setGroupBy,
@@ -185,17 +187,18 @@ export default function StateProvider(props) {
         filteredItems,
         isFiltered,
         selectedItem,
+        sidebarContent, setSidebarContent,
     };
 
     const actions = {
         'undo': () => dispatch({ type: 'undo' }),
         'apply-snapshot': id => {
-            dispatch({type: 'apply-snapshot', id});
+            dispatch({ type: 'apply-snapshot', id });
             const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
             const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
             // newPaths.forEach((path, driver) => paths.set(driver, path));
             setPaths(paths);
-            },
+        },
         'group-items': groupItems,
         'auto-assign': autoAssign,
         'clear-all': clearAll,
