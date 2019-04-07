@@ -65,20 +65,15 @@ function App({ state, dispatch }) {
                 <Expandable key={'totals'} expanded={true} content={<p />}>
                   <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
                 </Expandable>
-                {routes.map(route => <Expandable
-                  key={route.vehicle}
-                  // onClick={() => props.onHeaderClick && props.onHeaderClick(props.content)}
-                  expanded={true}
-                  content={
+                {routes.map(route =>
+                  <Expandable key={route.vehicle} expanded={true} content={
                     <Header id={route.vehicle}>
                       <div>{drivers[route.vehicle]}</div>
                       <div>{formattedDuration(route.duration + route.service)}</div>
-                      {/* <Badge>{props.count}</Badge> */}
                     </Header>
-                  }
-                >
-                  <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
-                </Expandable>
+                  }>
+                    <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
+                  </Expandable>
                 )}
               </Pane>
             })
