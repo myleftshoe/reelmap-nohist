@@ -110,7 +110,7 @@ export default function StateProvider(props) {
                 break;
             }
             case 'header': {
-                actions.reassignRoute(target, id);
+                reassignRoute(target, id);
                 break;
             }
             default: {
