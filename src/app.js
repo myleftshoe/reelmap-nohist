@@ -117,7 +117,6 @@ function App({ state, dispatch }) {
                 )
               }}
             </Panes>
-
           </Sidebar.Content>
         }
       </Sidebar >
