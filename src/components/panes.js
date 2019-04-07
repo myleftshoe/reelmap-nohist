@@ -8,6 +8,10 @@ export default function Panes(props) {
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
 
+    const paneActionButtons = [
+        { id: 'open-in-new', tooltip: 'Open in new', icon: 'open_in_new', onClick: onOpenInNew, visible: maximizedPaneId }
+    ]
+
     function handleMaximize(id) {
         setMaximizedPaneId(id);
         // Wait for pane transition before triggering rerender
@@ -27,7 +31,7 @@ export default function Panes(props) {
                 maximized={maximizedPaneId}
                 onDrop={onDrop}
                 onMaximize={handleMaximize}
-                onOpenInNew={onOpenInNew}
+                actionButtons={paneActionButtons}
             >
                 {children(paneItems.all())}
             </Pane>

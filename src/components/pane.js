@@ -7,6 +7,8 @@ import { PaneContainer, PaneHeader, PaneContent } from './pane.sc'
 
 function Pane(props) {
 
+    const { actionButtons = [] } = props;
+
     const [expanded, toggleExpanded] = useToggle(props.expanded);
     const [headerMouseOver, setHeaderMouseOver] = useState(false);
 
@@ -72,8 +74,11 @@ function Pane(props) {
         props.onMaximize(props.id)
     }
 
-    function handleOpenInNewClick() {
-        props.onOpenInNew(props.id)
+    function handleActionButtonClick(id) {
+        console.log(id);
+        const actionButton = actionButtons.find(ab => ab.id === id);
+        actionButton.onClick(props.id);
+        // props.onOpenInNew(props.id)
     }
 
     function handleHeaderMouseOver() {
@@ -85,7 +90,6 @@ function Pane(props) {
     }
 
     const showMaximizeButton = headerMouseOver && !props.maximized && expanded;
-    const showOpenInNewButton = headerMouseOver && props.maximized;
 
     return (
         <PaneContainer
@@ -109,11 +113,17 @@ function Pane(props) {
             >
                 {props.title}
                 <Minibar>
-                    {showOpenInNewButton &&
+                    {actionButtons.map(({ id, tooltip, icon, onClick, visible }) =>
+                        visible && headerMouseOver &&
+                        <Minibar.Button key={id} id={id} visible={true} onClick={handleActionButtonClick}>
+                            {icon}
+                        </Minibar.Button>
+                    )}
+                    {/* {showOpenInNewButton &&
                         <Minibar.Button visible={true} onClick={handleOpenInNewClick}>
                             open_in_new
                         </Minibar.Button>
-                    }
+                    } */}
                     {showMaximizeButton &&
                         <Minibar.Button visible={true} onClick={handleMaximizeClick}>
                             fullscreen
