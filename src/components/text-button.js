@@ -12,12 +12,7 @@ const StyledTextButton = styled.button`
     text-align: center;
     text-transform: uppercase;
     border: none;
-    &::before {
-        /* content: '⬤ '; */
-        color:${props => props.color}
-    }
-    /* border-bottom: ${props => props.active && '2px solid'}; */
-    /* color: ${props => props.active ? 'white' : 'gray'}; */
+    outline: none;
     &:hover {
         color:black;
         cursor:pointer;

@@ -25,6 +25,7 @@ import Solution from './components/solution';
 import formattedDuration from './utils/formatted-duration';
 import Expandable from './components/expandable';
 import { Header } from './components/group.sc';
+// import TextButton from './components/text-button';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
@@ -53,7 +54,7 @@ function App({ state, dispatch }) {
         {state.sidebarContent === 'history' ?
           <Sidebar.Content>
             <Minibar>
-              <Minibar.Button visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
+              <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
             </Minibar>
             {
               [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
@@ -67,6 +68,14 @@ function App({ state, dispatch }) {
                   onMaximize={dispatch('apply-snapshot')}
                   onOpenInNew={dispatch('remove-snapshot')}
                 >
+                  {Boolean(index) && <>
+                    <Minibar>
+                      <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
+                      <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button>
+                    </Minibar>
+                    {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
+                  </>
+                  }
                   <Expandable key={'totals'} expanded={true} content={<p />}>
                     <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
                   </Expandable>

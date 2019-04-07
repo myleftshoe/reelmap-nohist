@@ -46,7 +46,8 @@ export default function reducer(state, action) {
             break;
         }
         case 'clear-snapshots': {
-            snapshots.current = new Map();
+            const current = [...snapshots.current].pop();
+            snapshots.current = new Map([current]);
             break;
         }
         default: { }

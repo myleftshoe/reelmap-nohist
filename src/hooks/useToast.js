@@ -7,7 +7,7 @@ import './useToast.css';
 toast.configure({
     position: toast.POSITION.BOTTOM_LEFT,
     transition: Bounce,
-    autoClose: false,
+    // autoClose: 5000,
     newestOnTop: true,
     closeOnClick: true,
     pauseOnVisibilityChange: true,
@@ -19,7 +19,7 @@ export default function useToast(id, solution, onButtonClick) {
         if (solution) {
             const { distance, duration, service } = solution.summary;
             toast.success(<Solution distance={distance} duration={duration} service={service} onButtonClick={() => onButtonClick(id)} />, {
-                toastId:id,
+                toastId: id,
                 className: 'shrink-font-size',
                 // bodyClassName: 'shrink-font-size',
                 // progressClassName: 'fancy-progress-bar'

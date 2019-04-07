@@ -30,7 +30,7 @@ Minibar.Button = props => {
         props.onClick && props.onClick(props.id);
     }
     const icon = props.children;
-    return <MinibarButton className="material-icons" visible={props.visible} onClick={onClick}>
+    return <MinibarButton className="material-icons" visible={props.visible} onClick={onClick} {...props}>
         {icon}
     </MinibarButton >
 }

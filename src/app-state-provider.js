@@ -208,7 +208,9 @@ export default function StateProvider(props) {
             // setPaths(paths);
         },
         'clear-history': () => {
-            solutions.clear();
+            const current = [...solutions].pop();
+            setSolutions(new Map([current]));
+            // solutions.clear();
             dispatch({ type: 'clear-snapshots' });
             // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
             // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
