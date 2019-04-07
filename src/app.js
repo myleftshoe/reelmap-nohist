@@ -19,7 +19,6 @@ import Routes from './map/routes'
 // import SuburbBoundary from './map/suburb-boundary'
 import { InfoWindow } from '@googlemap-react/core'
 import { colors, resizableProps, drivers, panes } from './constants'
-import { circle } from './svg/cursors'
 import useToast from './hooks/useToast'
 import useCursor from './hooks/useCursor'
 import Solution from './components/solution';
