@@ -14,12 +14,17 @@ const SolutionContainer = styled.div`
     flex-direction:column;
 `
 
-export default function Solution({ duration, distance, service }) {
+export default function Solution({ duration, distance, service, onButtonClick }) {
     console.log(ms(2 * 3860000))
+    const handleClick = e => {
+        e.stopPropagation();
+        onButtonClick();
+    }
     return <SolutionContainer>
         <div>Total duration: {formattedDuration(duration + service)}</div>
         <div>Total travel time: {formattedDuration(duration)}</div>
         <div>Total service time: {formattedDuration(service)}</div>
         <div>Total distance: {Math.round(distance / 1000)} kms</div>
+        <button onClick={handleClick}>Use</button>
     </SolutionContainer>
 }

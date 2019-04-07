@@ -26,8 +26,8 @@ const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 
 function App({ state, dispatch }) {
-  console.log('rendering', state);
-  useToast(state.solutions);
+  console.log('rendering', state.currentSolutionId, state.solutions.get(state.currentSolutionId));
+  useToast(state.currentSolutionId, state.solutions.get(state.currentSolutionId), dispatch('apply-snapshot'));
   const cursor = useCursor({shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label:''});
   return (
     <Resizable split='vertical' {...resizableProps}>
@@ -36,7 +36,7 @@ function App({ state, dispatch }) {
           <Sidebar.NavButton id='City,PostalCode' active={state.groupBy === 'City,PostalCode'} onClick={state.setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
           <Sidebar.NavButton id='PostalCode,City' active={state.groupBy === 'PostalCode,City'} onClick={state.setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
           <Sidebar.NavButton id='OrderId,' active={state.groupBy === 'OrderId,'} onClick={state.setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
-          <Sidebar.NavButton id='Sequence,' active={state.groupBy === 'Sequence,'} onClick={state.setGroupBy} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
+          <Sidebar.NavButton id='Sequence,' active={state.groupBy === 'Sequence,'} onClick={dispatch('undo')} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
           <Sidebar.NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>

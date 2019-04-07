@@ -14,11 +14,12 @@ toast.configure({
     draggable: true,
 })
 
-export default function useToast(solutions) {
+export default function useToast(id, solution, onButtonClick) {
     function showToast() {
-        if (solutions.length) {
-            const { distance, duration, service } = solutions[0].summary;
-            toast.success(<Solution distance={distance} duration={duration} service={service} />, {
+        if (solution) {
+            const { distance, duration, service } = solution.summary;
+            toast.success(<Solution distance={distance} duration={duration} service={service} onButtonClick={() => onButtonClick(id)} />, {
+                toastId:id,
                 className: 'shrink-font-size',
                 // bodyClassName: 'shrink-font-size',
                 // progressClassName: 'fancy-progress-bar'
@@ -26,5 +27,5 @@ export default function useToast(solutions) {
             // state.setSolution(null);
         }
     }
-    useEffect(showToast, [solutions]);
+    useEffect(showToast, [id]);
 }

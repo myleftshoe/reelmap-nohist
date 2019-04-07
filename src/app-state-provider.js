@@ -22,11 +22,13 @@ export default function StateProvider(props) {
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
     const [working, setWorking] = useState(false);
-    const [solutions, setSolutions] = useState([]);
+    const [solutions, setSolutions] = useState(new Map());
+    const [currentSolutionId, setCurrentSolutionId] = useState();
+
+    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
     console.log(solutions)
 
-    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
     const filteredItems = useMemo(() => collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes'])), [items]);
     const isFiltered = Boolean(filter && filteredItems.count())
@@ -54,11 +56,16 @@ export default function StateProvider(props) {
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
         if (!activeItems.count()) return;
         setWorking(true);
-        setMapEditMode({ on: false, id: null, tool: null })
+        setMapEditMode({ on: false, id: null, tool: null });
+        const snapshotId = Date.now();
+        dispatch({ type: 'add-snapshot', id: snapshotId });
         const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
-        newPaths.forEach((path, driver) => paths.set(driver, path));
+        const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+        // newPaths.forEach((path, driver) => paths.set(driver, path));
         setPaths(paths);
-        setSolutions([solution, ...solutions]);
+        solutions.set(snapshotId, solution)
+        setCurrentSolutionId(snapshotId);
+        setSolutions(new Map(solutions));
         setWorking(false);
     }
 
@@ -171,6 +178,7 @@ export default function StateProvider(props) {
         selectedMarkerId, setSelectedMarkerId,
         working, //setWorking,
         solutions,
+        currentSolutionId,
         // derived
         activeItems,
         activePaths,
@@ -180,6 +188,14 @@ export default function StateProvider(props) {
     };
 
     const actions = {
+        'undo': () => dispatch({ type: 'undo' }),
+        'apply-snapshot': id => {
+            dispatch({type: 'apply-snapshot', id});
+            const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+            const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+            // newPaths.forEach((path, driver) => paths.set(driver, path));
+            setPaths(paths);
+            },
         'group-items': groupItems,
         'auto-assign': autoAssign,
         'clear-all': clearAll,
