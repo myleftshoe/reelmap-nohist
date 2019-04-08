@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Busy from './components/busy';
 import Group from './components/group'
 import Filter from './components/filter'
 import Minibar from './components/minibar'
 import Panes from './components/panes';
-import Pane from './components/pane';
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
@@ -14,28 +13,14 @@ import JobMarkers from './map/job-markers'
 import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import RegionSelectControl from './map/region-select-control'
 import Routes from './map/routes'
-// import { labeledIcon } from './map/markers/markers.js'
-// import ContouredPolygon from './map/contoured-polygon'
-// import SuburbBoundary from './map/suburb-boundary'
 import { InfoWindow } from '@googlemap-react/core'
 import { colors, resizableProps, drivers, panes } from './constants'
 import useToast from './hooks/useToast'
 import useCursor from './hooks/useCursor'
-import Solution from './components/solution';
-import formattedDuration from './utils/formatted-duration';
-import Expandable from './components/expandable';
-import { Header } from './components/group.sc';
-import TextButton from './components/text-button';
-import posed, { PoseGroup } from 'react-pose';
-// import TextButton from './components/text-button';
+import ToastSidebar from './components/toast-sidebar';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
-
-const Toast = posed.div({
-  enter: { opacity: 1, delay: 300 },
-  exit: { opacity: 0 }
-});
 
 function App({ state, dispatch }) {
   console.log(state.sidebarContent)
@@ -59,40 +44,7 @@ function App({ state, dispatch }) {
           <Busy busy={state.working} />
         </Sidebar.Navigation>
         {state.sidebarContent === 'history' ?
-          <Sidebar.Content>
-            {state.solutions.size
-              ? <Minibar>
-                {/* <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>delete_sweep</Minibar.Button> */}
-                <TextButton color='#fff7' title='Clear history' visible onClick={dispatch('clear-history')}>Clear all</TextButton>
-              </Minibar>
-              : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>History cleared!</div>
-            }
-            <PoseGroup>
-              {
-                [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) =>
-                  <Toast key={key} style={{ backgroundColor: '#0003', margin: '4px 12px 4px 8px', paddingBottom: 8 }}>
-                    <Minibar>
-                      <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
-                      <Minibar.Button title='Clear history' visible onClick={() => dispatch('remove-snapshot')(key)}>clear</Minibar.Button>
-                    </Minibar>
-                    {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
-                    <Expandable key={'totals'} expanded={false} content={
-                      <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
-                    } >
-                      {routes.map(route => <>
-                        <Header id={route.vehicle}>
-                          <div>{drivers[route.vehicle]}</div>
-                          <div>{formattedDuration(route.duration + route.service)}</div>
-                        </Header>
-                        <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
-                      </>
-                      )}
-                    </Expandable>
-                  </Toast>
-                )
-              }
-            </PoseGroup>
-          </Sidebar.Content>
+          <ToastSidebar toasts={state.solutions} />
           : <Sidebar.Content>
             <Minibar>
               <Filter onChange={state.setFilter} />
