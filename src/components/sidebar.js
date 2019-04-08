@@ -32,6 +32,12 @@ Sidebar.Content = styled.div`
     display:flex;
     flex-direction: column;
     font-size:0.96em;
+    overflow-y: overlay;
+    overflow-x: hidden;
+    ::-webkit-scrollbar { width: 10px; };
+    :hover::-webkit-scrollbar-thumb { background-color: #FFF3; };
+    ::-webkit-scrollbar-thumb:hover { background-color: #0FF6; };
+    ::-webkit-scrollbar-thumb:active { background-color: #0FFA; };
 `
 
 const NavButton = styled.div`
