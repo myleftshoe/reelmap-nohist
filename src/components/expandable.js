@@ -38,7 +38,8 @@ function Expandable(props) {
       restDisplacementThreshold: 0,
     },
     from: {
-      height: 0, opacity: 0
+      height: 0,
+      opacity: 0,
     },
     to: {
       height: expanded ? 'auto' : 0,
