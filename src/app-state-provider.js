@@ -201,7 +201,8 @@ export default function StateProvider(props) {
         },
         'remove-snapshot': id => {
             solutions.delete(id);
-            dispatch({ type: 'remove-snapshot', id });
+            setSolutions(new Map(solutions))
+            // dispatch({ type: 'remove-snapshot', id });
             // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
             // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
             // // newPaths.forEach((path, driver) => paths.set(driver, path));

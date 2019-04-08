@@ -26,10 +26,16 @@ import formattedDuration from './utils/formatted-duration';
 import Expandable from './components/expandable';
 import { Header } from './components/group.sc';
 import TextButton from './components/text-button';
+import posed, { PoseGroup } from 'react-pose';
 // import TextButton from './components/text-button';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
+
+const Toast = posed.div({
+  enter: { opacity: 1, delay: 300 },
+  exit: { opacity: 0 }
+});
 
 function App({ state, dispatch }) {
   console.log(state.sidebarContent)
@@ -61,30 +67,31 @@ function App({ state, dispatch }) {
               </Minibar>
               : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>History cleared!</div>
             }
-            {
-              [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) => {
-                console.log('pane.js', index);
-                return <div style={{ backgroundColor: '#0003', margin: '4px 12px 4px 8px', paddingBottom: 8 }}>
-                  <Minibar>
-                    <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
-                    <Minibar.Button title='Clear history' visible onClick={dispatch('clear-history')}>clear</Minibar.Button>
-                  </Minibar>
-                  {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
-                  <Expandable key={'totals'} expanded={false} content={
-                    <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
-                  } >
-                    {routes.map(route => <>
-                      <Header id={route.vehicle}>
-                        <div>{drivers[route.vehicle]}</div>
-                        <div>{formattedDuration(route.duration + route.service)}</div>
-                      </Header>
-                      <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
-                    </>
-                    )}
-                  </Expandable>
-                </div>
-              })
-            }
+            <PoseGroup>
+              {
+                [...state.solutions.entries()].reverse().map(([key, { summary, routes }], index) =>
+                  <Toast key={key} style={{ backgroundColor: '#0003', margin: '4px 12px 4px 8px', paddingBottom: 8 }}>
+                    <Minibar>
+                      <Minibar.Button title='Restore' visible onClick={() => dispatch('apply-snapshot')(key)}>restore</Minibar.Button>
+                      <Minibar.Button title='Clear history' visible onClick={() => dispatch('remove-snapshot')(key)}>clear</Minibar.Button>
+                    </Minibar>
+                    {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
+                    <Expandable key={'totals'} expanded={false} content={
+                      <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} onButtonClick={dispatch('apply-snapshot')} />
+                    } >
+                      {routes.map(route => <>
+                        <Header id={route.vehicle}>
+                          <div>{drivers[route.vehicle]}</div>
+                          <div>{formattedDuration(route.duration + route.service)}</div>
+                        </Header>
+                        <Solution distance={route.distance} duration={route.duration} service={route.service} onButtonClick={dispatch('apply-snapshot')} />
+                      </>
+                      )}
+                    </Expandable>
+                  </Toast>
+                )
+              }
+            </PoseGroup>
           </Sidebar.Content>
           : <Sidebar.Content>
             <Minibar>
