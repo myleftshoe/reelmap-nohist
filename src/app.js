@@ -23,10 +23,12 @@ const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 
 function App({ state, dispatch }) {
-  console.log(state.sidebarContent)
-  console.log('rendering', state.solutions);
-  useToast(state.currentSolutionId, state.solutions.get(state.currentSolutionId), dispatch('apply-snapshot'));
+
+  // console.log('rendering', state.toasts);
+
+  useToast(state.toast);
   const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: '' });
+
   return (
     <Resizable split='vertical' {...resizableProps}>
       <Sidebar>
@@ -39,12 +41,12 @@ function App({ state, dispatch }) {
           <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
           {Boolean(state.solutions.size) &&
-            <Sidebar.NavButton active={state.sidebarContent === 'history'} id='history' onClick={() => state.setSidebarContent(state.sidebarContent === 'history' ? 'drivers' : 'history')} tooltip='History'>history</Sidebar.NavButton>
+            <Sidebar.NavButton active={state.sidebarContent === 'history'} id='history' onClick={() => state.setSidebarContent(state.sidebarContent === 'history' ? 'drivers' : 'history')} tooltip='History' badge={{ count: state.solutions.size, color: '#facf00' }}>history</Sidebar.NavButton>
           }
           <Busy busy={state.working} />
         </Sidebar.Navigation>
         {state.sidebarContent === 'history' ?
-          <ToastSidebar toasts={state.solutions} />
+          <ToastSidebar />
           : <Sidebar.Content>
             <Minibar>
               <Filter onChange={state.setFilter} />

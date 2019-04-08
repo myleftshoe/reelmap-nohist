@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { toast, Bounce, Slide, Flip, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Solution from '../components/solution';
 import './useToast.css';
 
 toast.configure({
@@ -14,18 +13,16 @@ toast.configure({
     draggable: true,
 })
 
-export default function useToast(id, solution, onButtonClick) {
+export default function useToast({ id, content }) {
+    if (!id) return;
     function showToast() {
-        if (solution) {
-            const { distance, duration, service } = solution.summary;
-            toast.success(<Solution distance={distance} duration={duration} service={service} onButtonClick={() => onButtonClick(id)} />, {
-                toastId: id,
-                className: 'shrink-font-size',
-                // bodyClassName: 'shrink-font-size',
-                // progressClassName: 'fancy-progress-bar'
-            });
-            // state.setSolution(null);
-        }
+        toast.success(content, {
+            toastId: id,
+            className: 'shrink-font-size',
+            // bodyClassName: 'shrink-font-size',
+            // progressClassName: 'fancy-progress-bar'
+        });
+        // state.setSolution(null);
     }
     useEffect(showToast, [id]);
 }

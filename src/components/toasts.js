@@ -3,10 +3,8 @@ import posed, { PoseGroup } from 'react-pose';
 import styled from '@emotion/styled';
 import Minibar from './minibar';
 import Expandable from './expandable';
-import Solution from './solution';
-import formattedDuration from '../utils/formatted-duration';
-import { Header } from './group.sc';
-import { drivers } from '../constants';
+import { useStore } from 'outstated'
+import toastStore from '../stores/toast-store'
 
 const toast = {};
 
@@ -23,27 +21,23 @@ toast.pose = posed(toast.style)({
 
 const Toast = toast.pose
 
-export default function Toasts({ toasts, onSelect, onDelete }) {
-    console.log([...toasts.keys()])
+export default function Toasts({ onSelect, onDelete }) {
+    const [toasts, toastActions] = useStore(toastStore);
+    console.log(toasts)
     return (
         <PoseGroup>{
-            [...toasts.entries()].reverse().map(([key, { summary, routes }], index) =>
+            [...toasts.entries()].map(([key, toast], index) =>
                 <Toast key={key}>
                     <Minibar>
                         <Minibar.Button title='Restore' visible >restore</Minibar.Button>
                         <Minibar.Button title='Clear history' visible >clear</Minibar.Button>
                     </Minibar>
                     {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
-                    <Expandable key={'totals'} expanded={false} content={
-                        <Solution id={key} distance={summary.distance} duration={summary.duration} service={summary.service} />
-                    } >
-                        {routes.map(route => <>
-                            <Header id={route.vehicle}>
-                                <div>{drivers[route.vehicle]}</div>
-                                <div>{formattedDuration(route.duration + route.service)}</div>
-                            </Header>
-                            <Solution distance={route.distance} duration={route.duration} service={route.service} />
-                        </>
+                    <Expandable key={'totals'} expanded={false} content={toast.content} >
+                        {toast.expandedContent.map((ec, index) =>
+                            <div key={index} style={{ marginTop: 8 }}>
+                                {ec}
+                            </div>
                         )}
                     </Expandable>
                 </Toast>

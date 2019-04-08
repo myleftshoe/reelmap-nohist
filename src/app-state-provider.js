@@ -1,18 +1,22 @@
 import React, { useState, useMemo } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './stores/mock-data-store'
+import toastStore from './stores/toast-store'
 import Filter from './components/filter'
 import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
 import groupBy2 from './utils/groupby2';
+// import useToasts from './hooks/useToasts';
+import Solution from './components/solution';
 
 
 export default function StateProvider(props) {
 
     const [store, dispatch] = useStore(dataStore);
-
+    const [toasts, toastActions] = useStore(toastStore);
+    const [toast, setToast] = useState({});
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
     const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
@@ -25,6 +29,7 @@ export default function StateProvider(props) {
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
     const [sidebarContent, setSidebarContent] = useState('drivers');
+
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
@@ -67,6 +72,17 @@ export default function StateProvider(props) {
         solutions.set(snapshotId, solution)
         setCurrentSolutionId(snapshotId);
         setSolutions(new Map(solutions));
+        const { distance, duration, service } = solution.summary;
+        const toast = {
+            id: snapshotId,
+            content: <Solution distance={distance} duration={duration} service={service} onButtonClick={() => console.log('TOAST!!!!')} />,
+            expandedContent: solution.routes.map(route => {
+                const { distance, duration, service } = route;
+                return <Solution distance={distance} duration={duration} service={service} onButtonClick={() => console.log('TOAST!!!!')} />
+            })
+        }
+        toastActions.add(toast.id, toast);
+        setToast(toast);
         setWorking(false);
     }
 
@@ -188,6 +204,7 @@ export default function StateProvider(props) {
         isFiltered,
         selectedItem,
         sidebarContent, setSidebarContent,
+        toast,
     };
 
     const actions = {
