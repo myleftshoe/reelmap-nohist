@@ -8,7 +8,7 @@ toast.configure({
     position: toast.POSITION.BOTTOM_LEFT,
     transition: Bounce,
     // autoClose: 5000,
-    newestOnTop: true,
+    newestOnTop: false,
     closeOnClick: true,
     pauseOnVisibilityChange: true,
     draggable: true,
