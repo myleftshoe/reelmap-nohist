@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import Tooltip from './tooltip'
+import { badgeBase } from './badge';
 
 const Sidebar = styled.div`
     height: 100%;
@@ -41,19 +42,32 @@ Sidebar.Content = styled.div`
 `
 
 const NavButton = styled.div`
+    position:relative;
     padding: 12px 8px;
     color: ${props => props.active ? 'white' : 'gray'};
     &:hover {
         color:white;
         cursor:pointer;
     };
+    &[data-count]:after{
+        position:absolute;
+        content: attr(data-count);
+        min-width: calc(1ch + 1px);
+        ${badgeBase}
+        color:#000;
+        bottom:25%;
+        right:20%;
+        background: ${props => props.badgeColor};
+    }
 `
 
 Sidebar.NavButton = props => {
     const { id, active, onClick, children: icon } = props;
+    const { badge = {} } = props;
+    console.log(badge)
     const handleClick = () => onClick && onClick(id);
     return <Tooltip position="right" content={props.tooltip}>
-        <NavButton active={active} onClick={handleClick}>
+        <NavButton active={active} onClick={handleClick} data-count={badge.count} badgeColor={badge.color}>
             <i className="material-icons">{icon}</i>
         </NavButton >
     </Tooltip>
