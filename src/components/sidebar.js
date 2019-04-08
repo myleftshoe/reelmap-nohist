@@ -28,7 +28,7 @@ Sidebar.Content = styled.div`
     color: #fffc;
     /* background-color: #213e48; */
     /* background-color: #272746; */
-    background-color: #1f384b;
+    /* background-color: #1f384b; */
     display:flex;
     flex-direction: column;
     font-size:0.96em;
