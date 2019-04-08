@@ -7,7 +7,7 @@ function reducer(state, action) {
             break;
         }
         case 'remove': {
-            newState.remove(action.payload.id);
+            newState.delete(action.payload.id);
             break;
         }
         case 'clear': {

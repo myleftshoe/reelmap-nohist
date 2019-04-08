@@ -30,7 +30,7 @@ export default function Toasts({ onSelect, onDelete }) {
                 <Toast key={key}>
                     <Minibar>
                         <Minibar.Button title='Restore' visible >restore</Minibar.Button>
-                        <Minibar.Button title='Clear history' visible >clear</Minibar.Button>
+                        <Minibar.Button title='Clear history' visible onClick={() => toastActions.remove(key)}>clear</Minibar.Button>
                     </Minibar>
                     {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
                     <Expandable key={'totals'} expanded={false} content={toast.content} >

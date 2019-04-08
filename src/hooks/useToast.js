@@ -14,15 +14,16 @@ toast.configure({
 })
 
 export default function useToast({ id, content }) {
-    if (!id) return;
     function showToast() {
-        toast.success(content, {
-            toastId: id,
-            className: 'shrink-font-size',
-            // bodyClassName: 'shrink-font-size',
-            // progressClassName: 'fancy-progress-bar'
-        });
-        // state.setSolution(null);
+        if (content) {
+            toast.success(content, {
+                toastId: id,
+                className: 'shrink-font-size',
+                // bodyClassName: 'shrink-font-size',
+                // progressClassName: 'fancy-progress-bar'
+            });
+            // state.setSolution(null);
+        }
     }
     useEffect(showToast, [id]);
 }

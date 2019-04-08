@@ -7,7 +7,7 @@ function toastStore() {
 
     const get = (id) => state.get(id);
     const add = (id, { content, expandedContent }) => dispatch({ type: 'add', payload: { id, content, expandedContent } });
-    const remove = (id) => dispatch({ type: 'add' });
+    const remove = (id) => dispatch({ type: 'remove', payload: {id} });
     const clear = () => dispatch({ type: 'clear' });
 
     const actions = { get, add, remove, clear }
