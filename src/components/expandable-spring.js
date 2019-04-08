@@ -35,7 +35,7 @@ function Expandable(props) {
     config: {
       ...config.default,
       restSpeedThreshold: 1,
-      restDisplacementThreshold: 0,
+      restDisplacementThreshold: 0.01,
     },
     from: {
       height: 0, opacity: 0
