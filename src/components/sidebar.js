@@ -7,6 +7,7 @@ const Sidebar = styled.div`
     display: grid;
     grid-template-columns: 50px 1fr;
     grid-template-rows: 100vh;
+    background-color: #1f384b;
 `
 
 Sidebar.Navigation = styled.div`
@@ -19,6 +20,7 @@ Sidebar.Navigation = styled.div`
     display:flex;
     flex-direction:column;
     user-select:none;
+    z-index:1;
 `
 
 Sidebar.Content = styled.div`
