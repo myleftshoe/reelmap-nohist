@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Spring, config, animated } from 'react-spring'
 import usePrevious from '../hooks/usePrevious';
+import { hidden } from 'ansi-colors';
 
 // export function usePrevious(value) {
 //   const ref = useRef()
@@ -38,6 +39,7 @@ function Expandable(props) {
       restDisplacementThreshold: 0,
     },
     from: {
+      overflow: 'hidden',
       height: 0,
       opacity: 0,
     },
@@ -51,7 +53,7 @@ function Expandable(props) {
     <div onClick={handleClick} >
       <span style={{ verticalAlign: 'middle', userSelect: 'text' }}>{content}</span>
       <Spring native {...springProps} render={Contents}>
-        {expanded && children}
+        {children}
       </Spring>
     </div >
   )
