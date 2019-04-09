@@ -10,6 +10,8 @@ import { drivers } from './constants'
 import groupBy2 from './utils/groupby2';
 // import useToasts from './hooks/useToasts';
 import Solution from './components/solution';
+import formattedDuration from './utils/formatted-duration';
+import { Header } from './components/group.sc';
 
 
 export default function StateProvider(props) {
@@ -78,7 +80,13 @@ export default function StateProvider(props) {
             content: <Solution distance={distance} duration={duration} service={service} />,
             expandedContent: solution.routes.map(route => {
                 const { distance, duration, service } = route;
-                return <Solution distance={distance} duration={duration} service={service} />
+                return <>
+                    <Header id={route.vehicle}>
+                        <div>{drivers[route.vehicle]}</div>
+                        <div>{formattedDuration(route.duration + route.service)}</div>
+                    </Header>
+                    <Solution distance={distance} duration={duration} service={service} />
+                </>
             })
         }
         toastActions.add(toast.id, toast);
