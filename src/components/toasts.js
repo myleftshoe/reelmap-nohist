@@ -27,7 +27,6 @@ const Toast = toast.pose
 
 export default function Toasts({ onSelect, onDelete }) {
     const [toasts, toastActions] = useStore(toastStore);
-    console.log(toasts)
     return (
         <PoseGroup>{
             [...toasts.entries()].map(([key, toast], index) =>

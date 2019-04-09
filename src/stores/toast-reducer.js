@@ -16,7 +16,6 @@ function reducer(state, action) {
         }
         default: { }
     }
-    console.log(newState)
     return newState;
 }
 

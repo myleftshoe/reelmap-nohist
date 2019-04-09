@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from '@emotion/styled';
-import ms from 'ms';
 import formattedDuration from '../utils/formatted-duration';
 
 const SolutionContainer = styled.div`
@@ -12,7 +11,6 @@ const SolutionContainer = styled.div`
 `
 
 export default function Solution({ duration, distance, service, onButtonClick }) {
-    console.log(ms(2 * 3860000))
     const handleClick = e => {
         e.stopPropagation();
         onButtonClick();

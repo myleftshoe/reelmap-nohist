@@ -17,7 +17,7 @@ export default async function vroom(items) {
     const depot = [145.005252, -37.688797];
     const drivers = ['CHA'];
     const _items = items.reduce((obj, item) => ((obj[item.OrderId] = item, obj)), {});
-    console.log(JSON.parse(JSON.stringify(_items)));
+    // console.log(JSON.parse(JSON.stringify(_items)));
     const jobs = items.map(item => {
         return { id: parseInt(item.OrderId, 10), location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude], amount: [1], skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0] }
     });//.slice(0,90);
@@ -41,7 +41,7 @@ export default async function vroom(items) {
     let newItems = [];
     json.routes.forEach(r => {
         const steps = r.steps.filter(s => s.type === "job");
-        console.log(steps);
+        // console.log(steps);
         steps.forEach(s => {
             let item = _items[s.job];
             item.Driver = drivers[r.vehicle];
@@ -51,7 +51,6 @@ export default async function vroom(items) {
     console.log(newItems);
     let paths = json.routes.map(r => ({ driver: drivers[r.vehicle], path: r.geometry }));
     console.log("vroom", paths);
-    console.log(newItems);
     return paths;
     // return new Items(newItems);
 }
