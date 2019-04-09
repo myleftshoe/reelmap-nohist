@@ -75,10 +75,10 @@ export default function StateProvider(props) {
         const { distance, duration, service } = solution.summary;
         const toast = {
             id: snapshotId,
-            content: <Solution distance={distance} duration={duration} service={service} onButtonClick={() => console.log('TOAST!!!!')} />,
+            content: <Solution distance={distance} duration={duration} service={service} />,
             expandedContent: solution.routes.map(route => {
                 const { distance, duration, service } = route;
-                return <Solution distance={distance} duration={duration} service={service} onButtonClick={() => console.log('TOAST!!!!')} />
+                return <Solution distance={distance} duration={duration} service={service} />
             })
         }
         toastActions.add(toast.id, toast);
