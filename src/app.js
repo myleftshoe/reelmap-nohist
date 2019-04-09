@@ -1,9 +1,5 @@
 import React from 'react'
 import Busy from './components/busy';
-import Group from './components/group'
-import Filter from './components/filter'
-import Minibar from './components/minibar'
-import Panes from './components/panes';
 import Resizable from './components/resizable'
 import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
@@ -18,6 +14,7 @@ import { colors, resizableProps, drivers, panes } from './constants'
 import useToast from './hooks/useToast'
 import useCursor from './hooks/useCursor'
 import ToastSidebar from './components/toast-sidebar';
+import DriverSidebar from './components/driver-sidebar';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
@@ -45,47 +42,9 @@ function App({ state, dispatch }) {
           }
           <Busy busy={state.working} />
         </Sidebar.Navigation>
-        {state.sidebarContent === 'history' ?
-          <ToastSidebar />
-          : <Sidebar.Content>
-            <Minibar>
-              <Filter onChange={state.setFilter} />
-              {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
-            <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
-            <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
-            </Minibar>
-            <Panes
-              panes={panes}
-              groupBy={'Driver'}
-              items={state.filteredItems}
-              isFiltered={state.isFiltered}
-              onDrop={dispatch('drop')}
-              onMaximizeEnd={dispatch('maximize-end')}
-              onOpenInNew={openInNew}
-            >
-              {items => {
-                // const groupedItems = groupBy2(items, state.groupBy);
-                const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
-                const groupKeys = Object.keys(groupedItems);
-                return groupKeys.map(groupKey =>
-                  <Group
-                    key={groupKey}
-                    id={groupKey.split(',')[0]}
-                    type={state.groupBy.split(',')[0]}
-                    items={groupedItems[groupKey]}
-                    content={groupKey}
-                    // onHeaderClick={dispatch('GroupHeaderClick')}
-                    onItemClick={state.setSelectedMarkerId}
-                    activeItemId={state.selectedMarkerId}
-                    flatten={groupKey === 'undefined'}
-                    count={groupedItems[groupKey].length}
-                    expanded={state.isFiltered}
-                    filter={state.filter}
-                  />
-                )
-              }}
-            </Panes>
-          </Sidebar.Content>
+        {state.sidebarContent === 'history'
+          ? <ToastSidebar />
+          : <DriverSidebar state={state} dispatch={dispatch} panes={panes} />
         }
       </Sidebar >
       <GoogleMap
