@@ -210,6 +210,7 @@ export default function StateProvider(props) {
         selectedItem,
         activeSidebar, setActiveSidebar,
         toast,
+        toasts,
     };
 
     const actions = {
