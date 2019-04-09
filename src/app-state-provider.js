@@ -7,10 +7,7 @@ import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
-import groupBy2 from './utils/groupby2';
-// import useToasts from './hooks/useToasts';
 import Solution from './components/solution';
-import formattedDuration from './utils/formatted-duration';
 import { Header } from './components/group.sc';
 
 
@@ -48,7 +45,6 @@ export default function StateProvider(props) {
 
     let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
     if (selectedDrivers.length) {
-        // activeItems = useMemo(() => items.whereIn('Driver', selectedDrivers), [items, selectedDrivers]);
         activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
     }
 
