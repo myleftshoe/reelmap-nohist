@@ -5,6 +5,7 @@ import Filter from './filter';
 import Panes from './panes';
 import Group from './group';
 import { panes } from '../constants';
+import groupBy2 from '../utils/groupby2';
 
 export default function DriverSidebar(props) {
     const { state, dispatch } = props;
@@ -13,8 +14,8 @@ export default function DriverSidebar(props) {
             <Minibar>
                 <Filter onChange={state.setFilter} />
                 {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
-            <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
-            <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
+                <Minibar.Button onClick={() => setSortBy('PostalCode,City')}>local_post_office</Minibar.Button>
+                <Minibar.Button onClick={() => setSortBy([])}>format_list_numbered</Minibar.Button> */}
             </Minibar>
             <Panes
                 panes={panes}
@@ -26,8 +27,7 @@ export default function DriverSidebar(props) {
             // onOpenInNew={openInNew}
             >
                 {items => {
-                    // const groupedItems = groupBy2(items, state.groupBy);
-                    const groupedItems = dispatch('group-items')({ items, by: state.groupBy });
+                    const groupedItems = groupBy2(items, state.groupBy);
                     const groupKeys = Object.keys(groupedItems);
                     return groupKeys.map(groupKey =>
                         <Group

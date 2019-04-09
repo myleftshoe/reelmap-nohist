@@ -55,11 +55,6 @@ export default function StateProvider(props) {
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
     const selectedItem = store.get(selectedMarkerId);
 
-
-    function groupItems({ items, by }) {
-        return groupBy2(items, by);
-    }
-
     async function autoAssign() {
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
         if (!activeItems.count()) return;
@@ -243,7 +238,6 @@ export default function StateProvider(props) {
             setSolutions(new Map());
             // dispatch({ type: 'clear-snapshots' });
         },
-        'group-items': groupItems,
         'auto-assign': autoAssign,
         'clear-all': clearAll,
         'reassign-item': reassignItem,
