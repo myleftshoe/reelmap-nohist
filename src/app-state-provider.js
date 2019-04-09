@@ -9,6 +9,7 @@ import collect from 'collect.js';
 import { drivers } from './constants'
 import Solution from './components/solution';
 import { Header } from './components/group.sc';
+import mapMove from './utils/map-move';
 
 
 export default function StateProvider(props) {
@@ -98,17 +99,8 @@ export default function StateProvider(props) {
     }
 
     function reassignRoute(from, to) {
-        const toPath = paths.get(to);
-        const fromPath = paths.get(from);
-
-        if (!toPath || !fromPath) return;
-
-        paths.set(to, fromPath);
-        paths.set(from, toPath);
-
         dispatch({ type: 'swap-route', from, to })
-
-        setPaths(paths);
+        setPaths(mapMove(paths, to, from));
     }
 
     function reassignItem(id, driver) {
