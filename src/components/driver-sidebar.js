@@ -1,5 +1,4 @@
 import React from 'react'
-import Sidebar from './sidebar';
 import Minibar from './minibar';
 import Filter from './filter';
 import Panes from './panes';
@@ -10,7 +9,7 @@ import groupBy2 from '../utils/groupby2';
 export default function DriverSidebar(props) {
     const { state, dispatch } = props;
     return (
-        <Sidebar.Content>
+        <>
             <Minibar>
                 <Filter onChange={state.setFilter} />
                 {/* <Minibar.Button onClick={() => setSortBy('City,PostalCode')}>location_city</Minibar.Button>
@@ -47,6 +46,6 @@ export default function DriverSidebar(props) {
                     )
                 }}
             </Panes>
-        </Sidebar.Content>
+        </>
     )
 }

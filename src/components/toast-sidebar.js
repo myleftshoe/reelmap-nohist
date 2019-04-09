@@ -1,5 +1,4 @@
 import React from 'react'
-import Sidebar from './sidebar';
 import Minibar from './minibar';
 import TextButton from './text-button';
 import Toasts from './toasts';
@@ -9,7 +8,7 @@ import toastStore from '../stores/toast-store'
 export default function ToastSidebar({ toasts }) {
     const [state, dispatch] = useStore(toastStore);
     return (
-        <Sidebar.Content>
+        <>
             {state.size
                 ? <Minibar>
                     <TextButton color='#fff7' title='Clear history' visible onClick={() => dispatch.clear()}>Clear all</TextButton>
@@ -17,6 +16,6 @@ export default function ToastSidebar({ toasts }) {
                 : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>Empty!</div>
             }
             <Toasts toasts={toasts} />
-        </Sidebar.Content>
+        </>
     );
 }

@@ -1,7 +1,5 @@
 import React from 'react'
-import Busy from './components/busy';
 import Resizable from './components/resizable'
-import Sidebar from './components/sidebar'
 import GoogleMap from './map/map'
 import CustomControlBar from './map/custom-control-bar';
 import DepotMarker from './map/depot-marker'
@@ -10,11 +8,10 @@ import MarkerInfoWindowContent from './map/marker-infowindow-content'
 import RegionSelectControl from './map/region-select-control'
 import Routes from './map/routes'
 import { InfoWindow } from '@googlemap-react/core'
-import { colors, resizableProps, drivers, panes } from './constants'
+import { colors, resizableProps, drivers } from './constants'
 import useToast from './hooks/useToast'
 import useCursor from './hooks/useCursor'
-import ToastSidebar from './components/toast-sidebar';
-import DriverSidebar from './components/driver-sidebar';
+import Sidebars from './components/sidebars';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
@@ -28,23 +25,7 @@ function App({ state, dispatch }) {
 
   return (
     <Resizable split='vertical' {...resizableProps}>
-      <Sidebar>
-        <Sidebar.Navigation>
-          <Sidebar.NavButton id='City,PostalCode' active={state.groupBy === 'City,PostalCode'} onClick={state.setGroupBy} tooltip='Group by suburb'>location_city</Sidebar.NavButton>
-          <Sidebar.NavButton id='PostalCode,City' active={state.groupBy === 'PostalCode,City'} onClick={state.setGroupBy} tooltip='Group by post code'>local_post_office</Sidebar.NavButton>
-          <Sidebar.NavButton id='OrderId,' active={state.groupBy === 'OrderId,'} onClick={state.setGroupBy} tooltip='Sort by order number'>sort</Sidebar.NavButton>
-          <Sidebar.NavButton id='Sequence,' active={state.groupBy === 'Sequence,'} onClick={dispatch('undo')} tooltip='Sort by delivery order'>format_list_numbered</Sidebar.NavButton>
-          <Sidebar.NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
-          <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
-          <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          <Sidebar.NavButton id='history' active={state.activeSidebar === 'history'}  onClick={() => state.setActiveSidebar(state.activeSidebar === 'history' ? 'drivers' : 'history')} tooltip='History' badge={{ count: state.solutions.size, color: '#facf00' }}>history</Sidebar.NavButton>
-          <Busy busy={state.working} />
-        </Sidebar.Navigation>
-        {state.activeSidebar === 'history'
-          ? <ToastSidebar />
-          : <DriverSidebar state={state} dispatch={dispatch} panes={panes} />
-        }
-      </Sidebar >
+      <Sidebars state={state} dispatch={dispatch} />
       <GoogleMap
         onClick={() => state.setSelectedMarkerId(null)}
         onRightClick={dispatch('map-rightclick')}
