@@ -29,11 +29,11 @@ export default function StateProvider(props) {
     const [currentSolutionId, setCurrentSolutionId] = useState();
     const [activeSidebar, setActiveSidebar] = useState('drivers');
 
-
-    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
-
+    // toastActions.onRemove((id) => console.log('Removed', id))
+    toastActions.onClear(() => setSolutions(new Map()));
     console.log(solutions)
 
+    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
 
     const filteredItems = useMemo(() => collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes'])), [items]);
     const isFiltered = Boolean(filter && filteredItems.count())
