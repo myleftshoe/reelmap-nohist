@@ -12,7 +12,7 @@ const NavButtons = ({ state, dispatch }) =>
         <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
         <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
         <Sidebar.NavButton id='history' active={state.activeSidebar === 'history'} onClick={() => state.setActiveSidebar(state.activeSidebar === 'history' ? 'drivers' : 'history')} tooltip='History' badge={{ count: state.solutions.size, color: '#facf00' }}>history</Sidebar.NavButton>
-        <Busy busy={state.working} />
+        <Busy busy={state.busy} />
     </>
 
 export default NavButtons

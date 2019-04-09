@@ -24,7 +24,7 @@ export default function StateProvider(props) {
     const [groupBy, setGroupBy] = useState('PostalCode,City');
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
-    const [working, setWorking] = useState(false);
+    const [busy, setBusy] = useState(false);
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
     const [activeSidebar, setActiveSidebar] = useState('drivers');
@@ -54,7 +54,7 @@ export default function StateProvider(props) {
     async function autoAssign() {
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
         if (!activeItems.count()) return;
-        setWorking(true);
+        setBusy(true);
         setMapEditMode({ on: false, id: null, tool: null });
         const snapshotId = Date.now();
         dispatch({ type: 'add-snapshot', id: snapshotId });
@@ -88,7 +88,7 @@ export default function StateProvider(props) {
         }
         toastActions.add(toast.id, toast);
         setToast(toast);
-        setWorking(false);
+        setBusy(false);
     }
 
     function clearAll() {
@@ -199,7 +199,7 @@ export default function StateProvider(props) {
         quickChange, //setQuickChange,
         selectedDrivers, //setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
-        working, //setWorking,
+        busy, //setBusy,
         solutions,
         currentSolutionId,
         // derived

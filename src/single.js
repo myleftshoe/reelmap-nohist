@@ -28,7 +28,7 @@ function Single(props) {
   const [filter, setFilter] = useState('');
   const [sortBy, setSortBy] = useState('PostalCode,City');
   const [path, setPath] = useState();
-  const [working, setWorking] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   const driver = props.match.params.id;
   const pane = driver;
@@ -54,13 +54,13 @@ function Single(props) {
 
 
   async function optimize() {
-    setWorking(true);
+    setBusy(true);
     const { paths, newItems } = await vroom(items, [driver]);
     console.log(paths)
     // console.log(paths[0].path)
     setPath(paths.get(driver).path);
     updateStore();
-    setWorking(false);
+    setBusy(false);
   }
 
   function clear() {
@@ -94,7 +94,7 @@ function Single(props) {
             sizeUnit='px'
             size={6}
             color={'#FFF'}
-            loading={working}
+            loading={busy}
           />
         </Sidebar.Navigation>
         <Sidebar.Content>
