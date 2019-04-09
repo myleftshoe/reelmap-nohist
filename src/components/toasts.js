@@ -15,8 +15,12 @@ toast.style = styled.div`
 `
 
 toast.pose = posed(toast.style)({
-    enter: { opacity: 1, delay: 300 },
-    exit: { opacity: 0 }
+    // draggable: true
+    // enter: { opacity: 1, delay: 300 },
+    // exit: { opacity: 0 },
+    // pressable: true,
+    // init: { scale: 1 },
+    // press: { scale: 0.95 }
 });
 
 const Toast = toast.pose

@@ -18,7 +18,7 @@ export default function Solution({ duration, distance, service, onButtonClick })
         onButtonClick();
     }
     return <SolutionContainer>
-        {/* <div>Duration: {formattedDuration(duration + service)}</div> */}
+        <div>Duration: {formattedDuration(duration + service)}</div>
         <div>Travel time: {formattedDuration(duration)}</div>
         <div>Service time: {formattedDuration(service)}</div>
         <div>Distance: {Math.round(distance / 1000)} kms</div>

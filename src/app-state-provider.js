@@ -74,16 +74,22 @@ export default function StateProvider(props) {
         solutions.set(snapshotId, solution)
         setCurrentSolutionId(snapshotId);
         setSolutions(new Map(solutions));
-        const { distance, duration, service } = solution.summary;
+        const { vehicle, distance, duration, service } = solution.summary;
         const toast = {
             id: snapshotId,
-            content: <Solution distance={distance} duration={duration} service={service} />,
+            content: <>
+                {/* <Header id={vehicle}>
+                    <div>{drivers[vehicle]}</div>
+                    <div>{formattedDuration(duration + service)}</div>
+                </Header> */}
+                <Solution distance={distance} duration={duration} service={service} />
+            </>,
             expandedContent: solution.routes.map(route => {
-                const { distance, duration, service } = route;
+                const { vehicle, distance, duration, service } = route;
                 return <>
-                    <Header id={route.vehicle}>
-                        <div>{drivers[route.vehicle]}</div>
-                        <div>{formattedDuration(route.duration + route.service)}</div>
+                    <Header id={vehicle}>
+                        <div>{drivers[vehicle]}</div>
+                        {/* <div>{formattedDuration(duration + service)}</div> */}
                     </Header>
                     <Solution distance={distance} duration={duration} service={service} />
                 </>
