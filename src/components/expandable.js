@@ -48,12 +48,12 @@ function Expandable(props) {
       opacity: expanded ? 1 : 0,
     }
   }
-
+  // Can remove 'expanded &&' below but seems more responsive with when groupBy buttons clicked
   return (
     <div onClick={handleClick} >
       <span style={{ verticalAlign: 'middle', userSelect: 'text' }}>{content}</span>
       <Spring native {...springProps} render={Contents}>
-        {children}
+        {expanded && children}
       </Spring>
     </div >
   )
