@@ -66,7 +66,7 @@ Sidebar.NavButton = props => {
     const { badge = {} } = props;
     const handleClick = () => onClick && onClick(id);
     return <Tooltip position="right" content={props.tooltip}>
-        <NavButton active={active} onClick={handleClick} data-count={badge.count} badgeColor={badge.color}>
+        <NavButton active={active} onClick={handleClick} data-count={badge.count > 0 ? badge.count : null} badgeColor={badge.color}>
             <i className="material-icons">{icon}</i>
         </NavButton >
     </Tooltip>

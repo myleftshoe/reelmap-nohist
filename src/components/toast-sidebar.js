@@ -14,7 +14,7 @@ export default function ToastSidebar({ toasts }) {
                 ? <Minibar>
                     <TextButton color='#fff7' title='Clear history' visible onClick={() => dispatch.clear()}>Clear all</TextButton>
                 </Minibar>
-                : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>History cleared!</div>
+                : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>Empty!</div>
             }
             <Toasts toasts={toasts} />
         </Sidebar.Content>

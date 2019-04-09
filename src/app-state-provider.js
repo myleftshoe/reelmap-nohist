@@ -30,7 +30,7 @@ export default function StateProvider(props) {
     const [working, setWorking] = useState(false);
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
-    const [sidebarContent, setSidebarContent] = useState('drivers');
+    const [activeSidebar, setActiveSidebar] = useState('drivers');
 
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
@@ -212,7 +212,7 @@ export default function StateProvider(props) {
         filteredItems,
         isFiltered,
         selectedItem,
-        sidebarContent, setSidebarContent,
+        activeSidebar, setActiveSidebar,
         toast,
     };
 

@@ -37,12 +37,10 @@ function App({ state, dispatch }) {
           <Sidebar.NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</Sidebar.NavButton>
           <Sidebar.NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</Sidebar.NavButton>
           <Sidebar.NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</Sidebar.NavButton>
-          {Boolean(state.solutions.size) &&
-            <Sidebar.NavButton active={state.sidebarContent === 'history'} id='history' onClick={() => state.setSidebarContent(state.sidebarContent === 'history' ? 'drivers' : 'history')} tooltip='History' badge={{ count: state.solutions.size, color: '#facf00' }}>history</Sidebar.NavButton>
-          }
+          <Sidebar.NavButton id='history' active={state.activeSidebar === 'history'}  onClick={() => state.setActiveSidebar(state.activeSidebar === 'history' ? 'drivers' : 'history')} tooltip='History' badge={{ count: state.solutions.size, color: '#facf00' }}>history</Sidebar.NavButton>
           <Busy busy={state.working} />
         </Sidebar.Navigation>
-        {state.sidebarContent === 'history'
+        {state.activeSidebar === 'history'
           ? <ToastSidebar />
           : <DriverSidebar state={state} dispatch={dispatch} panes={panes} />
         }
