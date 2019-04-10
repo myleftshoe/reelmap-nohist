@@ -6,7 +6,7 @@ import './index.css'
 import * as serviceWorker from './serviceWorker'
 import { GoogleMapProvider } from '@googlemap-react/core'
 import { Provider as DataProvider } from 'outstated'
-import dataStore from './stores/mock-data-store'
+import dataStore from './app/mock-data-store'
 import toastStore from './toasts/store'
 import AppContainer from './app/app-container'
 import Single from "./app/single"

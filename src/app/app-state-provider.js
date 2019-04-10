@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useStore } from 'outstated'
-import dataStore from '../stores/mock-data-store'
+import dataStore from './mock-data-store'
 import toastStore from '../toasts/store'
 import Filter from '../common/filter'
 import { LatLng } from '../map/utils'

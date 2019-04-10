@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { css } from '@emotion/core';
 import { useStore } from 'outstated'
-import dataStore from '../stores/mock-data-store'
+import dataStore from './mock-data-store'
 import Minibar from '../common/minibar'
 import Resizable from '../common/resizable'
 import Sidebar from '../sidebar/sidebar'
