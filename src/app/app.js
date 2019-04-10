@@ -5,9 +5,7 @@ import { useToast } from '../toasts'
 import Sidebars from '../sidebar/sidebars';
 import MapMaster from '../map/map-master';
 
-console.log(useToast)
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
-
 
 function App({ state, dispatch }) {
 

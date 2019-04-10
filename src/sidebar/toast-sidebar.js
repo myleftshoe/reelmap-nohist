@@ -1,9 +1,9 @@
 import React from 'react'
 import Minibar from '../common/minibar';
 import TextButton from '../common/text-button';
-import ToastList from './list';
+import ToastList from '../toasts/list';
 import { useStore } from 'outstated'
-import toastStore from './store'
+import toastStore from '../toasts/store'
 
 export default function ToastSidebar({ toasts }) {
     const [state, dispatch] = useStore(toastStore);

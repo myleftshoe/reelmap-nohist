@@ -1,6 +1,6 @@
 import React from 'react'
 import Sidebar from './sidebar';
-import ToastSidebar from '../toasts/sidebar';
+import ToastSidebar from './toast-sidebar';
 import DriverSidebar from './driver-sidebar';
 import NavButtons from './nav-buttons';
 
