@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker'
 import { GoogleMapProvider } from '@googlemap-react/core'
 import { Provider as DataProvider } from 'outstated'
 import dataStore from './stores/mock-data-store'
-import toastStore from './stores/toast-store'
+import toastStore from './toasts/store'
 import AppContainer from './app-container'
 import Single from "./single"
 

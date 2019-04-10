@@ -1,10 +1,10 @@
 import React from 'react'
 import posed, { PoseGroup } from 'react-pose';
 import styled from '@emotion/styled';
-import Minibar from './minibar';
-import Expandable from './expandable';
+import Minibar from '../components/minibar';
+import Expandable from '../components/expandable';
 import { useStore } from 'outstated'
-import toastStore from '../stores/toast-store'
+import {store} from '.'
 
 const toast = {};
 
@@ -26,7 +26,7 @@ toast.pose = posed(toast.style)({
 const Toast = toast.pose
 
 export default function ToastList({ onSelect, onDelete }) {
-    const [toasts, toastActions] = useStore(toastStore);
+    const [toasts, toastActions] = useStore(store);
     return (
         <PoseGroup>{
             [...toasts.entries()].map(([key, toast], index) =>

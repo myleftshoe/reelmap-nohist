@@ -1,10 +1,11 @@
 import React from 'react'
 import Resizable from './components/resizable'
 import { resizableProps } from './constants'
-import useToast from './hooks/useToast'
+import { useToast } from './toasts'
 import Sidebars from './components/sidebars';
 import MapMaster from './map/map-master';
 
+console.log(useToast)
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 

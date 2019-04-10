@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './stores/mock-data-store'
-import toastStore from './stores/toast-store'
+import toastStore from './toasts/store'
 import Filter from './components/filter'
 import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
 import mapMove from './utils/map-move';
-import SolutionToast from './components/toasts';
-
+import {SolutionToast} from './toasts';
 
 export default function StateProvider(props) {
 

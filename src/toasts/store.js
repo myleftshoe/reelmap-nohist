@@ -1,5 +1,5 @@
 import { useReducer, useRef } from 'react';
-import reducer from './toast-reducer';
+import reducer from './reducer';
 
 function toastStore() {
 

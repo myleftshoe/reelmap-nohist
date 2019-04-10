@@ -1,9 +1,9 @@
 import React from 'react'
-import Solution from './solution';
-import { Header } from './group.sc';
+import Solution from '../components/solution';
+import { Header } from '../components/group.sc';
 import { drivers } from '../constants';
 
-export default function SolutionToast(id, solution) {
+export function SolutionToast(id, solution) {
     const { vehicle, distance, duration, service } = solution.summary;
     return ({
         id,
