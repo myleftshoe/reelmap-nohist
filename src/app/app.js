@@ -1,9 +1,9 @@
 import React from 'react'
-import Resizable from './common/resizable'
-import { resizableProps } from './common/constants'
-import { useToast } from './toasts'
-import Sidebars from './sidebar/sidebars';
-import MapMaster from './map/map-master';
+import Resizable from '../common/resizable'
+import { resizableProps } from '../common/constants'
+import { useToast } from '../toasts'
+import Sidebars from '../sidebar/sidebars';
+import MapMaster from '../map/map-master';
 
 console.log(useToast)
 const openInNew = id => window.open(`http://localhost:3006/${id}`)

@@ -2,22 +2,22 @@
 import React, { useState } from 'react'
 import { css } from '@emotion/core';
 import { useStore } from 'outstated'
-import dataStore from './stores/mock-data-store'
-import Minibar from './common/minibar'
-import Resizable from './common/resizable'
-import Sidebar from './sidebar/sidebar'
-import Panes from './panes/panes'
-import Group from './group/group'
-import Filter from './common/filter'
-import GoogleMap from './map/map'
+import dataStore from '../stores/mock-data-store'
+import Minibar from '../common/minibar'
+import Resizable from '../common/resizable'
+import Sidebar from '../sidebar/sidebar'
+import Panes from '../panes/panes'
+import Group from '../group/group'
+import Filter from '../common/filter'
+import GoogleMap from '../map/map'
 import { InfoWindow, Marker, Polyline } from '@googlemap-react/core'
-import MarkerInfoWindowContent from './map/marker-infowindow-content'
-import { circle } from './svg/cursors'
-import { colors, resizableProps } from './common/constants'
-import vroom from './map/services/vroom2'
+import MarkerInfoWindowContent from '../map/marker-infowindow-content'
+import { circle } from '../svg/cursors'
+import { colors, resizableProps } from '../common/constants'
+import vroom from '../map/services/vroom2'
 import { BeatLoader } from 'react-spinners';
 import collect from 'collect.js';
-import groupBy2 from './utils/groupby2';
+import groupBy2 from '../utils/groupby2';
 
 function Single(props) {
 
