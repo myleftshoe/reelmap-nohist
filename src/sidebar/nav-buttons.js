@@ -2,10 +2,25 @@ import React from 'react'
 import NavButton from './nav-button';
 import Busy from '../common/busy';
 
-function NavButtons({ state, dispatch }) {
+function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
     function handleClick(btnId) {
-        state.setGroupBy(btnId);
-        state.setActiveSidebar('drivers');
+        // state.setGroupBy(btnId);
+        console.log(btnId)
+        switch (btnId) {
+            case 'history': {
+                onSidebarChange('history');
+                break;
+            }
+            case 'editmode':
+            case 'autoassign': {
+                break;
+            }
+            default: {
+                state.setGroupBy(btnId);
+                onSidebarChange('drivers')
+            }
+
+        }
     }
     return <>
         <NavButton id='City,PostalCode' active={state.groupBy === 'City,PostalCode'} onClick={handleClick} tooltip='Group by suburb'>location_city</NavButton>
@@ -15,7 +30,7 @@ function NavButtons({ state, dispatch }) {
         <NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</NavButton>
         <NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</NavButton>
         <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</NavButton>
-        <NavButton id='history' active={state.activeSidebar === 'history'} onClick={() => state.setActiveSidebar('history')} tooltip='History' badge={{ count: state.toasts.size, color: '#facf00' }}>history</NavButton>
+        <NavButton id='history' active={activeSidebar === 'history'} onClick={handleClick} tooltip='History' badge={{ count: state.toasts.size, color: '#facf00' }}>history</NavButton>
         <Busy busy={state.busy} />
     </>
 }
