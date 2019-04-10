@@ -31,9 +31,8 @@ export default function StateProvider(props) {
     toastActions.onClear(() => setSolutions(new Map()));
     toastActions.onRemove((id) => console.log(id));
     toastActions.onSelect((id) => {
-        console.log(id)
+        applySnapshot(id);
         const paths = new Map(solutions.get(id).routes.map(route => ([drivers[route.vehicle], route.geometry])));
-        // newPaths.forEach((path, driver) => paths.set(driver, path));
         setPaths(paths);
     });
 
@@ -176,6 +175,13 @@ export default function StateProvider(props) {
         setMapEditMode({ ...mapEditMode, tool })
     }
 
+    function applySnapshot(id) {
+        dispatch({ type: 'apply-snapshot', id });
+        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+        const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+        // newPaths.forEach((path, driver) => paths.set(driver, path));
+        setPaths(paths);
+    }
 
     const state = {
         filter, setFilter,
