@@ -17,7 +17,7 @@ const Badge = styled.span`
     color:${props => props.color && '#000'};
     font-weight:${props => props.color && 500};
     min-width:1ch;
-   /* float: right; */
+    float: right;
     ${badgeBase}
 `
 export default Badge;
