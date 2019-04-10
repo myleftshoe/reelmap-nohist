@@ -1,6 +1,6 @@
 import React from 'react'
 import Sidebar from './sidebar';
-import Busy from './busy';
+import Busy from '../components/busy';
 
 const NavButtons = ({ state, dispatch }) =>
     <>

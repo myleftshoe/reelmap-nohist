@@ -2,7 +2,7 @@ import React from 'react'
 import Resizable from './components/resizable'
 import { resizableProps } from './constants'
 import { useToast } from './toasts'
-import Sidebars from './components/sidebars';
+import Sidebars from './sidebar/sidebars';
 import MapMaster from './map/map-master';
 
 console.log(useToast)

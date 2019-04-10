@@ -2,9 +2,9 @@ import React from 'react'
 import posed, { PoseGroup } from 'react-pose';
 import styled from '@emotion/styled';
 import Minibar from '../components/minibar';
-import Expandable from '../components/expandable';
+import Expandable from '../expandable/expandable';
 import { useStore } from 'outstated'
-import {store} from '.'
+import { store } from '.'
 
 const toast = {};
 

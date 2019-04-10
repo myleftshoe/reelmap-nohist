@@ -1,6 +1,6 @@
 import React from 'react'
-import Minibar from './minibar';
-import Filter from './filter';
+import Minibar from '../components/minibar';
+import Filter from '../components/filter';
 import Panes from '../panes/panes';
 import Group from '../group/group';
 import { panes } from '../constants';

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Tooltip from './tooltip'
-import { badgeBase } from './badge';
+import Tooltip from '../components/tooltip'
+import { badgeBase } from '../components/badge';
 
 const Sidebar = styled.div`
     height: 100%;
