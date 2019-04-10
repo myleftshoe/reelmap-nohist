@@ -7,17 +7,15 @@ export const badgeBase = `
     padding-bottom: 1px;
     border-radius: .64rem;
     font-size: .64rem;
+    font-weight:500;
     text-align: center;
     vertical-align: middle;
 `
 
 const Badge = styled.span`
-    /* color:#FFF; */
+    ${badgeBase}
     background-color:${props => props.color};
     color:${props => props.color && '#000'};
-    font-weight:${props => props.color && 500};
-    min-width:1ch;
     float: right;
-    ${badgeBase}
 `
 export default Badge;

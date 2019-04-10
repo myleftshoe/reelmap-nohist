@@ -14,7 +14,6 @@ const NavButtonBase = styled.div`
     &[data-count]:after{
         position:absolute;
         content: attr(data-count);
-        min-width: calc(1ch + 1px);
         ${badgeBase}
         color:#000;
         bottom:25%;
@@ -23,7 +22,7 @@ const NavButtonBase = styled.div`
     }
 `
 
-function NavButton (props) {
+function NavButton(props) {
     const { id, active, onClick, children: icon } = props;
     const { badge = {} } = props;
     const handleClick = () => onClick && onClick(id);
