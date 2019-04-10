@@ -29,6 +29,14 @@ export default function StateProvider(props) {
 
     // toastActions.onRemove((id) => console.log('Removed', id))
     toastActions.onClear(() => setSolutions(new Map()));
+    toastActions.onRemove((id) => console.log(id));
+    toastActions.onSelect((id) => {
+        console.log(id)
+        const paths = new Map(solutions.get(id).routes.map(route => ([drivers[route.vehicle], route.geometry])));
+        // newPaths.forEach((path, driver) => paths.set(driver, path));
+        setPaths(paths);
+    });
+
     console.log(solutions)
 
     const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);

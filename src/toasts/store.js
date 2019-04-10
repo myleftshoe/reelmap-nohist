@@ -16,10 +16,14 @@ function toastStore() {
         dispatch({ type: 'clear' });
         callbacks.current.onClear && callbacks.current.onClear()
     }
+    const select = (id) => {
+        callbacks.current.onSelect && callbacks.current.onSelect(id)
+    }
     const onRemove = callback => callbacks.current.onRemove = callback;
     const onClear = callback => callbacks.current.onClear = callback;
+    const onSelect = callback => callbacks.current.onSelect = callback;
 
-    const actions = { get, add, remove, clear, onRemove, onClear }
+    const actions = { get, add, remove, clear, select, onRemove, onClear, onSelect }
 
     return [state, actions]
 }
