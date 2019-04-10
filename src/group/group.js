@@ -1,6 +1,6 @@
 import React from 'react'
-import Badge from './badge'
-import Expandable from "./expandable";
+import Badge from '../components/badge'
+import Expandable from "../components/expandable";
 import useToggle from '../hooks/useToggle';
 import { useState } from 'react';
 import { Header, SearchHighlight, Table, Row, Address, Street, CityWithPostCode, Numeric, Notes } from './group.sc';

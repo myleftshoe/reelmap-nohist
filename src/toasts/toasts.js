@@ -1,6 +1,6 @@
 import React from 'react'
 import Solution from '../components/solution';
-import { Header } from '../components/group.sc';
+import { Header } from '../group/group.sc';
 import { drivers } from '../constants';
 
 export function SolutionToast(id, solution) {

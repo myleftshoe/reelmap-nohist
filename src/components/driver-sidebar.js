@@ -1,8 +1,8 @@
 import React from 'react'
 import Minibar from './minibar';
 import Filter from './filter';
-import Panes from './panes';
-import Group from './group';
+import Panes from '../panes/panes';
+import Group from '../group/group';
 import { panes } from '../constants';
 import groupBy2 from '../utils/groupby2';
 
