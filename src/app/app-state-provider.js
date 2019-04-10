@@ -26,7 +26,6 @@ export default function StateProvider(props) {
     const [busy, setBusy] = useState(false);
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
-    const [activeSidebar, setActiveSidebar] = useState('drivers');
 
     // toastActions.onRemove((id) => console.log('Removed', id))
     toastActions.onClear(() => setSolutions(new Map()));
@@ -186,7 +185,6 @@ export default function StateProvider(props) {
         filteredItems,
         isFiltered,
         selectedItem,
-        activeSidebar, setActiveSidebar,
         toast,
         toasts,
     };

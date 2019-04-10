@@ -3,9 +3,8 @@ import NavButton from './nav-button';
 import Busy from '../common/busy';
 
 function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
+
     function handleClick(btnId) {
-        // state.setGroupBy(btnId);
-        console.log(btnId)
         switch (btnId) {
             case 'history': {
                 onSidebarChange('history');
@@ -19,9 +18,9 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
                 state.setGroupBy(btnId);
                 onSidebarChange('drivers')
             }
-
         }
     }
+
     return <>
         <NavButton id='City,PostalCode' active={state.groupBy === 'City,PostalCode'} onClick={handleClick} tooltip='Group by suburb'>location_city</NavButton>
         <NavButton id='PostalCode,City' active={state.groupBy === 'PostalCode,City'} onClick={handleClick} tooltip='Group by post code'>local_post_office</NavButton>
