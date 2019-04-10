@@ -3,7 +3,7 @@ import Resizable from '../common/resizable'
 import { resizableProps } from '../common/constants'
 import { useToast } from '../toasts'
 import Sidebars from '../sidebar/sidebars';
-import MapMaster from '../map/map-master';
+import MapContainer from '../map/map-container';
 
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
@@ -15,7 +15,7 @@ function App({ state, dispatch }) {
   return (
     <Resizable split='vertical' {...resizableProps}>
       <Sidebars state={state} dispatch={dispatch} />
-      <MapMaster state={state} dispatch={dispatch} />
+      <MapContainer state={state} dispatch={dispatch} />
     </Resizable >
   )
 }

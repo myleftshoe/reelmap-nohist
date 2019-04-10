@@ -10,7 +10,7 @@ import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 import useCursor from '../hooks/useCursor'
 
-function MapMaster({ state, dispatch }) {
+function MapContainer({ state, dispatch }) {
     const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: '' });
     console.log(state.activeItems)
     return (<GoogleMap
@@ -75,4 +75,4 @@ function MapMaster({ state, dispatch }) {
     )
 }
 
-export default MapMaster;
+export default MapContainer;
