@@ -1,7 +1,7 @@
 import React from 'react'
 import Minibar from './minibar';
 import TextButton from './text-button';
-import Toasts from './toasts';
+import ToastList from './toasts-list';
 import { useStore } from 'outstated'
 import toastStore from '../stores/toast-store'
 
@@ -15,7 +15,7 @@ export default function ToastSidebar({ toasts }) {
                 </Minibar>
                 : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>Empty!</div>
             }
-            <Toasts toasts={toasts} />
+            <ToastList toasts={toasts} />
         </>
     );
 }

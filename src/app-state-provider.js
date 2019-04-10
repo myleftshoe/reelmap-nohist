@@ -7,9 +7,8 @@ import { LatLng } from './map/utils'
 import vroom from './map/services/vroom2'
 import collect from 'collect.js';
 import { drivers } from './constants'
-import Solution from './components/solution';
-import { Header } from './components/group.sc';
 import mapMove from './utils/map-move';
+import SolutionToast from './components/toasts';
 
 
 export default function StateProvider(props) {
@@ -53,42 +52,30 @@ export default function StateProvider(props) {
     const selectedItem = store.get(selectedMarkerId);
 
     async function autoAssign() {
-        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+
         if (!activeItems.count()) return;
+
+        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
+
         setBusy(true);
         setMapEditMode({ on: false, id: null, tool: null });
+
         const snapshotId = Date.now();
         dispatch({ type: 'add-snapshot', id: snapshotId });
+
         const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         // newPaths.forEach((path, driver) => paths.set(driver, path));
         setPaths(paths);
+
         solutions.set(snapshotId, solution)
         setCurrentSolutionId(snapshotId);
         setSolutions(new Map(solutions));
-        const { vehicle, distance, duration, service } = solution.summary;
-        const toast = {
-            id: snapshotId,
-            content: <>
-                {/* <Header id={vehicle}>
-                    <div>{drivers[vehicle]}</div>
-                    <div>{formattedDuration(duration + service)}</div>
-                </Header> */}
-                <Solution distance={distance} duration={duration} service={service} />
-            </>,
-            expandedContent: solution.routes.map(route => {
-                const { vehicle, distance, duration, service } = route;
-                return <>
-                    <Header id={vehicle}>
-                        <div>{drivers[vehicle]}</div>
-                        {/* <div>{formattedDuration(duration + service)}</div> */}
-                    </Header>
-                    <Solution distance={distance} duration={duration} service={service} />
-                </>
-            })
-        }
+
+        const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
+
         setBusy(false);
     }
 
