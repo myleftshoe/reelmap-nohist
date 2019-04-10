@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import useToggle from '../hooks/useToggle'
 import move from 'lodash-move';
-import Minibar from '../components/minibar';
-import Badge from '../components/badge';
+import Minibar from '../common/minibar';
+import Badge from '../common/badge';
 import { PaneContainer, PaneHeader, PaneContent } from './pane.sc'
 
 function Pane(props) {

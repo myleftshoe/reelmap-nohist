@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from '@emotion/styled';
-import TextButton from '../components/text-button'
+import TextButton from '../common/text-button'
 
 const PrimaryText = styled.div`
     padding-top:8px;

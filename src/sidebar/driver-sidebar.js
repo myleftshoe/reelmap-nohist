@@ -1,9 +1,9 @@
 import React from 'react'
-import Minibar from '../components/minibar';
-import Filter from '../components/filter';
+import Minibar from '../common/minibar';
+import Filter from '../common/filter';
 import Panes from '../panes/panes';
 import Group from '../group/group';
-import { panes } from '../constants';
+import { panes } from '../common/constants';
 import groupBy2 from '../utils/groupby2';
 
 export default function DriverSidebar(props) {

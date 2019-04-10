@@ -4,7 +4,7 @@ import DepotMarker from './job-markers';
 import JobMarkers from './job-markers';
 import { InfoWindow } from '@googlemap-react/core';
 import MarkerInfoWindowContent from './marker-infowindow-content';
-import { colors, drivers } from '../constants';
+import { colors, drivers } from '../common/constants';
 import Routes from './routes';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';

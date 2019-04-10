@@ -1,7 +1,7 @@
 import React from 'react'
-import Solution from '../components/solution';
+import Solution from '../common/solution';
 import { Header } from '../group/group.sc';
-import { drivers } from '../constants';
+import { drivers } from '../common/constants';
 
 export function SolutionToast(id, solution) {
     const { vehicle, distance, duration, service } = solution.summary;

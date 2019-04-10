@@ -1,6 +1,6 @@
 import React from 'react'
-import Minibar from '../components/minibar';
-import TextButton from '../components/text-button';
+import Minibar from '../common/minibar';
+import TextButton from '../common/text-button';
 import ToastList from './list';
 import { useStore } from 'outstated'
 import toastStore from './store'

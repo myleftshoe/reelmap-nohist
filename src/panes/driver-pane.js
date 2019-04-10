@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import useToggle from '../hooks/useToggle'
 import Pane from './pane'
-import Minibar from '../components/minibar';
-import Badge from '../components/badge';
+import Minibar from '../common/minibar';
+import Badge from '../common/badge';
 
 function DriverPane(props) {
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import JobMarker from './job-marker';
-import { colors } from '../constants';
+import { colors } from '../common/constants';
 
 const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerClick, onMarkerRightClick, onMarkerMouseOver }) => {
     return items.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {

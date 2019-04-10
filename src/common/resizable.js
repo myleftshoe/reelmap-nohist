@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SplitPane from './react-split-pane';
+import SplitPane from '../common/react-split-pane';
 import '../resizer.css'
 
 function Resizable({ defaultSize, minSize, maxSize, children }) {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { colors } from '../constants';
+import { colors } from '../common/constants';
 import Route from './route';
 
 function Routes({ paths, hidden = false, onRightClick }) {

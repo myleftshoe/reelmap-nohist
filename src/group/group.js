@@ -1,5 +1,5 @@
 import React from 'react'
-import Badge from '../components/badge'
+import Badge from '../common/badge'
 import Expandable from "../expandable/expandable";
 import useToggle from '../hooks/useToggle';
 import { useState } from 'react';
