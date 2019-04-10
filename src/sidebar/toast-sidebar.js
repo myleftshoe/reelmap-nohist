@@ -7,15 +7,16 @@ import toastStore from '../toasts/store'
 
 export default function ToastSidebar({ toasts }) {
     const [state, dispatch] = useStore(toastStore);
-    return (
-        <>
+    // <div> required to prevent content moving up when scrollbar appears
+    return <>
+        <div>
             {state.size
                 ? <Minibar>
                     <TextButton color='#fff7' title='Clear history' visible onClick={() => dispatch.clear()}>Clear all</TextButton>
                 </Minibar>
                 : <div style={{ display: 'flex', alignSelf: 'center', margin: 32, color: '#fff7' }}>Empty!</div>
             }
-            <ToastList toasts={toasts} />
-        </>
-    );
+        </div>
+        <ToastList toasts={toasts} />
+    </>
 }
