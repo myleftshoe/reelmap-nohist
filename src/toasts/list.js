@@ -35,7 +35,6 @@ export default function ToastList({ onSelect, onDelete }) {
                         <Minibar.Button title='Restore' visible onClick={() => toastActions.select(key)}>restore</Minibar.Button>
                         <Minibar.Button title='Delete' visible onClick={() => toastActions.remove(key)}>clear</Minibar.Button>
                     </Minibar>
-                    {/* <TextButton style={{ display: 'flex', width: '100%', justifyContent: 'center' }} color='#fff7' onClick={() => dispatch('apply-snapshot')(key)}>Show</TextButton> */}
                     <Expandable key={'totals'} expanded={false} content={toast.content} >
                         {toast.expandedContent.map((ec, index) =>
                             <div key={index} style={{ marginTop: 8 }}>

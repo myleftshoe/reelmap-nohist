@@ -27,14 +27,9 @@ export default function StateProvider(props) {
     const [solutions, setSolutions] = useState(new Map());
     const [currentSolutionId, setCurrentSolutionId] = useState();
 
-    // toastActions.onRemove((id) => console.log('Removed', id))
-    toastActions.onClear(() => setSolutions(new Map()));
-    toastActions.onRemove((id) => console.log(id));
-    toastActions.onSelect((id) => {
-        applySnapshot(id);
-        const paths = new Map(solutions.get(id).routes.map(route => ([drivers[route.vehicle], route.geometry])));
-        setPaths(paths);
-    });
+    toastActions.onClear(clearHistory);
+    toastActions.onRemove(removeSnapshot);
+    toastActions.onSelect(applySnapshot);
 
     console.log(solutions)
 
@@ -70,7 +65,6 @@ export default function StateProvider(props) {
 
         const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-        // newPaths.forEach((path, driver) => paths.set(driver, path));
         setPaths(paths);
 
         solutions.set(snapshotId, solution)
@@ -179,8 +173,16 @@ export default function StateProvider(props) {
         dispatch({ type: 'apply-snapshot', id });
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
         const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-        // newPaths.forEach((path, driver) => paths.set(driver, path));
         setPaths(paths);
+    }
+
+    function removeSnapshot(id) {
+        solutions.delete(id);
+        setSolutions(new Map(solutions))
+    }
+
+    function clearHistory() {
+        setSolutions(new Map());
     }
 
     const state = {
@@ -204,27 +206,6 @@ export default function StateProvider(props) {
     };
 
     const actions = {
-        'undo': () => dispatch({ type: 'undo' }),
-        'apply-snapshot': id => {
-            dispatch({ type: 'apply-snapshot', id });
-            const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-            const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-            // newPaths.forEach((path, driver) => paths.set(driver, path));
-            setPaths(paths);
-        },
-        'remove-snapshot': id => {
-            solutions.delete(id);
-            setSolutions(new Map(solutions))
-            // dispatch({ type: 'remove-snapshot', id });
-            // const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-            // const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-            // // newPaths.forEach((path, driver) => paths.set(driver, path));
-            // setPaths(paths);
-        },
-        'clear-history': () => {
-            setSolutions(new Map());
-            // dispatch({ type: 'clear-snapshots' });
-        },
         'auto-assign': autoAssign,
         'clear-all': clearAll,
         'reassign-item': reassignItem,
