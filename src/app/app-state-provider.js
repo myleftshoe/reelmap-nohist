@@ -61,7 +61,6 @@ export default function StateProvider(props) {
         setMapEditMode({ on: false, id: null, tool: null });
 
         const snapshotId = Date.now();
-        dispatch({ type: 'add-snapshot', id: snapshotId });
 
         const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
@@ -70,6 +69,8 @@ export default function StateProvider(props) {
         solutions.set(snapshotId, solution)
         setCurrentSolutionId(snapshotId);
         setSolutions(new Map(solutions));
+
+        dispatch({ type: 'add-snapshot', id: snapshotId });
 
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
