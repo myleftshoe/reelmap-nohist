@@ -1,8 +1,3 @@
-import { createRef } from 'react';
-
-const snapshots = createRef();
-snapshots.current = new Map();
-
 export default function reducer(state, action) {
 
     console.log('reducing.....', action)
@@ -28,26 +23,8 @@ export default function reducer(state, action) {
             });
             break;
         }
-        case 'update': {
-            break;
-        }
-        case 'add-snapshot': {
-            snapshots.current.set(action.id, JSON.stringify([...state]))
-            console.log(snapshots)
-            break;
-        }
-        case 'apply-snapshot': {
-            state = JSON.parse(snapshots.current.get(action.id));
-            break;
-        }
-        case 'remove-snapshot': {
-            console.log(action.id)
-            snapshots.current.delete(action.id);
-            break;
-        }
-        case 'clear-snapshots': {
-            const current = [...snapshots.current].pop();
-            snapshots.current = new Map([current]);
+        case 'set': {
+            state = new Map(action.state);
             break;
         }
         default: { }

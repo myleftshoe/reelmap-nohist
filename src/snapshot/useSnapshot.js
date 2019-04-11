@@ -1,32 +1,35 @@
-import { useReducer } from 'react'
-import reducer from './reducer'
+import { useRef } from 'react'
+
+/*
+    useRef doesn't trigger rerender when .current changes -
+    use here instead of state because snapshots don't
+    need to be renderered.
+*/
 
 function useSnapshot() {
 
-    const [state, dispatch] = useReducer(reducer, new Map());
+    const snapshots = useRef(new Map());
 
     const actions = {
 
         add(id, state) {
-            dispatch({ type: 'add', id, state })
+            snapshots.current.set(id, JSON.stringify([...state]))
         },
 
         delete(id) {
-            dispatch({ type: 'delete', id })
+            snapshots.current.delete(id);
         },
 
         clear() {
-            dispatch({ type: 'clear' })
+            snapshots.current.clear();
         },
 
         get(id) {
-            console.log('rrrrrrrrrrrrrrrrrr', id);
-            console.log(state.get(id))
-            return JSON.parse(state.get(id));
+            return JSON.parse(snapshots.current.get(id));
         }
     }
 
-    return [state, actions]
+    return actions
 
 }
 
