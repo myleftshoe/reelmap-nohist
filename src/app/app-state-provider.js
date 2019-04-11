@@ -182,10 +182,8 @@ export default function StateProvider(props) {
         groupBy, setGroupBy,
         mapEditMode, //setMapEditMode,
         quickChange, //setQuickChange,
-        selectedDrivers, //setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
         busy, //setBusy,
-        solutions,
         // derived
         activeItems,
         activePaths,
