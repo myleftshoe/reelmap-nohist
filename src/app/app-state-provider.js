@@ -29,6 +29,8 @@ export default function StateProvider(props) {
     const solutions = useDict();
     const snapshots = useJsonDict();
 
+    //!important: useDict causes clear and delete
+    //to error inless () => is used.
     toastActions.onClear(() => solutions.clear());
     toastActions.onRemove(id => solutions.delete(id));
     toastActions.onSelect(applySnapshot);
