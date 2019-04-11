@@ -29,7 +29,7 @@ export default function ToastList({ onSelect, onDelete }) {
     const [toasts, toastActions] = useStore(store);
     return (
         <PoseGroup>{
-            [...toasts.entries()].map(([key, toast], index) =>
+            [...toasts.entries()].reverse().map(([key, toast], index) =>
                 <Toast key={key}>
                     <Minibar>
                         <Minibar.Button title='Restore' visible onClick={() => toastActions.select(key)}>restore</Minibar.Button>
