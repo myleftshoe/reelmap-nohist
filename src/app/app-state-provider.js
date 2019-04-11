@@ -9,6 +9,7 @@ import collect from 'collect.js';
 import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
+import useSolutions from '../solutions/useSolutions';
 
 export default function StateProvider(props) {
 
@@ -24,11 +25,11 @@ export default function StateProvider(props) {
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
     const [busy, setBusy] = useState(false);
-    const [solutions, setSolutions] = useState(new Map());
+    const [solutions, solutionActions] = useSolutions();
     const [currentSolutionId, setCurrentSolutionId] = useState();
 
-    toastActions.onClear(clearHistory);
-    toastActions.onRemove(removeSnapshot);
+    toastActions.onClear(solutionActions.clear);
+    toastActions.onRemove(solutionActions.delete);
     toastActions.onSelect(applySnapshot);
 
     console.log(solutions)
@@ -66,9 +67,8 @@ export default function StateProvider(props) {
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         setPaths(paths);
 
-        solutions.set(snapshotId, solution)
+        solutionActions.add(snapshotId, solution)
         setCurrentSolutionId(snapshotId);
-        setSolutions(new Map(solutions));
 
         dispatch({ type: 'add-snapshot', id: snapshotId });
 
@@ -175,15 +175,6 @@ export default function StateProvider(props) {
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
         const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         setPaths(paths);
-    }
-
-    function removeSnapshot(id) {
-        solutions.delete(id);
-        setSolutions(new Map(solutions))
-    }
-
-    function clearHistory() {
-        setSolutions(new Map());
     }
 
     const state = {
