@@ -9,8 +9,8 @@ import collect from 'collect.js';
 import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
-import useSolutions from '../solutions/useSolutions';
-import useSnapshot from '../snapshot/useSnapshot';
+import useDict from '../hooks/useDict';
+import useJsonDict from '../hooks/useJsonDict';
 
 export default function StateProvider(props) {
 
@@ -26,11 +26,11 @@ export default function StateProvider(props) {
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
     const [busy, setBusy] = useState(false);
-    const [solutions, solutionActions] = useSolutions();
-    const snapshots = useSnapshot();
+    const solutions = useDict();
+    const snapshots = useJsonDict();
 
-    toastActions.onClear(solutionActions.clear);
-    toastActions.onRemove(solutionActions.delete);
+    toastActions.onClear(solutions.clear);
+    toastActions.onRemove(solutions.delete);
     toastActions.onSelect(applySnapshot);
 
     console.log(solutions)
@@ -68,10 +68,10 @@ export default function StateProvider(props) {
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         setPaths(paths);
 
-        solutionActions.add(snapshotId, solution)
+        solutions.set(snapshotId, solution)
 
         // dispatch({ type: 'add-snapshot', id: snapshotId });
-        snapshots.add(snapshotId, store);
+        snapshots.set(snapshotId, store);
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);

@@ -1,7 +1,9 @@
 import { useRef } from 'react'
 
-function useDict() {
-    const dict = useRef(new Map());
+// Stores data without triggering rerenders!
+
+function useDict(init) {
+    const dict = useRef(new Map(init));
     return dict.current;
 }
 
