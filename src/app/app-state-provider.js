@@ -26,7 +26,6 @@ export default function StateProvider(props) {
     const [paths, setPaths] = useState(new Map());
     const [busy, setBusy] = useState(false);
     const [solutions, solutionActions] = useSolutions();
-    const [currentSolutionId, setCurrentSolutionId] = useState();
 
     toastActions.onClear(solutionActions.clear);
     toastActions.onRemove(solutionActions.delete);
@@ -68,7 +67,6 @@ export default function StateProvider(props) {
         setPaths(paths);
 
         solutionActions.add(snapshotId, solution)
-        setCurrentSolutionId(snapshotId);
 
         dispatch({ type: 'add-snapshot', id: snapshotId });
 
@@ -186,7 +184,6 @@ export default function StateProvider(props) {
         selectedMarkerId, setSelectedMarkerId,
         busy, //setBusy,
         solutions,
-        currentSolutionId,
         // derived
         activeItems,
         activePaths,
