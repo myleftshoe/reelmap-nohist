@@ -60,12 +60,7 @@ export default function StateProvider(props) {
     async function autoAssign() {
 
         if (!activeItems.count()) return;
-        if (snapshots.contains(store)) {
-            // toggleShowPaths()
-            // if (mapEditMode.on)
-            //     setMapEditMode({ on: false, id: null, tool: null });
-            return;
-        }
+        // if (snapshots.contains(store)) return;
 
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
 
@@ -77,7 +72,7 @@ export default function StateProvider(props) {
         const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         setPaths(paths);
-
+        console.log(paths)
         solutions.set(snapshotId, solution)
 
         // dispatch({ type: 'add-snapshot', id: snapshotId });
@@ -85,6 +80,15 @@ export default function StateProvider(props) {
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
+        if (!showPaths) toggleShowPaths();
+        setBusy(false);
+    }
+
+    async function recalcRoute(driver) {
+        setBusy(true);
+        const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
+        paths.set(driver, solution.routes[0].geometry);
+        setPaths(new Map(paths));
         if (!showPaths) toggleShowPaths();
         setBusy(false);
     }
@@ -101,7 +105,12 @@ export default function StateProvider(props) {
     }
 
     function reassignItem(id, driver) {
+        const fromDriver = store.get(id).Driver;
         dispatch({ type: 'assign', ids: [id], driver })
+        recalcRoute(fromDriver);
+        recalcRoute(driver);
+        console.log(fromDriver)
+
     }
 
     function Drop(transferredData, target, e) {
@@ -138,7 +147,8 @@ export default function StateProvider(props) {
 
     function MarkerClick(id) {
         if (mapEditMode.id) {
-            dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
+            reassignItem(id, mapEditMode.id);
+            // dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
             return;
         }
         setSelectedMarkerId(id)
@@ -156,8 +166,13 @@ export default function StateProvider(props) {
 
     function SelectionComplete(e) {
         console.log(e.bounds);
-        const ids = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('OrderId').all();
-        dispatch({ type: 'assign', ids, driver: mapEditMode.id })
+        const selected = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('Driver', 'OrderId');
+        const ids = selected.keys().all();
+        const drivers = new Set(selected.values().unique().all());
+        drivers.add(mapEditMode.id);
+        console.log(ids, drivers);
+        dispatch({ type: 'assign', ids, driver: mapEditMode.id });
+        [...drivers].forEach(recalcRoute);
     }
 
     function SelectionChange(ids) {
