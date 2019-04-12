@@ -8,8 +8,8 @@ import { Bounds } from './utils'
 export default function Route({ id, path, color, fitBounds = true, ...eventProps }) {
     const mapContext = useContext(GoogleMapContext);
     const { map } = mapContext.state;
-    const points = useMemo(() => google.maps.geometry.encoding.decodePath(path)
-        .map(point => point.toJSON()), [path]);
+    const points = useMemo(() => !window.google ? [] :
+        google.maps.geometry.encoding.decodePath(path).map(point => point.toJSON()), [path]);
     return <React.Fragment>
         <RoutePolyline
             id={`${id}.polyline`}

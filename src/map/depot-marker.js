@@ -2,7 +2,7 @@ import React from 'react'
 import { Marker } from "@googlemap-react/core";
 import { LatLng } from './utils';
 
-export default function DepoMarker({ id, position, color, cursor, ...eventProps }) {
+export default function DepotMarker({ id, position, color, cursor, ...eventProps }) {
     return <Marker
         key={id}
         id={id}
