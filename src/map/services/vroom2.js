@@ -20,9 +20,7 @@ async function fetchSolution(payload) {
         },
         body: JSON.stringify(payload)
     });
-    const json = response.json();
-    console.log(json);
-    return json;
+    return response.json();
 }
 
 
