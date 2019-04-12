@@ -65,7 +65,7 @@ export default function StateProvider(props) {
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
 
         setBusy(true);
-        setMapEditMode({ on: false, id: null, tool: null });
+        // setMapEditMode({ on: false, id: null, tool: null });
 
         const snapshotId = Date.now();
 
