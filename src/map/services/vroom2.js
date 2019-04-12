@@ -11,7 +11,7 @@ const depot = [145.005252, -37.688797];
 
 // const totalDuration = shiftDurations.reduce((a, b) => a + b, 0)
 
-async function doFetch(payload) {
+async function fetchSolution(payload) {
     const response = await fetch(`http://localhost:3000/`, {
         method: 'POST',
         headers: {
@@ -82,7 +82,7 @@ export default async function vroom(items = [], drivers = []) {
 
     const options = { "g": true }; //returns route geometry
 
-    const solution = await doFetch({ vehicles, jobs, options });
+    const solution = await fetchSolution({ vehicles, jobs, options });
 
     const newItems = mapSolutionToItems(solution, items, drivers);
 
