@@ -1,6 +1,6 @@
 import React from 'react'
 import GoogleMap from './map'
-import DepotMarker from './job-markers';
+import DepotMarker from './depot-marker';
 import JobMarkers from './job-markers';
 import { InfoWindow } from '@googlemap-react/core';
 import MarkerInfoWindowContent from './marker-infowindow-content';
