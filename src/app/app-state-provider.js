@@ -11,6 +11,7 @@ import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
 import useDict from '../hooks/useDict';
 import useJsonDict from '../hooks/useJsonDict';
+import useToggle from '../hooks/useToggle';
 
 export default function StateProvider(props) {
 
@@ -21,6 +22,7 @@ export default function StateProvider(props) {
     const [selectedDrivers, setSelectedDrivers] = useState([]);
     const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
     const [quickChange, setQuickChange] = useState();
+    const [showPaths, toggleShowPaths] = useToggle(true);
     const [filter, setFilter] = useState('');
     const [groupBy, setGroupBy] = useState('PostalCode,City');
     // const [suburb, setSuburb] = useState('');
@@ -58,6 +60,12 @@ export default function StateProvider(props) {
     async function autoAssign() {
 
         if (!activeItems.count()) return;
+        if (snapshots.contains(store)) {
+            // toggleShowPaths()
+            // if (mapEditMode.on)
+            //     setMapEditMode({ on: false, id: null, tool: null });
+            return;
+        }
 
         const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
 
@@ -77,7 +85,7 @@ export default function StateProvider(props) {
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
-
+        if (!showPaths) toggleShowPaths();
         setBusy(false);
     }
 
@@ -162,8 +170,9 @@ export default function StateProvider(props) {
     }
 
     function EditModeClick() {
-        setPaths(new Map())
-        setMapEditMode({ on: true })
+        // setPaths(new Map())
+        toggleShowPaths();
+        // setMapEditMode({ on: true });
     }
 
     function MapRightClick() {
@@ -194,6 +203,7 @@ export default function StateProvider(props) {
         selectedItem,
         toast,
         toasts,
+        showPaths
     };
 
     const actions = {

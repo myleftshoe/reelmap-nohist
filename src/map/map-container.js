@@ -48,29 +48,29 @@ function MapContainer({ state, dispatch }) {
             </InfoWindow>
         }
         {/* <ContouredPolygon
-  id='polygon'
-  points={polygonPoints}
-/> */}
-        <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassign-route')} />
+            id='polygon'
+            points={polygonPoints}
+        /> */}
+        {state.showPaths && <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassign-route')} />}
         {/* <SuburbBoundary suburb={suburb} /> */}
-        {state.mapEditMode.on &&
-            <CustomControlBar small>
-                <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
-                    {drivers.map(driver =>
-                        <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
-                    )}
-                </CustomControlBar.Select>
-                <RegionSelectControl
-                    id='regionSelectTool'
-                    title='Region select tool'
-                    hidden
-                    active={state.mapEditMode.tool === 'rectangle'}
-                    onSelectionComplete={dispatch('selection-complete')}
-                    clearOnComplete
-                    color={colors[state.mapEditMode.id]}
-                />
-            </CustomControlBar>
-        }
+        <CustomControlBar small>
+            <CustomControlBar.TextButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>Calculate!</CustomControlBar.TextButton>
+            <CustomControlBar.IconButton onClick={dispatch('editmode-click')}>{state.showPaths ? 'scatter_plot' : 'timeline'}</CustomControlBar.IconButton>
+            <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
+                {drivers.map(driver =>
+                    <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
+                )}
+            </CustomControlBar.Select>
+            <RegionSelectControl
+                id='regionSelectTool'
+                title='Region select tool'
+                hidden
+                active={state.mapEditMode.tool === 'rectangle'}
+                onSelectionComplete={dispatch('selection-complete')}
+                clearOnComplete
+                color={colors[state.mapEditMode.id]}
+            />
+        </CustomControlBar>
     </GoogleMap>
     )
 }

@@ -22,6 +22,10 @@ function useJsonDict(init) {
             dict.current.clear();
         },
 
+        contains(value) {
+            return ([...dict.current.values()].includes(JSON.stringify([...value])))
+        }
+
     }
 
     return actions
