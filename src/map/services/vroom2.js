@@ -20,50 +20,35 @@ async function doFetch(payload) {
         },
         body: JSON.stringify(payload)
     });
-    // console.log(response.json());
-    return response.json();
+    const json = response.json();
+    console.log(json);
+    return json;
 }
 
-export default async function vroom(items = [], drivers = []) {
 
-    if (!items.length) return { paths: [], items };
+const mapItemsToJobs = (items, drivers) => items.map(item => ({
+    id: parseInt(item.OrderId, 10),
+    location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude],
+    // amount: [1],
+    skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0],
+    service: 120 //2 mins
+}));
 
-    const itemsMap = new Map([...items.map(item => [item.OrderId, item])]);
-    // const items = [...itemsMap.values()];
-    // const depot = [145.005252, -37.688797];
-    // const drivers = ['CHA'];
+const mapDriversToVehicles = (drivers) => drivers.map((driver, index) => {
+    // console.log(driver, shiftDurations[index], Math.ceil(capacityFactor * shiftDurations[index]))
+    return {
+        "id": index,
+        "start": depot,
+        "end": depot,
+        // "time_window": [36000, 48000],
+        "time_window": [36000, 61200],
+        // capacity: [Math.ceil(capacityFactor * shiftDurations[index]) + 2],
+        skills: [0, index + 1]
+    }
+});
 
-    const jobs = items.map(item => ({
-        id: parseInt(item.OrderId, 10),
-        location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude],
-        // amount: [1],
-        skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0],
-        service: 120 //2 mins
-    }));
-
-    // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
-
-    // const totalJobs = items.length;
-    // const _totalDuration = (drivers.length === 1) ? 1 : totalDuration;
-    // const capacityFactor = totalJobs / _totalDuration;
-    // console.log(capacityFactor)
-    const vehicles = drivers.map((driver, index) => {
-        // console.log(driver, shiftDurations[index], Math.ceil(capacityFactor * shiftDurations[index]))
-        return {
-            "id": index,
-            "start": depot,
-            "end": depot,
-            // "time_window": [36000, 48000],
-            "time_window": [36000, 61200],
-            // capacity: [Math.ceil(capacityFactor * shiftDurations[index]) + 2],
-            skills: [0, index + 1]
-        }
-    });
-
-    const options = { "g": true }; //returns route geometry
-
-    const solution = await doFetch({ vehicles, jobs, options });
-    console.log(solution)
+const mapSolutionToItems = (solution, items, drivers) => {
+    const itemsMap = new Map(items.map(item => [item.OrderId, item]));
     const newItems = [];
     solution.routes.forEach(route => {
         const steps = route.steps.filter(s => s.type === "job");
@@ -75,6 +60,31 @@ export default async function vroom(items = [], drivers = []) {
             newItems.push(item);
         });
     });
+    return newItems;
+}
+
+export default async function vroom(items = [], drivers = []) {
+
+    if (!items.length) return { paths: [], items };
+
+    // const depot = [145.005252, -37.688797];
+    // const drivers = ['CHA'];
+
+    const jobs = mapItemsToJobs(items, drivers);
+
+    // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
+
+    // const totalJobs = items.length;
+    // const _totalDuration = (drivers.length === 1) ? 1 : totalDuration;
+    // const capacityFactor = totalJobs / _totalDuration;
+    // console.log(capacityFactor)
+    const vehicles = mapDriversToVehicles(drivers);
+
+    const options = { "g": true }; //returns route geometry
+
+    const solution = await doFetch({ vehicles, jobs, options });
+
+    const newItems = mapSolutionToItems(solution, items, drivers);
 
     const paths = new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
 
