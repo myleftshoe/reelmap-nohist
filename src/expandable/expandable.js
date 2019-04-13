@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Spring, config, animated } from 'react-spring'
 import usePrevious from '../hooks/usePrevious';
-import { hidden } from 'ansi-colors';
 
 // export function usePrevious(value) {
 //   const ref = useRef()
