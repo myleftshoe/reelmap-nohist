@@ -27,8 +27,7 @@ function Expandable(props) {
     setExpanded(false);
 
   function handleClick() {
-    setExpanded(!expanded);
-    props.onClick && props.onClick();
+    props.onClick ? props.onClick() : setExpanded(!expanded);
   }
 
   const springProps = {
