@@ -11,6 +11,33 @@ const depot = [145.005252, -37.688797];
 
 // const totalDuration = shiftDurations.reduce((a, b) => a + b, 0)
 
+export default async function vroom(items = [], drivers = []) {
+
+    if (!items.length) return { paths: [], items };
+
+    // const depot = [145.005252, -37.688797];
+    // const drivers = ['CHA'];
+
+    // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
+    // const totalJobs = items.length;
+    // const _totalDuration = (drivers.length === 1) ? 1 : totalDuration;
+    // const capacityFactor = totalJobs / _totalDuration;
+    // console.log(capacityFactor)
+
+    const jobs = mapItemsToJobs(items, drivers);
+    const vehicles = mapDriversToVehicles(drivers);
+    const options = { "g": true }; //returns route geometry
+
+    const solution = await fetchSolution({ vehicles, jobs, options });
+
+    const newItems = mapSolutionToItems(solution, items, drivers);
+    const paths = mapRoutesToPaths(solution, drivers);
+
+    return { paths, items: newItems, solution };
+    // return new Items(newItems);
+}
+
+
 async function fetchSolution(payload) {
     const response = await fetch(`http://localhost:3000/`, {
         method: 'POST',
@@ -61,31 +88,6 @@ const mapSolutionToItems = (solution, items, drivers) => {
     return newItems;
 }
 
-export default async function vroom(items = [], drivers = []) {
-
-    if (!items.length) return { paths: [], items };
-
-    // const depot = [145.005252, -37.688797];
-    // const drivers = ['CHA'];
-
-    const jobs = mapItemsToJobs(items, drivers);
-
-    // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
-
-    // const totalJobs = items.length;
-    // const _totalDuration = (drivers.length === 1) ? 1 : totalDuration;
-    // const capacityFactor = totalJobs / _totalDuration;
-    // console.log(capacityFactor)
-    const vehicles = mapDriversToVehicles(drivers);
-
-    const options = { "g": true }; //returns route geometry
-
-    const solution = await fetchSolution({ vehicles, jobs, options });
-
-    const newItems = mapSolutionToItems(solution, items, drivers);
-
-    const paths = new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
-
-    return { paths, items: newItems, solution };
-    // return new Items(newItems);
+function mapRoutesToPaths(solution, drivers) {
+    return new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
 }
