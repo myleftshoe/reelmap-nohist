@@ -94,7 +94,7 @@ export default function StateProvider(props) {
         else
             paths.delete(driver);
         setPaths(new Map(paths));
-        if (!showPaths) toggleShowPaths();
+        // if (!showPaths) toggleShowPaths();
         setBusy(false);
     }
 
