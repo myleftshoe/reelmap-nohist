@@ -72,7 +72,6 @@ export default function StateProvider(props) {
         const { paths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         // const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
         setPaths(paths);
-        console.log(paths)
         solutions.set(snapshotId, solution)
 
         // dispatch({ type: 'add-snapshot', id: snapshotId });
