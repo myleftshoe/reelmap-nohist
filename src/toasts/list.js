@@ -10,7 +10,7 @@ import useToggle from '../hooks/useToggle';
 const toast = {};
 
 toast.style = styled.div`
-    background-color: #0003;
+    background-color: ${props => props.selected ? '#6666' : '#0003'};
     margin: 4px 12px 4px 8px;
     padding-bottom: 8px;
 `
@@ -27,14 +27,18 @@ toast.pose = posed(toast.style)({
 const Toast = toast.pose
 
 
-const ToastItem = ({ id, toast, toastActions }) => {
+const ToastItem = ({ id, toast, toastActions, selected, onClick }) => {
     const [expanded, toggleExpanded] = useToggle(false);
-    return <Toast>
+    function handleClick() {
+        toastActions.select(id);
+        onClick && onClick(id);
+    }
+    return <Toast selected={selected}>
         <Minibar>
             <Minibar.Button title='Restore' visible onClick={toggleExpanded}>expand_more</Minibar.Button>
             <Minibar.Button title='Delete' visible onClick={() => toastActions.remove(id)}>clear</Minibar.Button>
         </Minibar>
-        <Expandable key={'totals'} expanded={expanded} content={toast.content} onClick={() => toastActions.select(id)}>
+        <Expandable key={'totals'} expanded={expanded} content={toast.content} onClick={handleClick}>
             {toast.expandedContent.map((ec, index) =>
                 <div key={index} style={{ marginTop: 8 }}>
                     {ec}
@@ -46,11 +50,12 @@ const ToastItem = ({ id, toast, toastActions }) => {
 
 
 export default function ToastList({ onSelect, onDelete }) {
+    const [selectedId, setSelectedId] = useState();
     const [toasts, toastActions] = useStore(store);
     return (
         <PoseGroup>{
             [...toasts.entries()].reverse().map(([key, toast], index) =>
-                <ToastItem key={key} id={key} toast={toast} toastActions={toastActions} />
+                <ToastItem key={key} id={key} toast={toast} toastActions={toastActions} selected={key === selectedId} onClick={setSelectedId} />
             )}
         </PoseGroup>
     )
