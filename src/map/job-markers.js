@@ -5,7 +5,7 @@ import { colors } from '../common/constants';
 const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerClick, onMarkerRightClick, onMarkerMouseOver }) => {
     return items.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
         // if (!GeocodedAddress) return null;
-        const label = showLabel ? Sequence : null;
+        const label = showLabel && (Sequence || null);
         const driver = Driver || 'UNASSIGNED'
         return <JobMarker
             key={id}

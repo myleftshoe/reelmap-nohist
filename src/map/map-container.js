@@ -27,7 +27,7 @@ function MapContainer({ state, dispatch }) {
             items={state.activeItems}
             selectedMarkerId={state.selectedMarkerId}
             cursor={cursor}
-            showLabel={!state.mapEditMode.on}
+            showLabel={true}
             onMarkerClick={dispatch('marker-click')}
             onMarkerRightClick={dispatch('marker-rightclick')}
             onMarkerMouseOver={state.setSelectedMarkerId}
