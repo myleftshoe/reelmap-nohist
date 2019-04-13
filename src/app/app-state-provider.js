@@ -84,13 +84,27 @@ export default function StateProvider(props) {
         setBusy(false);
     }
 
+
+
     async function recalcRoute(driver) {
         setBusy(true);
         const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
-        paths.set(driver, solution.routes[0].geometry);
+        if (solution)
+            paths.set(driver, solution.routes[0].geometry);
+        else
+            paths.delete(driver);
         setPaths(new Map(paths));
         if (!showPaths) toggleShowPaths();
         setBusy(false);
+    }
+
+    function SelectionComplete(e) {
+        const selected = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('Driver', 'OrderId');
+        const ids = selected.keys().all();
+        const drivers = new Set(selected.values().unique().all());
+        drivers.add(mapEditMode.id);
+        dispatch({ type: 'assign', ids, driver: mapEditMode.id });
+        [...drivers].forEach(recalcRoute);
     }
 
     function clearAll() {
@@ -162,17 +176,6 @@ export default function StateProvider(props) {
             return;
         }
         setQuickChange(store.get(id).Sequence);
-    }
-
-    function SelectionComplete(e) {
-        console.log(e.bounds);
-        const selected = activeItems.filter(item => e.bounds.contains(LatLng(item.GeocodedAddress))).pluck('Driver', 'OrderId');
-        const ids = selected.keys().all();
-        const drivers = new Set(selected.values().unique().all());
-        drivers.add(mapEditMode.id);
-        console.log(ids, drivers);
-        dispatch({ type: 'assign', ids, driver: mapEditMode.id });
-        [...drivers].forEach(recalcRoute);
     }
 
     function SelectionChange(ids) {
