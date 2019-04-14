@@ -1,3 +1,5 @@
+import move from "lodash-move";
+
 export default function reducer(state, action) {
 
     console.log('reducing.....', action)
@@ -25,6 +27,16 @@ export default function reducer(state, action) {
         }
         case 'set': {
             state = new Map(action.state);
+            break;
+        }
+        case 'move': {
+            const {items, fromItem, toItem} = action;
+            const fromIndex = items.indexOf(fromItem);
+            const toIndex = items.indexOf(toItem);
+            fromItem.pinned = true;
+            const newItems = move(items, fromIndex, toIndex).map((item, index) => ({...item, Sequence: index+1}));
+            newItems.forEach(item => state.set(item.OrderId, item))
+            console.table(newItems, ['OrderId', 'Sequence', 'pinned', 'Street', 'City']);
             break;
         }
         default: { }

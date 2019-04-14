@@ -135,6 +135,8 @@ export default function StateProvider(props) {
                 const fromItem = store.get(id);
                 const toItem = store.get(e.target.id);
                 if (toItem && toItem.Driver === fromItem.Driver) {
+                    const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
+                    dispatch({ type: 'move', items: driverItems, fromItem, toItem });
                 }
                 else {
                     dispatch({ type: 'assign', ids: selected, driver: target });
