@@ -90,8 +90,9 @@ export default function StateProvider(props) {
     async function recalcRoute(driver) {
         setBusy(true);
 
-        const path = await route(items.where('Driver', driver).sortBy('Sequence').all());
+        const { path } = await route(items.where('Driver', driver).sortBy('Sequence').all());
         paths.set(driver, path);
+        setPaths(new Map(paths));
 
         // const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
         // if (solution)
@@ -200,9 +201,9 @@ export default function StateProvider(props) {
             const next = quickChange + 1;
             store.get(id).Sequence = next;
             setQuickChange(next)
-            const {newItems, path, order} = await route(items.where('Driver', fromItem.Driver).sortBy('Sequence').all());
+            const { newItems, path, order } = await route(items.where('Driver', fromItem.Driver).sortBy('Sequence').all());
             // dispatch({ type: 'move', items: newItems, fromItem, toItem: fromItem });
-            dispatch({type:'reorder', order})
+            dispatch({ type: 'reorder', order })
             paths.set(fromItem.Driver, path);
             return;
         }
