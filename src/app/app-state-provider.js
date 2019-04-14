@@ -5,6 +5,7 @@ import toastStore from '../toasts/store'
 import Filter from '../common/filter'
 import { LatLng } from '../map/utils'
 import vroom from '../map/services/vroom2'
+import route from '../map/services/osrm'
 import collect from 'collect.js';
 import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
@@ -12,6 +13,7 @@ import { SolutionToast } from '../toasts';
 import useDict from '../hooks/useDict';
 import useJsonDict from '../hooks/useJsonDict';
 import useToggle from '../hooks/useToggle';
+import move from 'lodash-move';
 
 export default function StateProvider(props) {
 
@@ -87,13 +89,19 @@ export default function StateProvider(props) {
 
     async function recalcRoute(driver) {
         setBusy(true);
-        const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
-        if (solution)
-            paths.set(driver, solution.routes[0].geometry);
-        else
-            paths.delete(driver);
-        setPaths(new Map(paths));
+
+        const path = await route(items.where('Driver', driver).sortBy('Sequence').all());
+        paths.set(driver, path);
+
+        // const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
+        // if (solution)
+        //     paths.set(driver, solution.routes[0].geometry);
+        // else
+        //     paths.delete(driver);
+        // setPaths(new Map(paths));
+
         // if (!showPaths) toggleShowPaths();
+
         setBusy(false);
     }
 
@@ -142,6 +150,14 @@ export default function StateProvider(props) {
                 if (toItem && toItem.Driver === fromItem.Driver) {
                     const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
                     dispatch({ type: 'move', items: driverItems, fromItem, toItem });
+                    // Alt method to move:
+                    // const order = items.where('Driver', fromItem.Driver).sortBy('Sequence').pluck('OrderId');
+                    // const fromIndex = order.get(id);
+                    // const toIndex = order.get(e.target.id)
+                    // const newOrder = move(order, fromIndex, toIndex);
+                    // console.log(order ,newOrder)
+                    // // const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
+                    // dispatch({ type: 'reorder', order: newOrder });
                 }
                 else {
                     dispatch({ type: 'assign', ids: selected, driver: target });
@@ -174,7 +190,7 @@ export default function StateProvider(props) {
         setSelectedMarkerId(id)
     }
 
-    function MarkerRightClick(id) {
+    async function MarkerRightClick(id) {
         console.log('MarkerRightClick', id, quickChange)
         if (quickChange) {
             const fromItem = store.get(id);
@@ -184,6 +200,10 @@ export default function StateProvider(props) {
             const next = quickChange + 1;
             store.get(id).Sequence = next;
             setQuickChange(next)
+            const {newItems, path, order} = await route(items.where('Driver', fromItem.Driver).sortBy('Sequence').all());
+            // dispatch({ type: 'move', items: newItems, fromItem, toItem: fromItem });
+            dispatch({type:'reorder', order})
+            paths.set(fromItem.Driver, path);
             return;
         }
         setQuickChange(store.get(id).Sequence);

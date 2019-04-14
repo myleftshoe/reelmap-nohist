@@ -44,6 +44,13 @@ export default function reducer(state, action) {
             newItems.forEach(item => state.set(item.OrderId, item));
             break;
         }
+        case 'reorder': {
+            action.order.forEach((id, index) => {
+                const item = state.get(id);
+                state.set(id, {...item, Sequence: index + 1})
+            });
+            break;
+        }
         default: { }
     }
 
