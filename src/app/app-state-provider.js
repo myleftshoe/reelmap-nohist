@@ -175,7 +175,12 @@ export default function StateProvider(props) {
     }
 
     function MarkerRightClick(id) {
+        console.log('MarkerRightClick', id, quickChange)
         if (quickChange) {
+            const fromItem = store.get(id);
+            const driverItems = items.where('Driver', fromItem.Driver).sortBy('Sequence').all();
+            const toItem = driverItems[quickChange];
+            dispatch({ type: 'move', items: driverItems, fromItem, toItem });
             const next = quickChange + 1;
             store.get(id).Sequence = next;
             setQuickChange(next)
@@ -200,6 +205,10 @@ export default function StateProvider(props) {
     }
 
     function MapRightClick() {
+        if (quickChange) {
+            setQuickChange(undefined);
+            return;
+        }
         if (!mapEditMode.id) return;
         const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
         setMapEditMode({ ...mapEditMode, tool })

@@ -11,7 +11,7 @@ import RegionSelectControl from './region-select-control';
 import useCursor from '../hooks/useCursor'
 
 function MapContainer({ state, dispatch }) {
-    const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: '' });
+    const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: state.quickChange || '' });
     console.log(state.activeItems)
     return (<GoogleMap
         onClick={() => state.setSelectedMarkerId(null)}
