@@ -51,7 +51,7 @@ function MapContainer({ state, dispatch }) {
             id='polygon'
             points={polygonPoints}
         /> */}
-        {state.showPaths && <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reassign-route')} />}
+        {state.showPaths && <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reverse-route')} />}
         {/* <SuburbBoundary suburb={suburb} /> */}
         <CustomControlBar small>
             <CustomControlBar.TextButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>Calculate!</CustomControlBar.TextButton>

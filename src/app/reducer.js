@@ -39,6 +39,11 @@ export default function reducer(state, action) {
             console.table(newItems, ['OrderId', 'Sequence', 'pinned', 'Street', 'City']);
             break;
         }
+        case 'reverse': {
+            const newItems = [...action.items].reverse().map((item, index) => ({...item, Sequence: index+1}));
+            newItems.forEach(item => state.set(item.OrderId, item));
+            break;
+        }
         default: { }
     }
 

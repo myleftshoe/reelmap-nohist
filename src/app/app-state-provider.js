@@ -117,13 +117,18 @@ export default function StateProvider(props) {
         setPaths(mapMove(paths, to, from));
     }
 
+    function reverseRoute(driver) {
+        const driverItems = items.where('Driver', driver).sortBy('Sequence').all();
+        dispatch({ type: 'reverse', items: driverItems })
+        // setPaths(mapMove(paths, to, from));
+    }
+
     function reassignItem(id, driver) {
         const fromDriver = store.get(id).Driver;
         dispatch({ type: 'assign', ids: [id], driver })
         recalcRoute(fromDriver);
         recalcRoute(driver);
         console.log(fromDriver)
-
     }
 
     function Drop(transferredData, target, e) {
@@ -230,6 +235,7 @@ export default function StateProvider(props) {
         'clear-all': clearAll,
         'reassign-item': reassignItem,
         'reassign-route': reassignRoute,
+        'reverse-route': reverseRoute,
         'drop': Drop,
         'marker-click': MarkerClick,
         'marker-rightclick': MarkerRightClick,
