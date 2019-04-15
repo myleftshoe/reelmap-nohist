@@ -6,11 +6,13 @@ import { GoogleMapContext } from '@googlemap-react/core'
 import { Bounds } from './utils'
 
 export default function Route({ id, path, color, fitBounds = true, ...eventProps }) {
+    if (!window.google) return null;
     const mapContext = useContext(GoogleMapContext);
     const { map } = mapContext.state;
-    const points = useMemo(() => !window.google ? [] :
-        google.maps.geometry.encoding.decodePath(path).map(point => point.toJSON()), [path]);
-    return <React.Fragment>
+    const points = useMemo(() => google.maps.geometry.encoding.decodePath(path), [path]);
+    const area = google.maps.geometry.spherical.computeArea(points);
+    const zIndex = -Math.trunc(area / 1000);
+    return <>
         <RoutePolyline
             id={`${id}.polyline`}
             path={points}
@@ -23,6 +25,7 @@ export default function Route({ id, path, color, fitBounds = true, ...eventProps
             {...eventProps}
             onClick={fitBounds ? () => map.fitBounds(Bounds.from(points)) : eventProps.onClick}
             onRightClick={eventProps.onRightClick}
+            zIndex={zIndex}
         />
-    </React.Fragment>
+    </>
 }
