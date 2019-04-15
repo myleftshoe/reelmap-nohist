@@ -26,7 +26,7 @@ export default function reducer(state, action) {
             break;
         }
         case 'set': {
-            state = new Map(action.state);
+            // state = new Map(action.state);
             break;
         }
         case 'move': {
