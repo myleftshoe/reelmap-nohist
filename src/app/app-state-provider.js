@@ -257,7 +257,8 @@ export default function StateProvider(props) {
         selectedItem,
         toast,
         toasts,
-        showPaths
+        showPaths,
+        items
     };
 
     const actions = {

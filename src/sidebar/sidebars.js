@@ -12,7 +12,7 @@ function Sidebars({ state, dispatch }) {
     let sidebar;
     switch (activeSidebar) {
         case 'timeline': {
-            sidebar = <Timeline />
+            sidebar = <Timeline state={state} dispath={dispatch} />
             break;
         }
         case 'history': {
