@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled';
-import formattedDuration from '../utils/formatted-duration';
+import Duration from '../utils/duration';
 
 const SolutionContainer = styled.div`
     display:flex;
@@ -16,9 +16,9 @@ export default function Solution({ duration, distance, service, onButtonClick })
         onButtonClick();
     }
     return <SolutionContainer>
-        <div>Duration: {formattedDuration(duration + service)}</div>
-        <div>Travel time: {formattedDuration(duration)}</div>
-        <div>Service time: {formattedDuration(service)}</div>
+        <div>Duration: {Duration(duration + service).format()}</div>
+        <div>Travel time: {Duration(duration).format()}</div>
+        <div>Service time: {Duration(service).format()}</div>
         <div>Distance: {Math.round(distance / 1000)} kms</div>
         {/* <button onClick={handleClick}>Use</button> */}
     </SolutionContainer>
