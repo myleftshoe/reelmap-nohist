@@ -5,6 +5,7 @@ import Panes from '../panes/panes';
 import Group from '../group/group';
 import { panes } from '../common/constants';
 import groupBy2 from '../utils/groupby2';
+import collect from 'collect.js';
 
 export default function DriverSidebar(props) {
     const { state, dispatch } = props;
@@ -26,7 +27,13 @@ export default function DriverSidebar(props) {
             // onOpenInNew={openInNew}
             >
                 {items => {
-                    const groupedItems = groupBy2(items, state.groupBy);
+                    const groupedItems = state.groupBy !== 'arrival'
+                        ? groupBy2(items, state.groupBy)
+                        : collect(items).sortBy('arrival').groupBy((item, key) =>
+                            Math.trunc(item.arrival / 3600)
+                        ).all()
+                    console.log(groupedItems)
+
                     const groupKeys = Object.keys(groupedItems);
                     return groupKeys.map(groupKey =>
                         <Group

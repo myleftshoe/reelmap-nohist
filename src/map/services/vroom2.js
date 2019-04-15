@@ -78,10 +78,11 @@ const mapSolutionToItems = (solution, items, drivers) => {
     solution.routes.forEach(route => {
         const steps = route.steps.filter(s => s.type === "job");
         // console.log(steps);
-        steps.forEach((s, i) => {
-            const item = itemsMap.get(`${s.job}`);
+        steps.forEach((step, i) => {
+            const item = itemsMap.get(`${step.job}`);
             item.Driver = drivers[route.vehicle];
             item.Sequence = i + 1;
+            item.arrival = step.arrival;
             newItems.push(item);
         });
     });
