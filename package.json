@@ -21,7 +21,8 @@
     "react-split-pane": "^0.1.85",
     "react-spring": "^5.9.2",
     "react-tippy": "^1.2.3",
-    "react-toastify": "^5.0.0-rc.6"
+    "react-toastify": "^5.0.0-rc.6",
+    "sort-by": "^1.2.0"
   },
   "main": "src/main.js",
   "scripts": {

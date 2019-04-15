@@ -3,7 +3,7 @@ export default function Duration(seconds) {
         format(fmt = '{hh}:{mm}') {
             const m = seconds / 3600;
             const hh = Math.floor(m).toString();
-            const mm = Math.round((m % 1) * 60).toString();
+            const mm = Math.floor((m % 1) * 60).toString();
             return fmt.replace('{hh}', hh).replace('{mm}', mm.padStart(2, '0'));
         }
     }
