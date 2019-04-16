@@ -1,52 +1,7 @@
 import React from 'react'
-import styled from '@emotion/styled';
 import Duration from '../utils/duration';
+import { Container, Row, Number, Time, Primary, Secondary, Notes } from './grouped-by-driver-sc';
 
-
-const padding = 'padding: 0px 6px;'
-
-const Container = styled.div`
-    user-select: none;
-`
-
-const Row = styled.div`
-    display: flex;
-    padding: 4px 0px;
-    font-size: 0.7rem;
-    color: #fff7;
-    :hover {background-color: #fff3};
-`
-
-const Primary = styled.div`
-    ${padding};
-    flex: 0 0 100px;
-    text-align: right;
-    visibility: ${props => !props.visible && 'hidden'};
-`
-
-const Secondary = styled.div`
-    ${padding};
-    flex: 0 0 200px;
-    margin-left: 12px;
-`
-
-const Number = styled.div`
-    ${padding};
-    flex: 0 0 4ch;
-    text-align:right;
-`
-
-const Time = styled.div`
-    ${padding};
-    flex: 0 0 6ch;
-    text-align:right;
-`
-
-
-const Notes = styled.div`
-    ${padding};
-    flex: 1 0 420px;
-`
 
 export default function GroupedByDriver({ items, sortBy }) {
 
