@@ -17,7 +17,7 @@ const Row = styled.div`
 const Primary = styled.div`
     ${padding};
     flex: 0 0 100px;
-    text-align: right;
+    text-align: left;
     visibility: ${props => !props.visible && 'hidden'};
 `
 
