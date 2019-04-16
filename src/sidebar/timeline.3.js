@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import styled from '@emotion/styled';
 import Duration from '../utils/duration';
 import { Time, Primary, Row, Secondary } from './grouped-by-driver-sc';
+import clamp from 'lodash.clamp';
+
 
 const Container = styled.div`
     display: grid;
@@ -31,13 +33,16 @@ const ItemContainer = styled.div`
 
 const Item = styled.div`
     grid-column:2;
-    ${props => props.height && `height: ${props.height}px`}
-    /* height: ${props => props.height}px; */
+    height: ${props => props.height}px;
     /* background-color:red; */
     /* align-content: center; */
+
 `
 
+
 export default function Timeline({ state, dispatch }) {
+
+    const [multiplier, setMultiplier] = useState(0.5);
 
     let prevHour;
     let row = 0;
@@ -56,20 +61,31 @@ export default function Timeline({ state, dispatch }) {
         return ret;
     }
 
+
+    function handleWheel(e) {
+        if (!e.shiftKey) return;
+        const newValue = clamp((multiplier * 100 + e.deltaY / 10) / 100, 0.5, 5);
+        console.log(newValue)
+        setMultiplier(newValue);
+    }
+
+
     const items = state.items;
     const driverItems = items.where('Driver', 'SAM1').sortBy('arrival').all();
 
     let hour;
     let prevCity;
     return (
-        <Container>
+        <Container onWheel={handleWheel}>
             {driverItems.map((item, index) => {
-                hour = Duration(item.arrival).hour;
+                const arrival = Duration(item.arrival);
+                hour = arrival.hour;
                 const nextItem = driverItems[index + 1] || {};
+                const nextArrival = Duration(nextItem.arrival);
                 const height = (nextItem.arrival - item.arrival) / 5;
                 console.log(height)
                 const ret = <>
-                    <Item height={height}>
+                    <Item height={height * multiplier}>
                         <Row>
                             <Time>{Duration(item.arrival).format('{mm}')}</Time>
                             <Primary visible={item.City !== prevCity}>{item.City}</Primary>

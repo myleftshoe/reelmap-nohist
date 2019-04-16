@@ -31,10 +31,10 @@ const ItemContainer = styled.div`
 
 const Item = styled.div`
     grid-column:2;
-    ${props => props.height && `height: ${props.height}px`}
-    /* height: ${props => props.height}px; */
+    height: ${props => props.height}px;
     /* background-color:red; */
     /* align-content: center; */
+
 `
 
 export default function Timeline({ state, dispatch }) {
@@ -64,8 +64,10 @@ export default function Timeline({ state, dispatch }) {
     return (
         <Container>
             {driverItems.map((item, index) => {
-                hour = Duration(item.arrival).hour;
+                const arrival = Duration(item.arrival);
+                hour = arrival.hour;
                 const nextItem = driverItems[index + 1] || {};
+                const nextArrival = Duration(nextItem.arrival);
                 const height = (nextItem.arrival - item.arrival) / 5;
                 console.log(height)
                 const ret = <>

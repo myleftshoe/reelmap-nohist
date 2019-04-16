@@ -6,7 +6,8 @@ export default function Duration(seconds) {
             const mm = Math.floor((m % 1) * 60);
             if (!hh || !mm) return '-';
             return fmt.replace('{hh}', hh).replace('{mm}', mm.toString().padStart(2, '0'));
-        }
+        },
+        get hour() { return Math.trunc(seconds / 3600) }
     }
 }
 
