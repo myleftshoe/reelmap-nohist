@@ -7,27 +7,22 @@ export default function GroupedByDriver({ items, sortBy }) {
 
     console.log(sortBy)
     const views = {
-        City: ['primary', 'secondary', 'sequence', 'arrival', 'orderId', 'notes'],
-        Sequence: ['sequence', 'arrival', 'primary', 'secondary', 'orderId', 'notes'],
-        OrderId: ['orderId', 'secondary', 'primary', 'sequence', 'arrival', 'notes'],
+        City: ['city', 'street', 'sequence', 'arrival', 'orderId', 'notes'],
+        Sequence: ['sequence', 'arrival', 'city', 'street', 'orderId', 'notes'],
+        OrderId: ['orderId', 'city', 'street', 'sequence', 'arrival', 'notes'],
     }
 
-    const componentOrder = views[sortBy] || ['sequence', 'arrival', 'primary', 'secondary', 'orderId', 'notes'];
+    const componentOrder = views[sortBy] || ['sequence', 'arrival', 'city', 'secondary', 'orderId', 'notes'];
 
-    let primary = sortBy;
-    if (['OrderId', 'Sequence'].includes(primary))
-        primary = 'City'
-
-    let prev;
-
+    let prevCity;
 
     return <Container>
         {items.map((item, index) => {
             const components = {
-                sequence: <Number key='sequence'>{item.Sequence}</Number>,
+                sequence: <Number key='sequence'>{item.Sequence || '-'}</Number>,
                 arrival: <Time key='arrival'>{Duration(item.arrival).format()}</Time>,
-                primary: <Primary key='primary' id={item[primary]} type={primary} draggable title={item.PostalCode} visible={item[primary] !== prev}>{item[primary]}</Primary>,
-                secondary: <Secondary key='secondary' id={item.OrderId} type='item' draggable>{item.Street}</Secondary>,
+                city: <Primary key='city' id={item.City} type='City' draggable title={item.PostalCode} visible={item.City !== prevCity}>{item.City}</Primary>,
+                street: <Secondary key='secondary' id={item.OrderId} type='item' draggable>{item.Street}</Secondary>,
                 orderId: <Number key='orderid'>{'#' + item.OrderId}</Number>,
                 notes: <Notes key='notes'>{item.DeliveryNotes}</Notes>
             }
@@ -36,7 +31,7 @@ export default function GroupedByDriver({ items, sortBy }) {
                     {componentOrder.map(component => components[component])}
                 </Row>
             );
-            prev = item[primary];
+            prevCity = item.City;
             return row;
         })
         }

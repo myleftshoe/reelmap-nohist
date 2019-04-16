@@ -2,9 +2,10 @@ export default function Duration(seconds) {
     return {
         format(fmt = '{hh}:{mm}') {
             const m = seconds / 3600;
-            const hh = Math.floor(m).toString();
-            const mm = Math.floor((m % 1) * 60).toString();
-            return fmt.replace('{hh}', hh).replace('{mm}', mm.padStart(2, '0'));
+            const hh = Math.floor(m);
+            const mm = Math.floor((m % 1) * 60);
+            if (!hh || !mm) return '-';
+            return fmt.replace('{hh}', hh).replace('{mm}', mm.toString().padStart(2, '0'));
         }
     }
 }

@@ -4,7 +4,7 @@ export const badgeBase = `
     min-width:1ch;
     padding-left: .8ch;
     padding-right: .8ch;
-    // padding-bottom: 1px;
+    padding-bottom: 1px;
     border-radius: .64rem;
     font-size: .64rem;
     font-weight:500;
