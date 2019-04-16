@@ -24,7 +24,7 @@ export default function DriverSidebar(props) {
                 onMaximizeEnd={dispatch('maximize-end')}
             // onOpenInNew={openInNew}
             >
-                {items => <GroupedByDriver items={items} sortBy={state.sortBy} />}
+                {items => <GroupedByDriver items={items} sortBy={state.sortBy} searchFilter={state.filter} />}
             </Panes>
         </>
     )

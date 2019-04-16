@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const padding = 'padding: 0px 6px;'
+const padding = 'padding: 4px 6px;'
 
 const Container = styled.div`
     user-select: none;
@@ -8,12 +8,10 @@ const Container = styled.div`
 
 const Row = styled.div`
     display: flex;
-    padding: 4px 0px;
     font-size: 0.7rem;
     color: #fff7;
     :hover {background-color: #fff3};
 `
-
 const Primary = styled.div`
     ${padding};
     flex: 0 0 100px;
