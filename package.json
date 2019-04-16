@@ -9,6 +9,7 @@
     "collect.js": "^4.6.5",
     "hull.js": "^0.2.10",
     "lodash-move": "^1.1.1",
+    "lodash.clamp": "^4.0.3",
     "outstated": "^2.0.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",

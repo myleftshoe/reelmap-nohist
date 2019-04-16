@@ -83,6 +83,7 @@ const mapSolutionToItems = (solution, items, drivers) => {
             item.Driver = drivers[route.vehicle];
             item.Sequence = i + 1;
             item.arrival = step.arrival;
+            item.duration = step.duration;
             newItems.push(item);
         });
     });

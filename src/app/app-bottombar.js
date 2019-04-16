@@ -5,7 +5,7 @@ import { useToast } from '../toasts'
 import Sidebars from '../sidebar/sidebars';
 import MapContainer from '../map/map-container';
 import TextButton from '../common/text-button';
-import TimelineHoriz from '../sidebar/timeline-horiz'
+
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 function App({ state, dispatch }) {
@@ -14,8 +14,10 @@ function App({ state, dispatch }) {
   useToast(state.toast);
 
   return <div style={{ display: 'flex', flexDirection: 'column' }}>
-    <div style={{ height: '200px', width: 'calc(100vw - 50px)', backgroundColor: '#2c2c2f', position: 'absolute', bottom: '0px', left: '50px', zIndex: 100, overflowX: 'auto' }}>
-      <TimelineHoriz state={state} dispatch={dispatch} />
+    <div style={{ flex: '0 0 40px', width: '100vw', backgroundColor: '#2c2c2f', display: 'flex', flexDiretion: 'row', justifyContent: 'space-evenly' }}>
+      <TextButton color='white'>Assign</TextButton>
+      <div style={{ flex: '0 0 1px', backgroundColor: '#fff3' }} />
+      <TextButton color='white'>Plan</TextButton>
     </div>
     <div>
       <Resizable split='vertical' {...resizableProps}>
