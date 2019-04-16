@@ -15,8 +15,6 @@ const Container = styled.div`
 const Hour = styled.div`
     background-color: #fff3;
     padding: 2px 12px;
-    /* height:1px; */
-    /* background-color:white; */
 `
 
 const DurationDiv = styled.div`
