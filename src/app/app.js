@@ -4,8 +4,8 @@ import { resizableProps } from '../common/constants'
 import { useToast } from '../toasts'
 import Sidebars from '../sidebar/sidebars';
 import MapContainer from '../map/map-container';
-import TextButton from '../common/text-button';
 import TimelineHoriz from '../sidebar/timeline-horiz'
+
 const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 function App({ state, dispatch }) {
@@ -14,7 +14,7 @@ function App({ state, dispatch }) {
   useToast(state.toast);
 
   return <div style={{ display: 'flex', flexDirection: 'column' }}>
-    <div style={{ height: '200px', width: 'calc(100vw - 50px)', backgroundColor: '#2c2c2f', position: 'absolute', bottom: '0px', left: '50px', zIndex: 100, overflowX: 'auto' }}>
+    <div style={{ height: '0px', width: 'calc(100vw - 50px)', backgroundColor: '#2c2c2f', position: 'absolute', bottom: '0px', left: '50px', zIndex: 100, overflowX: 'auto' }}>
       <TimelineHoriz state={state} dispatch={dispatch} />
     </div>
     <div>

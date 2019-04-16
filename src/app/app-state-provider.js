@@ -26,7 +26,7 @@ export default function StateProvider(props) {
     const [quickChange, setQuickChange] = useState();
     const [showPaths, toggleShowPaths] = useToggle(true);
     const [filter, setFilter] = useState('');
-    const [groupBy, setGroupBy] = useState('PostalCode,City');
+    const [sortBy, setSortBy] = useState('City');
     // const [suburb, setSuburb] = useState('');
     const [paths, setPaths] = useState(new Map());
     const [busy, setBusy] = useState(false);
@@ -41,7 +41,12 @@ export default function StateProvider(props) {
 
     console.log(solutions)
 
-    const items = collect([...store.values()]).sortBy(groupBy.split(',')[0]);
+    const coerce = property => item => {
+        const value = item[property];
+        return Number(value) || value;
+    }
+
+    const items = collect([...store.values()]).sortBy(coerce(sortBy));
 
     const filteredItems = useMemo(() => collect(Filter.apply(items.all(), ['OrderId', 'Street', 'PostalCode', 'City', 'DeliveryNotes'])), [items]);
     const isFiltered = Boolean(filter && filteredItems.count())
@@ -244,7 +249,7 @@ export default function StateProvider(props) {
 
     const state = {
         filter, setFilter,
-        groupBy, setGroupBy,
+        sortBy, setSortBy,
         mapEditMode, //setMapEditMode,
         quickChange, //setQuickChange,
         selectedMarkerId, setSelectedMarkerId,

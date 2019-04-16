@@ -2,10 +2,8 @@ import React from 'react'
 import Minibar from '../common/minibar';
 import Filter from '../common/filter';
 import Panes from '../panes/panes';
-import Group from '../group/group';
 import { panes } from '../common/constants';
-import groupBy2 from '../utils/groupby2';
-import collect from 'collect.js';
+import GroupedByDriver from './grouped-by-driver';
 
 export default function DriverSidebar(props) {
     const { state, dispatch } = props;
@@ -26,32 +24,7 @@ export default function DriverSidebar(props) {
                 onMaximizeEnd={dispatch('maximize-end')}
             // onOpenInNew={openInNew}
             >
-                {items => {
-                    const groupedItems = state.groupBy !== 'arrival'
-                        ? groupBy2(items, state.groupBy)
-                        : collect(items).sortBy('arrival').groupBy((item, key) =>
-                            Math.trunc(item.arrival / 3600)
-                        ).all()
-                    console.log(groupedItems)
-
-                    const groupKeys = Object.keys(groupedItems);
-                    return groupKeys.map(groupKey =>
-                        <Group
-                            key={groupKey}
-                            id={groupKey.split(',')[0]}
-                            type={state.groupBy.split(',')[0]}
-                            items={groupedItems[groupKey]}
-                            content={groupKey}
-                            // onHeaderClick={dispatch('GroupHeaderClick')}
-                            onItemClick={state.setSelectedMarkerId}
-                            activeItemId={state.selectedMarkerId}
-                            flatten={groupKey === 'undefined'}
-                            count={groupedItems[groupKey].length}
-                            expanded={state.isFiltered}
-                            filter={state.filter}
-                        />
-                    )
-                }}
+                {items => <GroupedByDriver items={items} sortBy={state.sortBy} />}
             </Panes>
         </>
     )
