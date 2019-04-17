@@ -10,7 +10,7 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
     console.log(sortBy)
     const views = {
         City: ['city', 'street', 'sequence', 'arrival', 'orderId', 'notes'],
-        Sequence: ['arrival', 'sequence','city', 'street', 'orderId', 'notes'],
+        Sequence: ['arrival', 'sequence', 'city', 'street', 'orderId', 'notes'],
         OrderId: ['orderId', 'city', 'street', 'sequence', 'arrival', 'notes'],
     }
 
@@ -47,6 +47,10 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
 
     }
 
+    const searchable = value =>
+        <SearchHighlight search={searchFilter}>
+            {value}
+        </SearchHighlight>
 
     const componentOrder = views[sortBy] || ['sequence', 'arrival', 'city', 'secondary', 'orderId', 'notes'];
 
@@ -64,30 +68,22 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
                     ),
                     city: (
                         <Primary key='city' id={item.City} type='City' draggable onDragStart={handleDragStart} title={item.PostalCode} visible={item.City !== prevCity}>
-                            <SearchHighlight search={searchFilter}>
-                                {item.City}
-                            </SearchHighlight>
+                            {searchable(item.City)}
                         </Primary>
                     ),
                     street: (
                         <Secondary key='secondary' id={item.OrderId} type='item' draggable onDragStart={handleDragStart}>
-                            <SearchHighlight search={searchFilter}>
-                                {item.Street}
-                            </SearchHighlight>
+                            {searchable(item.Street)}
                         </Secondary>
                     ),
                     orderId: (
                         <Number key='orderid'>
-                            <SearchHighlight search={searchFilter}>
-                                {'#' + item.OrderId}
-                            </SearchHighlight>
+                            {searchable('#' + item.OrderId)}
                         </Number>
                     ),
                     notes: (
                         <Notes key='notes'>
-                            <SearchHighlight search={searchFilter}>
-                                {item.DeliveryNotes}
-                            </SearchHighlight>
+                            {searchable(item.DeliveryNotes)}
                         </Notes>
                     ),
                 }
