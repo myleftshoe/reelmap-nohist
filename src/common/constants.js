@@ -14,3 +14,8 @@ export const resizableProps = {
 export const drivers = ['SAM1', 'DRK', 'CHA'];
 
 export const panes = [...drivers, 'UNASSIGNED'];
+
+export const theme = {
+    badgeColor: '#facf00',
+    searchHighlightColor: '#facf00',
+}

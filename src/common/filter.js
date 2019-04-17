@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Highlight from 'react-highlighter'
+import { theme } from './constants';
 
 export const SearchHighlight = props =>
     // react-highlighter will error if children is not a string
     <div style={{ pointerEvents: 'none' }}>
-        <Highlight matchStyle={{ backgroundColor: '#FACF00' }} search={Filter.value}>
+        <Highlight matchStyle={{ backgroundColor: theme.searchHighlightColor }} search={Filter.value}>
             {props.children + ''}
         </Highlight>
     </div>

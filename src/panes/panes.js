@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Pane from './pane';
+import { theme } from '../common/constants';
 
 export default function Panes(props) {
 
@@ -25,7 +26,7 @@ export default function Panes(props) {
                 id={id}
                 title={id}
                 count={paneItems.count()}
-                countColor={isFiltered && paneItems.count() ? '#FACF00' : null}
+                countColor={isFiltered && paneItems.count() && theme.badgeColor}
                 onReorder={setPanes}
                 maximized={maximizedPaneId}
                 onDrop={onDrop}
