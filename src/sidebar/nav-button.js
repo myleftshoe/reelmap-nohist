@@ -6,7 +6,7 @@ import { badgeBase } from '../common/badge';
 const NavButtonBase = styled.div`
     position:relative;
     padding: 12px 8px;
-    color: ${props => props.active ? 'white' : 'gray'};
+    color: ${props => props.active ? 'white' : props.color || 'gray'};
     &:hover {
         color:white;
         cursor:pointer;
@@ -23,11 +23,11 @@ const NavButtonBase = styled.div`
 `
 
 function NavButton(props) {
-    const { id, active, onClick, children: icon } = props;
+    const { id, active, onClick, children: icon, color } = props;
     const { badge = {} } = props;
     const handleClick = () => onClick && onClick(id);
     return <Tooltip position="right" content={props.tooltip}>
-        <NavButtonBase active={active} onClick={handleClick} data-count={badge.count > 0 ? badge.count : null} badgeColor={badge.color}>
+        <NavButtonBase active={active} onClick={handleClick} data-count={badge.count > 0 ? badge.count : null} badgeColor={badge.color} color={color}>
             <i className="material-icons">{icon}</i>
         </NavButtonBase >
     </Tooltip>

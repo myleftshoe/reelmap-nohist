@@ -6,6 +6,7 @@
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.7",
     "@googlemap-react/core": "^0.1.1-alpha.1",
+    "@material/react-fab": "^0.11.0",
     "collect.js": "^4.6.5",
     "hull.js": "^0.2.10",
     "lodash-move": "^1.1.1",

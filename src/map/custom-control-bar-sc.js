@@ -5,7 +5,7 @@ const S = {}
 
 S.ControlBar = styled.div`
     overflow:hidden;
-    background-color:#FFF;
+    background-color: ${({ color }) => color || '#fff'};
     display:flex;
     flex-direction: ${({ vertical }) => vertical ? 'column' : 'row'};
     justify-content:space-between;

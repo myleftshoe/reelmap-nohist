@@ -3,13 +3,13 @@ import { CustomControl } from '@googlemap-react/core';
 import S from './custom-control-bar-sc';
 import useToggle from '../hooks/useToggle';
 
-const CustomControlBar = ({ position = 'TOP_LEFT', small, children, switchDirection }) => {
+const CustomControlBar = ({ position = 'TOP_LEFT', small, children, switchDirection, color }) => {
     let vertical;
     vertical = position.startsWith('LEFT_') || position.startsWith('RIGHT_');
     if (switchDirection)
         vertical = !vertical
     return <CustomControl bindingPosition={position}>
-        <S.ControlBar vertical={vertical}>{
+        <S.ControlBar vertical={vertical} color={color}>{
             React.Children.map(children, child =>
                 React.cloneElement(child, { small, vertical })
             )}
