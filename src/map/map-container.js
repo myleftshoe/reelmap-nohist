@@ -77,7 +77,7 @@ function MapContainer({ state, dispatch }) {
         <CustomControlBar position='LEFT_TOP' color='transparent'>
             {drivers.map(driver =>
                 // <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver] }} />
-                <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 10 }} icon={<i className="material-icons">airport_shuttle</i>} />
+                <Fab key={driver} id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 10 }} icon={<i className="material-icons">airport_shuttle</i>} />
             )}
             <Fab id='ALL' style={{ margin: 10 }} onClick={() => dispatch('maximize-end')()} mini textLabel='All' />
         </CustomControlBar>

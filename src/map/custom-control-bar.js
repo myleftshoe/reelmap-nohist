@@ -11,7 +11,7 @@ const CustomControlBar = ({ position = 'TOP_LEFT', small, children, switchDirect
     return <CustomControl bindingPosition={position}>
         <S.ControlBar vertical={vertical} color={color}>{
             React.Children.map(children, child =>
-                React.cloneElement(child, { small, vertical })
+                React.cloneElement(child, { small, vertical: `${vertical}` })
             )}
         </S.ControlBar>
     </CustomControl>
