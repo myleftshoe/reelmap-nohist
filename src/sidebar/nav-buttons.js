@@ -26,10 +26,10 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
     }
 
     return <>
-        <NavButton id='City' active={state.sortBy === 'City'} onClick={handleClick} tooltip='Group by suburb'>location_city</NavButton>
+        <NavButton id='City' active={state.sortBy === 'City'} onClick={handleClick} tooltip='By suburb'>location_city</NavButton>
         {/* <NavButton id='PostalCode,City' active={state.sortBy === 'PostalCode,City'} onClick={handleClick} tooltip='Group by post code'>local_post_office</NavButton> */}
-        <NavButton id='OrderId' active={state.sortBy === 'OrderId'} onClick={handleClick} tooltip='Sort by order number'>sort</NavButton>
-        <NavButton id='Sequence' active={state.sortBy === 'Sequence'} onClick={handleClick} tooltip='Sort by delivery order'>format_list_numbered</NavButton>
+        <NavButton id='OrderId' active={state.sortBy === 'OrderId'} onClick={handleClick} tooltip='By order number'>sort</NavButton>
+        <NavButton id='Sequence' active={state.sortBy === 'Sequence'} onClick={handleClick} tooltip='By delivery order'>format_list_numbered</NavButton>
         {/* <NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</NavButton> */}
         {/* <NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</NavButton> */}
         {/* <NavButton id='timeline' active={activeSidebar === 'timeline'} onClick={handleClick} tooltip='Timeline'>timeline</NavButton> */}

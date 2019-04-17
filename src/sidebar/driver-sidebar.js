@@ -24,7 +24,9 @@ export default function DriverSidebar(props) {
                 onMaximizeEnd={dispatch('maximize-end')}
             // onOpenInNew={openInNew}
             >
-                {items => <GroupedByDriver items={items} sortBy={state.sortBy} searchFilter={state.filter} />}
+                {   // key prevents PoseGroup from animating all items on view change
+                    items => <GroupedByDriver key={state.sortBy} items={items} sortBy={state.sortBy} searchFilter={state.filter} />
+                }
             </Panes>
         </>
     )
