@@ -4,6 +4,7 @@ import range from '../utils/range';
 import { colors, drivers } from '../common/constants';
 import Badge from '../common/badge';
 import clamp from 'lodash.clamp';
+import Duration from '../utils/duration';
 
 
 const Container = styled.div`
@@ -14,17 +15,35 @@ const Row = styled.div`
     flex-direction: row;
     padding: 12px 0;
     transition: flex-basis 2s ease;
+    border-left: 1px solid #fff3;
 `
 
 const Times = styled(Row)`
+    display:flex;
     color: #fff7;
 `
 
+const Line = styled.div`
+    display:flex;
+    color: #fff7;
+    border-top: 1px solid #fff3;
+    align-items:center;
+
+`
+const Driver = styled.div`
+    flex: 0 0 100px;
+`
+
+
 const Col = styled.div`
+    display:flex;
+    flex-direction: column;
+    align-items: center;
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: ${props => props.width}px;
-    font-size: 0.7rem ;
+    font-size: 0.5rem ;
+
 `
 
 export default function TimelineHoriz({ state, dispath }) {
@@ -53,6 +72,7 @@ export default function TimelineHoriz({ state, dispath }) {
         const ret = (
             <Col key={item.OrderId} width={width}>
                 <Badge draggable onDragStart={() => console.log('dragstart')} color={colors[item.Driver]}>{item.Sequence}</Badge>
+                {Duration(item.arrival).format('{mm}')}
             </Col>
         );
 
@@ -66,16 +86,19 @@ export default function TimelineHoriz({ state, dispath }) {
             onWheel={handleWheel}
         >
             <Times>
+                <div />
                 {timelineRange.map(hour =>
                     <Col key={hour} width={multiplier}>
                         {hour}
                     </Col>
                 )}
             </Times>
-            {drivers.map(driver =>
+            {drivers.map(driver => <Line>
+                <Driver>{driver}</Driver>
                 <Row key={driver}>
                     {items.where('Driver', driver).sortBy('arrival').map(renderRow)}
                 </Row>
+            </Line>
             )}
         </Container>
     )
