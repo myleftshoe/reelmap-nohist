@@ -10,7 +10,7 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
     console.log(sortBy)
     const views = {
         City: ['city', 'street', 'sequence', 'arrival', 'orderId', 'notes'],
-        Sequence: ['sequence', 'arrival', 'city', 'street', 'orderId', 'notes'],
+        Sequence: ['arrival', 'sequence','city', 'street', 'orderId', 'notes'],
         OrderId: ['orderId', 'city', 'street', 'sequence', 'arrival', 'notes'],
     }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import NavButton from './nav-button';
 import Busy from '../common/busy';
+import styled from '@emotion/styled';
 
 function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
 
@@ -34,8 +35,8 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
         {/* <NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</NavButton> */}
         {/* <NavButton id='timeline' active={activeSidebar === 'timeline'} onClick={handleClick} tooltip='Timeline'>timeline</NavButton> */}
         {/* <NavButton id='arrival' active={state.sortBy === 'arrival'} onClick={handleClick} tooltip='Auto assign'>timeline</NavButton> */}
-        <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>clear_all</NavButton>
         <NavButton id='history' active={activeSidebar === 'history'} onClick={handleClick} tooltip='History' badge={{ count: state.toasts.size, color: '#facf00' }}>history</NavButton>
+        <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>warning</NavButton>
         <Busy busy={state.busy} />
     </>
 }

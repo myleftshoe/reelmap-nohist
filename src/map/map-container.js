@@ -75,11 +75,12 @@ function MapContainer({ state, dispatch }) {
             />
         </CustomControlBar>
         <CustomControlBar position='LEFT_TOP' color='transparent'>
+            <Fab id='ALL' style={{ margin: '50px 20px' }} onClick={() => dispatch('maximize-end')()} mini textLabel='All' />
             {drivers.map(driver =>
                 // <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver] }} />
-                <Fab key={driver} id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 10 }} icon={<i className="material-icons">airport_shuttle</i>} />
+                <Fab key={driver} id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 20 }} icon={<i className="material-icons">airport_shuttle</i>} />
             )}
-            <Fab id='ALL' style={{ margin: 10 }} onClick={() => dispatch('maximize-end')()} mini textLabel='All' />
+            <Fab id='UNASSIGNED' style={{ margin: '50px 20px' }} onClick={() => dispatch('maximize-end')('UNASSIGNED')} mini textLabel='Unassigned' />
         </CustomControlBar>
     </GoogleMap>
     )
