@@ -2,8 +2,7 @@ import React from 'react'
 import Duration from '../utils/duration';
 import { Container, Row, Number, Time, Primary, Secondary, Notes } from './grouped-by-driver-sc';
 import { SearchHighlight } from '../group/group.sc';
-
-
+import { PoseGroup } from 'react-pose';
 
 
 export default function GroupedByDriver({ items, sortBy, searchFilter }) {
@@ -54,51 +53,53 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
     let prevCity;
 
     return <Container>
-        {items.map((item, index) => {
-            const components = {
-                sequence: (
-                    <Number key='sequence'>{item.Sequence || '-'}</Number>
-                ),
-                arrival: (
-                    <Time key='arrival'>{Duration(item.arrival).format()}</Time>
-                ),
-                city: (
-                    <Primary key='city' id={item.City} type='City' draggable onDragStart={handleDragStart} title={item.PostalCode} visible={item.City !== prevCity}>
-                        <SearchHighlight search={searchFilter}>
-                            {item.City}
-                        </SearchHighlight>
-                    </Primary>
-                ),
-                street: (
-                    <Secondary key='secondary' id={item.OrderId} type='item' draggable onDragStart={handleDragStart}>
-                        <SearchHighlight search={searchFilter}>
-                            {item.Street}
-                        </SearchHighlight>
-                    </Secondary>
-                ),
-                orderId: (
-                    <Number key='orderid'>
-                        <SearchHighlight search={searchFilter}>
-                            {'#' + item.OrderId}
-                        </SearchHighlight>
-                    </Number>
-                ),
-                notes: (
-                    <Notes key='notes'>
-                        <SearchHighlight search={searchFilter}>
-                            {item.DeliveryNotes}
-                        </SearchHighlight>
-                    </Notes>
-                ),
+        <PoseGroup>
+            {items.map((item, index) => {
+                const components = {
+                    sequence: (
+                        <Number key='sequence'>{item.Sequence || '-'}</Number>
+                    ),
+                    arrival: (
+                        <Time key='arrival'>{Duration(item.arrival).format()}</Time>
+                    ),
+                    city: (
+                        <Primary key='city' id={item.City} type='City' draggable onDragStart={handleDragStart} title={item.PostalCode} visible={item.City !== prevCity}>
+                            <SearchHighlight search={searchFilter}>
+                                {item.City}
+                            </SearchHighlight>
+                        </Primary>
+                    ),
+                    street: (
+                        <Secondary key='secondary' id={item.OrderId} type='item' draggable onDragStart={handleDragStart}>
+                            <SearchHighlight search={searchFilter}>
+                                {item.Street}
+                            </SearchHighlight>
+                        </Secondary>
+                    ),
+                    orderId: (
+                        <Number key='orderid'>
+                            <SearchHighlight search={searchFilter}>
+                                {'#' + item.OrderId}
+                            </SearchHighlight>
+                        </Number>
+                    ),
+                    notes: (
+                        <Notes key='notes'>
+                            <SearchHighlight search={searchFilter}>
+                                {item.DeliveryNotes}
+                            </SearchHighlight>
+                        </Notes>
+                    ),
+                }
+                const row = (
+                    <Row key={item.OrderId}>
+                        {componentOrder.map(component => components[component])}
+                    </Row>
+                );
+                prevCity = item.City;
+                return row;
+            })
             }
-            const row = (
-                <Row key={item.OrderId}>
-                    {componentOrder.map(component => components[component])}
-                </Row>
-            );
-            prevCity = item.City;
-            return row;
-        })
-        }
+        </PoseGroup>
     </Container>
 }

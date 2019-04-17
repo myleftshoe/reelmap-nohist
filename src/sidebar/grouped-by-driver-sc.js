@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import posed from 'react-pose';
 
 const padding = 'padding: 4px 6px;'
 
@@ -6,12 +7,15 @@ const Container = styled.div`
     user-select: none;
 `
 
-const Row = styled.div`
+const RowStyle = styled.div`
     display: flex;
     font-size: 0.7rem;
     color: #fff7;
     :hover {background-color: #fff3};
 `
+
+const Row = posed(RowStyle)({})
+
 const Primary = styled.div`
     ${padding};
     flex: 0 0 100px;
