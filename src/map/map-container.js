@@ -9,6 +9,9 @@ import Routes from './routes';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 import useCursor from '../hooks/useCursor'
+import { Fab } from '@material/react-fab';
+import '@material/react-fab/dist/fab.css';
+
 
 function MapContainer({ state, dispatch }) {
     const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: state.quickChange || '' });
@@ -70,6 +73,13 @@ function MapContainer({ state, dispatch }) {
                 clearOnComplete
                 color={colors[state.mapEditMode.id]}
             />
+        </CustomControlBar>
+        <CustomControlBar position='LEFT_TOP' color='transparent'>
+            {drivers.map(driver =>
+                // <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver] }} />
+                <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 10 }} icon={<i className="material-icons">airport_shuttle</i>} />
+            )}
+            <Fab id='ALL' style={{ margin: 10 }} onClick={() => dispatch('maximize-end')()} mini textLabel='All' />
         </CustomControlBar>
     </GoogleMap>
     )
