@@ -1,11 +1,11 @@
 import React from 'react'
 import Duration from '../utils/duration';
 import { Container, Row, Number, Time, Primary, Secondary, Notes } from './grouped-by-driver-sc';
-import { SearchHighlight } from '../group/group.sc';
+import { searchable } from '../common/filter';
 import { PoseGroup } from 'react-pose';
 
 
-export default function GroupedByDriver({ items, sortBy, searchFilter }) {
+export default function GroupedByDriver({ items, sortBy }) {
 
     console.log(sortBy)
     const views = {
@@ -46,11 +46,6 @@ export default function GroupedByDriver({ items, sortBy, searchFilter }) {
         setTimeout(() => crt.parentNode.removeChild(crt), 0);
 
     }
-
-    const searchable = value =>
-        <SearchHighlight search={searchFilter}>
-            {value}
-        </SearchHighlight>
 
     const componentOrder = views[sortBy] || ['sequence', 'arrival', 'city', 'secondary', 'orderId', 'notes'];
 

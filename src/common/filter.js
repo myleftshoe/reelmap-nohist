@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import Highlight from 'react-highlighter'
+
+export const SearchHighlight = props =>
+    // react-highlighter will error if children is not a string
+    <div style={{ pointerEvents: 'none' }}>
+        <Highlight matchStyle={{ backgroundColor: '#FACF00' }} search={Filter.value}>
+            {props.children + ''}
+        </Highlight>
+    </div>
+
+export const searchable = value =>
+    <SearchHighlight>
+        {value}
+    </SearchHighlight>
 
 const FilterInput = styled.input`
     flex: 1 1 258px;

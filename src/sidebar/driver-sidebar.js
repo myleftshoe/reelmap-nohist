@@ -25,7 +25,7 @@ export default function DriverSidebar(props) {
             // onOpenInNew={openInNew}
             >
                 {   // key prevents PoseGroup from animating all items on view change
-                    items => <GroupedByDriver key={state.sortBy} items={items} sortBy={state.sortBy} searchFilter={state.filter} />
+                    items => <GroupedByDriver key={state.sortBy} items={items} sortBy={state.sortBy} />
                 }
             </Panes>
         </>

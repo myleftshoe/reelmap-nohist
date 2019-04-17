@@ -1,13 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Highlight from 'react-highlighter'
 import Badge from '../common/badge'
-
-export const SearchHighlight = props =>
-    // react-highlighter will error if children is not a string
-    <Highlight matchStyle={{ backgroundColor: '#FACF00' }} {...props}>
-        {props.children + ''}
-    </Highlight>
 
 export const CustomTable = styled.table`
     border-collapse: separate;

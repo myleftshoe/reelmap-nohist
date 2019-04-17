@@ -3,7 +3,8 @@ import Badge from '../common/badge'
 import Expandable from "../expandable/expandable";
 import useToggle from '../hooks/useToggle';
 import { useState } from 'react';
-import { Header, SearchHighlight, Table, Row, Address, Street, CityWithPostCode, Numeric, Notes } from './group.sc';
+import { SearchHighlight } from '../common/filter';
+import { Header, Table, Row, Address, Street, CityWithPostCode, Numeric, Notes } from './group.sc';
 import Duration from '../utils/duration';
 
 const minWidth = 300;
