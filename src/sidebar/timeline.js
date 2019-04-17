@@ -68,7 +68,7 @@ export default function Timeline({ state, dispatch }) {
                 const nextItem = driverItems[index + 1] || {};
                 const height = (nextItem.arrival - item.arrival) / 5;
                 console.log(height)
-                const ret = <>
+                const ret = <React.Fragment key={item.OrderId}>
                     <Item height={height}>
                         <Row>
                             <Time>{Duration(item.arrival).format('{mm}')}</Time>
@@ -77,7 +77,7 @@ export default function Timeline({ state, dispatch }) {
                         </Row>
                     </Item>
                     {renderHour(hour)}
-                </>
+                </React.Fragment>
                 prevCity = item.City;
                 return ret;
             })}
