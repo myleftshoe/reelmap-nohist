@@ -18,7 +18,7 @@ export default function createGhostElement({ target, width, height, badgeContent
         border-left: 1px solid ${theme.searchHighlightColor};
     `
 
-    const crt = document.createElement('div');
+    let crt = document.createElement('div');
     crt.style.cssText = `
         ${ghostCss}
         height:${height - 1}px;
@@ -76,6 +76,10 @@ export default function createGhostElement({ target, width, height, badgeContent
         crt4.appendChild(document.createTextNode(`${text}`))
         badge.appendChild(document.createTextNode(`${badgeContent}`))
         crt4.appendChild(badge)
+    }
+    else {
+        crt = crt4;
+        crt.appendChild(document.createTextNode(`${text}`))
     }
 
     target.parentNode.appendChild(crt);

@@ -18,18 +18,21 @@ export default function GroupedByDriver({ items, sortBy }) {
         OrderId: ['orderId', 'street', 'city', 'sequence', 'arrival', 'notes'],
     }
 
-    function handleDragStart(e) {
+    function handleDragStart(e, group) {
 
+        console.log(group)
         let count;
-        if (sortBy === 'City') {
-            count = items.filter(({ City }) => City === 'Brunswick').length
+        if (group) {
+            count = items.filter(({ [group.key]: key }) => key === group.value).length
         }
 
         const target = e.currentTarget;
 
         const { x, y, width, height } = target.firstChild.getBoundingClientRect();
         const posX = e.clientX - x + 8;
-        const posY = e.clientY - y + 4;
+        let posY = e.clientY - y + 4;
+        if (count)
+            posY += 8;
 
         const ghostElement = createGhostElement({ target, width, height: height + 4, badgeContent: count })
 
@@ -51,7 +54,7 @@ export default function GroupedByDriver({ items, sortBy }) {
                         <Time key='arrival'>{Duration(item.arrival).format()}</Time>
                     ),
                     city: (
-                        <Primary key='city' id={item.City} type='City' draggable onDragStart={handleDragStart} title={item.PostalCode} visible={item.City !== prevCity}>
+                        <Primary key='city' id={item.City} type='City' draggable onDragStart={e => handleDragStart(e, { key: 'City', value: item.City })} title={item.PostalCode} visible={item.City !== prevCity}>
                             {searchable(item.City)}
                         </Primary>
                     ),
