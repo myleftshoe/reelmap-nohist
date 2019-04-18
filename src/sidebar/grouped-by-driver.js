@@ -3,6 +3,10 @@ import Duration from '../utils/duration';
 import { Container, Row, Number, Time, Primary, Secondary, Notes } from './grouped-by-driver-sc';
 import { searchable } from '../common/filter';
 import { PoseGroup } from 'react-pose';
+import createGhostElement from '../common/ghost-element';
+
+
+
 
 
 export default function GroupedByDriver({ items, sortBy }) {
@@ -10,41 +14,26 @@ export default function GroupedByDriver({ items, sortBy }) {
     console.log(sortBy)
     const views = {
         City: ['city', 'street', 'sequence', 'arrival', 'orderId', 'notes'],
-        Sequence: ['arrival', 'sequence', 'city', 'street', 'orderId', 'notes'],
-        OrderId: ['orderId', 'city', 'street', 'sequence', 'arrival', 'notes'],
+        Sequence: ['arrival', 'sequence', 'street', 'city', 'orderId', 'notes'],
+        OrderId: ['orderId', 'street', 'city', 'sequence', 'arrival', 'notes'],
     }
 
     function handleDragStart(e) {
 
+        let count;
+        if (sortBy === 'City') {
+            count = items.filter(({ City }) => City === 'Brunswick').length
+        }
+
         const target = e.currentTarget;
+
         const { x, y, width, height } = target.firstChild.getBoundingClientRect();
+        const posX = e.clientX - x + 8;
+        const posY = e.clientY - y + 4;
 
-        const paddingTop = target.computedStyleMap().get('padding-top').value;
-        const paddingBottom = target.computedStyleMap().get('padding-bottom').value;
-        const paddingLeft = target.computedStyleMap().get('padding-top').value;
-        const paddingRight = target.computedStyleMap().get('padding-bottom').value;
+        const ghostElement = createGhostElement({ target, width, height: height + 4, badgeContent: count })
 
-        const posX = e.clientX - x + paddingLeft + paddingRight;
-        const posY = e.clientY - y + paddingTop + paddingBottom;
-
-        const crt = target.cloneNode(target);
-        crt.style.color = 'white';
-        crt.style.backgroundColor = 'orange';
-        // crt.style.backgroundColor = "#1d2f3d";
-        crt.style.border = '2px solid white';
-        crt.style.textAlign = 'center';
-        crt.style.width = `${width}px`;
-        crt.style.height = `${height}px`;
-        crt.style.position = 'absolute';
-        crt.style.top = '0';
-        crt.style.left = '0';
-        crt.style.zIndex = '-1';
-
-        target.parentNode.appendChild(crt);
-        e.dataTransfer.setDragImage(crt, posX, posY);
-
-        setTimeout(() => crt.parentNode.removeChild(crt), 0);
-
+        e.dataTransfer.setDragImage(ghostElement, posX, posY);
     }
 
     const componentOrder = views[sortBy] || ['sequence', 'arrival', 'city', 'secondary', 'orderId', 'notes'];
