@@ -6,6 +6,7 @@ export default function createGhostElement({ target, width, height, badgeContent
 
     const baseCss = `
         width:${width}px;
+        border: 1px solid black;
         border-radius: 3px;
         position: absolute;
         z-index: -1;
@@ -14,8 +15,7 @@ export default function createGhostElement({ target, width, height, badgeContent
     const ghostCss = `
         ${baseCss}
         padding: 1px 1px;
-        border-top: 1px solid ${theme.searchHighlightColor};
-        border-left: 1px solid ${theme.searchHighlightColor};
+        background-color: ${theme.searchHighlightColor};
     `
 
     let crt = document.createElement('div');
