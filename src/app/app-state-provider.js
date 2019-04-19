@@ -76,8 +76,9 @@ export default function StateProvider(props) {
 
         const snapshotId = Date.now();
 
-        const { paths, newItems, solution } = await vroom(activeItems.all(), _drivers);
+        const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
         // const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
+        newPaths.forEach((value, key) => paths.set(key, value));
         setPaths(paths);
         solutions.set(snapshotId, solution)
 
@@ -96,7 +97,9 @@ export default function StateProvider(props) {
         setBusy(true);
 
         const { path } = await route(items.where('Driver', driver).sortBy('Sequence').all());
+        console.log('yyy', paths.keys())
         paths.set(driver, path);
+        console.log('yyy', paths.keys())
         setPaths(new Map(paths));
 
         // const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
@@ -138,6 +141,7 @@ export default function StateProvider(props) {
     }
 
     function reassignItem(id, driver) {
+        console.log('yyy reassigne')
         const fromDriver = store.get(id).Driver;
         dispatch({ type: 'assign', ids: [id], driver })
         recalcRoute(fromDriver);
@@ -148,14 +152,16 @@ export default function StateProvider(props) {
     function Drop(transferredData, target, e) {
         const { type, id, selected } = transferredData;
         console.log('Drop', transferredData, target, e.currentTarget, e.target);
+        const fromItem = store.get(id);
 
         switch (type) {
             case 'item': {
-                const fromItem = store.get(id);
+                // const fromItem = store.get(id);
                 const toItem = store.get(e.target.id);
                 if (toItem && toItem.Driver === fromItem.Driver) {
                     const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
                     dispatch({ type: 'move', items: driverItems, fromItem, toItem });
+                    recalcRoute(fromItem.Driver)
                     // Alt method to move:
                     // const order = items.where('Driver', fromItem.Driver).sortBy('Sequence').pluck('OrderId');
                     // const fromIndex = order.get(id);
@@ -166,7 +172,10 @@ export default function StateProvider(props) {
                     // dispatch({ type: 'reorder', order: newOrder });
                 }
                 else {
+                    const drivers = items.whereIn('OrderId', selected).pluck('Driver').push(target).unique();
                     dispatch({ type: 'assign', ids: selected, driver: target });
+                    console.log('yyyy', drivers.all())
+                    drivers.each(recalcRoute)
                 }
                 break;
             }
@@ -176,7 +185,10 @@ export default function StateProvider(props) {
             }
             default: {
                 const ids = items.where(type, id).pluck('OrderId').all();
+                const drivers = items.where(type, id).pluck('Driver').push(target).unique();
+                console.log(id, type, target, drivers)
                 dispatch({ type: 'assign', ids, driver: target })
+                drivers.each(recalcRoute)
             }
         }
     }
