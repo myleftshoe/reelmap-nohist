@@ -9,7 +9,6 @@ import Routes from './routes';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 import useCursor from '../hooks/useCursor'
-import { Fab } from '@material/react-fab';
 import '@material/react-fab/dist/fab.css';
 
 
@@ -57,7 +56,6 @@ function MapContainer({ state, dispatch }) {
         {state.showPaths && <Routes hidden={state.isFiltered} paths={state.activePaths} onRightClick={dispatch('reverse-route')} />}
         {/* <SuburbBoundary suburb={suburb} /> */}
         <CustomControlBar small>
-            <CustomControlBar.TextButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>Calculate!</CustomControlBar.TextButton>
             <CustomControlBar.IconButton onClick={dispatch('editmode-click')}>{state.showPaths ? 'scatter_plot' : 'timeline'}</CustomControlBar.IconButton>
             <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
                 {drivers.map(driver =>
@@ -74,13 +72,24 @@ function MapContainer({ state, dispatch }) {
                 color={colors[state.mapEditMode.id]}
             />
         </CustomControlBar>
-        <CustomControlBar position='LEFT_TOP' color='transparent'>
-            <Fab id='ALL' style={{ margin: '50px 20px' }} onClick={() => dispatch('maximize-end')()} mini textLabel='All' />
+        <CustomControlBar position='LEFT_TOP' small>
+            <CustomControlBar.TextButton id='ALL' onClick={() => dispatch('maximize-end')()} textLabel='All' >All</CustomControlBar.TextButton>
             {drivers.map(driver =>
-                // <Fab id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver] }} />
-                <Fab key={driver} id={driver} onClick={() => dispatch('maximize-end')(driver)} mini textLabel={driver} style={{ backgroundColor: colors[driver], margin: 20 }} icon={<i className="material-icons">airport_shuttle</i>} />
+                <CustomControlBar.TextButton
+                    key={driver}
+                    id={driver}
+                    onClick={() => dispatch('maximize-end')(driver)}
+                    color='white'
+                    style={{ width: 100, margin: 5, backgroundColor: colors[driver] }}
+                    textLabel={driver}
+                >
+                    {driver}
+                </CustomControlBar.TextButton>
             )}
-            <Fab id='UNASSIGNED' style={{ margin: '50px 20px' }} onClick={() => dispatch('maximize-end')('UNASSIGNED')} mini textLabel='Unassigned' />
+            <CustomControlBar.TextButton id='UNASSIGNED' onClick={() => dispatch('maximize-end')('UNASSIGNED')} textLabel='Unassigned'>Unassigned</CustomControlBar.TextButton>
+        </CustomControlBar>
+        <CustomControlBar position='TOP_LEFT' small>
+            <CustomControlBar.TextButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>Calculate!</CustomControlBar.TextButton>
         </CustomControlBar>
     </GoogleMap>
     )
