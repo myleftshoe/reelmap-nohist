@@ -13,7 +13,7 @@ S.ControlBar = styled.div`
     margin:10px;
     filter: drop-shadow(0px 1px 1px #00000028);
     border-radius:2px;
-    cursor:pointer;
+    /* cursor:pointer; */
     user-select:none;
 `
 
@@ -21,6 +21,7 @@ S.ButtonBase = ({ vertical, color, active = false, disabled }) => css`
     display:flex;
     align-items:center;
     justify-content: center;
+    cursor:pointer;
     border:none;
     outline:none;
     color:${color};
