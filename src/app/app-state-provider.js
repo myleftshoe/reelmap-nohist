@@ -66,51 +66,30 @@ export default function StateProvider(props) {
 
     async function autoAssign() {
 
-        if (!activeItems.count()) return;
-        // if (snapshots.contains(store)) return;
-
-        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-
         setBusy(true);
-        // setMapEditMode({ on: false, id: null, tool: null });
+
+        const { paths: newPaths, newItems, solution } = await vroom(items.all(), drivers);
+        setPaths(newPaths);
 
         const snapshotId = Date.now();
-
-        const { paths: newPaths, newItems, solution } = await vroom(activeItems.all(), _drivers);
-        // const paths = new Map(solution.routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-        newPaths.forEach((value, key) => paths.set(key, value));
-        setPaths(paths);
         solutions.set(snapshotId, solution)
-
-        // dispatch({ type: 'add-snapshot', id: snapshotId });
         snapshots.set(snapshotId, store);
+
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
+
         if (!showPaths) toggleShowPaths();
+
         setBusy(false);
     }
 
-
-
     async function recalcRoute(driver) {
+        if (driver === 'UNASSIGNED') return;
         setBusy(true);
-
         const { path } = await route(items.where('Driver', driver).sortBy('Sequence').all());
-        console.log('yyy', paths.keys())
         paths.set(driver, path);
-        console.log('yyy', paths.keys())
         setPaths(new Map(paths));
-
-        // const { solution } = await vroom(items.where('Driver', driver).all(), [driver]);
-        // if (solution)
-        //     paths.set(driver, solution.routes[0].geometry);
-        // else
-        //     paths.delete(driver);
-        // setPaths(new Map(paths));
-
-        // if (!showPaths) toggleShowPaths();
-
         setBusy(false);
     }
 
@@ -162,14 +141,6 @@ export default function StateProvider(props) {
                     const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
                     dispatch({ type: 'move', items: driverItems, fromItem, toItem });
                     recalcRoute(fromItem.Driver)
-                    // Alt method to move:
-                    // const order = items.where('Driver', fromItem.Driver).sortBy('Sequence').pluck('OrderId');
-                    // const fromIndex = order.get(id);
-                    // const toIndex = order.get(e.target.id)
-                    // const newOrder = move(order, fromIndex, toIndex);
-                    // console.log(order ,newOrder)
-                    // // const driverItems = items.where('Driver', toItem.Driver).sortBy('Sequence').all();
-                    // dispatch({ type: 'reorder', order: newOrder });
                 }
                 else {
                     const drivers = items.whereIn('OrderId', selected).pluck('Driver').push(target).unique();
@@ -193,16 +164,9 @@ export default function StateProvider(props) {
         }
     }
 
-    // function GroupHeaderClick(id) {
-    //   const splitId = id.split(', ');
-    //   const suburb = (Boolean(Number(splitId[0]))) ? splitId[1] : splitId[0];
-    //   setSuburb(suburb);
-    // }
-
     function MarkerClick(id) {
         if (mapEditMode.id) {
             reassignItem(id, mapEditMode.id);
-            // dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id });
             return;
         }
         setSelectedMarkerId(id)
