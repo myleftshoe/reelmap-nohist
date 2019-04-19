@@ -14,7 +14,7 @@ function MapControls({ state, dispatch }) {
 function RouteBar({ state, dispatch }) {
     return (
         <CustomControlBar position='LEFT_TOP' small style={{ width: 120, marginTop: 50 }} >
-            <CustomControlBar.TextButton id='ALL' onClick={dispatch('maximize-end')} style={{ padding: '7px 0px', marginBottom:5, borderBottom: '1px solid #00000015' }} textLabel='All' >All</CustomControlBar.TextButton>
+            <CustomControlBar.TextButton id='ALL' onClick={() => dispatch('maximize-end')(null)} style={{ padding: '7px 0px', marginBottom:5, borderBottom: '1px solid #00000015' }} textLabel='All' >All</CustomControlBar.TextButton>
             {drivers.map(driver =>
                 <CustomControlBar.TextButton
                     key={driver}
