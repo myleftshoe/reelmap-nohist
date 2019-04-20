@@ -129,7 +129,7 @@ function Pane(props) {
                             fullscreen
                         </Minibar.Button>
                     }
-                    <Badge color={props.countColor}>{props.count}</Badge>
+                    <Badge color={props.countColor || null}>{props.count}</Badge>
                 </Minibar>
             </PaneHeader>
             <PaneContent>
