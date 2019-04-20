@@ -32,6 +32,7 @@ export default function StateProvider(props) {
     const [busy, setBusy] = useState(false);
     const solutions = useDict();
     const snapshots = useJsonDict();
+    const [maxPaneId, setMaxPaneId] = useState();
 
     //!important: useDict causes clear and delete
     //to error inless () => is used.
@@ -198,6 +199,7 @@ export default function StateProvider(props) {
     function MaximizeEnd(id) {
         setMapEditMode({ on: false, id: null, tool: null })
         setSelectedDrivers(id ? [id] : [])
+        setMaxPaneId(id)
     }
 
     function EditModeClick() {
@@ -239,7 +241,8 @@ export default function StateProvider(props) {
         toast,
         toasts,
         showPaths,
-        items
+        items,
+        maxPaneId, setMaxPaneId
     };
 
     const actions = {

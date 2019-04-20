@@ -4,7 +4,7 @@ import { theme } from '../common/constants';
 
 export default function Panes(props) {
 
-    const { panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew } = props;
+    const { panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew, maxPaneId } = props;
     const [_panes, setPanes] = useState(panes);
     const [maximizedPaneId, setMaximizedPaneId] = useState(null);
 
@@ -28,7 +28,7 @@ export default function Panes(props) {
                 count={paneItems.count()}
                 countColor={isFiltered && paneItems.count() && theme.badgeColor}
                 onReorder={setPanes}
-                maximized={maximizedPaneId}
+                maximized={maxPaneId}
                 onDrop={onDrop}
                 onMaximize={handleMaximize}
                 actionButtons={paneActionButtons}

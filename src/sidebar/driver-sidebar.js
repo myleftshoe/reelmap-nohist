@@ -22,6 +22,7 @@ export default function DriverSidebar(props) {
                 isFiltered={state.isFiltered}
                 onDrop={dispatch('drop')}
                 onMaximizeEnd={dispatch('maximize-end')}
+                maxPaneId = {state.maxPaneId}
             // onOpenInNew={openInNew}
             >
                 {   // key prevents PoseGroup from animating all items on view change

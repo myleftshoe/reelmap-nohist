@@ -12,7 +12,8 @@ export default function Map(props) {
                 center: { lat: -37.815018, lng: 144.946014 },
                 zoom: 11,
                 styles: styles[localStorage.getItem('mapTheme')],
-                draggableCursor: props.cursor
+                draggableCursor: props.cursor,
+                mapTypeControl : false
             }}
             useDrawing
             useGeometry
@@ -21,7 +22,7 @@ export default function Map(props) {
             onRightClick={props.onRightClick}
             LoadingComponent={null}
         />
-        <ThemeSwitcher bindingPosition='TOP_LEFT' map={map} />
+        {/* <ThemeSwitcher bindingPosition='TOP_LEFT' map={map} /> */}
         {props.children}
     </>
 }
