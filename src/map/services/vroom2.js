@@ -32,8 +32,9 @@ export default async function vroom(items = [], drivers = []) {
 
     const newItems = mapSolutionToItems(solution, items, drivers);
     const paths = mapRoutesToPaths(solution, drivers);
+    const routes = mapSolutionToRoutes(solution, drivers);
 
-    return { paths, items: newItems, solution };
+    return { paths, items: newItems, solution, routes };
     // return new Items(newItems);
 }
 
@@ -92,4 +93,18 @@ const mapSolutionToItems = (solution, items, drivers) => {
 
 function mapRoutesToPaths(solution, drivers) {
     return new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
+}
+
+
+function mapSolutionToRoutes(solution, drivers) {
+
+    const routes = new Map();
+    solution.routes.forEach(route => {
+        const _route = { ...route }
+        const steps = [...route.steps];
+        _route.start = steps[0].arrival;
+        _route.end = steps[steps.length - 1].arrival;
+        routes.set(drivers[route.vehicle], _route)
+    });
+    return routes;
 }

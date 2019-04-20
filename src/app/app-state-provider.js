@@ -69,8 +69,8 @@ export default function StateProvider(props) {
 
         setBusy(true);
 
-        const { paths: newPaths, newItems, solution } = await vroom(items.all(), drivers);
-        setPaths(newPaths);
+        const { paths: newPaths, newItems, solution, routes } = await vroom(items.all(), drivers);
+        setPaths(new Map([...routes.entries()].map(([key, value]) => [key, value.geometry])));
 
         const snapshotId = Date.now();
         solutions.set(snapshotId, solution)
