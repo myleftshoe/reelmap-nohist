@@ -9,7 +9,6 @@ import { Provider as DataProvider } from 'outstated'
 import dataStore from './app/mock-data-store'
 import toastStore from './toasts/store'
 import AppContainer from './app/app-container'
-import Single from "./app/single"
 
 const history = createBrowserHistory()
 
@@ -18,7 +17,6 @@ ReactDOM.render(
         <DataProvider stores={[dataStore, toastStore]}>
             <Router history={history}>
                 <Switch>
-                    <Route path="/:id" component={Single} />
                     <Route path="/" component={AppContainer} />
                 </Switch>
             </Router>
