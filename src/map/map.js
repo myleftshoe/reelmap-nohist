@@ -16,7 +16,7 @@ export default function Map(props) {
                 zoom: 11,
                 styles: styles[localStorage.getItem('mapTheme')],
                 draggableCursor: props.cursor,
-                mapTypeControl : false
+                mapTypeControl: false
             }}
             useDrawing
             useGeometry
@@ -25,7 +25,7 @@ export default function Map(props) {
             onRightClick={props.onRightClick}
             LoadingComponent={null}
         />
-        {/* <ThemeSwitcher bindingPosition='TOP_LEFT' map={map} /> */}
+        <ThemeSwitcher bindingPosition='TOP_LEFT' map={map} />
         {props.children}
     </>
 }

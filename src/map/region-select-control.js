@@ -34,7 +34,7 @@ export default function RegionSelectControl({ id, small, title, onSelectionCompl
     }
 
     function handleKeyUp(e) {
-        if (!shiftKeyDown) return;
+        // if (!shiftKeyDown) return;
         const code = (e.keyCode ? e.keyCode : e.which);
         if (code === 16) {
             setShiftKeyDown(false);
