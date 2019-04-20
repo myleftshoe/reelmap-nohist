@@ -60,7 +60,7 @@ function ToolBar({ state, dispatch }) {
                 id='regionSelectTool'
                 title='Region select tool'
                 hidden
-                active={state.mapEditMode.tool === 'rectangle'}
+                active={state.mapEditMode.tool}
                 onSelectionComplete={dispatch('selection-complete')}
                 clearOnComplete
                 color={colors[state.mapEditMode.id]}

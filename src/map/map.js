@@ -5,6 +5,9 @@ import styles from './styles/styles'
 
 export default function Map(props) {
     const { state: { map } } = useContext(GoogleMapContext);
+
+    console.log('Rendering map')
+
     return <>
         <MapBox
             apiKey={process.env.REACT_APP_GMAPS}
