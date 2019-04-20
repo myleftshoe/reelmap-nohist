@@ -6,17 +6,10 @@ export default function Panes(props) {
 
     const { panes, items, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew, maxPaneId } = props;
     const [_panes, setPanes] = useState(panes);
-    const [maximizedPaneId, setMaximizedPaneId] = useState(null);
 
     const paneActionButtons = [
-        { id: 'open-in-new', tooltip: 'Open in new', icon: 'open_in_new', onClick: onOpenInNew, visible: maximizedPaneId }
+        { id: 'open-in-new', tooltip: 'Open in new', icon: 'open_in_new', onClick: onOpenInNew, visible: maxPaneId }
     ]
-
-    function handleMaximize(id) {
-        setMaximizedPaneId(id);
-        // Wait for pane transition before triggering rerender
-        setTimeout(() => onMaximizeEnd(id), 500);
-    }
 
     return _panes.map((id) => {
         const paneItems = groupBy ? items.where(groupBy, id) : items;
@@ -30,7 +23,7 @@ export default function Panes(props) {
                 onReorder={setPanes}
                 maximized={maxPaneId}
                 onDrop={onDrop}
-                onMaximize={handleMaximize}
+                onMaximize={onMaximizeEnd}
                 actionButtons={paneActionButtons}
             >
                 {children(paneItems.all())}

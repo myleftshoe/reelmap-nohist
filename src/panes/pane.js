@@ -70,7 +70,8 @@ function Pane(props) {
         toggleExpanded();
     }
 
-    function handleMaximizeClick() {
+    function handleMaximizeClick(e) {
+        e.stopPropagation();
         props.onMaximize(props.id)
     }
 

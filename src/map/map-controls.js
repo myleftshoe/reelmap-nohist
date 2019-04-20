@@ -13,11 +13,19 @@ function MapControls({ state, dispatch }) {
 }
 
 function RouteBar({ state, dispatch }) {
+
+    function handleClick(e) {
+        let id = e.target.id;
+        if (id === 'ALL')
+            id = null;
+        dispatch('maximize-end')(id);
+    }
+
     return (
         <CustomControlBar position='LEFT_TOP' small style={{ width: 120, marginTop: 50 }} >
             <CustomControlBar.TextButton
                 id='ALL'
-                onClick={() => dispatch('maximize-end')(null)}
+                onClick={handleClick}
                 style={{ padding: '7px 0px', marginBottom: 5, borderBottom: '1px solid #00000015' }}
                 textLabel='All'
             >
@@ -27,7 +35,7 @@ function RouteBar({ state, dispatch }) {
                 <CustomControlBar.TextButton
                     key={driver}
                     id={driver}
-                    onClick={() => dispatch('maximize-end')(driver)}
+                    onClick={handleClick}
                     color='white'
                     style={{ margin: 5, backgroundColor: colors[driver] }}
                     textLabel={driver}
@@ -38,7 +46,7 @@ function RouteBar({ state, dispatch }) {
             <CustomControlBar.TextButton
                 id='UNASSIGNED'
                 style={{ padding: '7px 0px', marginTop: 5 }}
-                onClick={() => dispatch('maximize-end')('UNASSIGNED')}
+                onClick={handleClick}
                 textLabel='Unassigned'
             >
                 Unassigned <Badge>({state.items.where('Driver', 'UNASSIGNED').count()})</Badge>

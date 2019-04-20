@@ -199,7 +199,9 @@ export default function StateProvider(props) {
     function MaximizeEnd(id) {
         // setMapEditMode({ on: false, id: null, tool: null })
         setSelectedDrivers(id ? [id] : [])
-        setMaxPaneId(id)
+        setMaxPaneId(id);
+        setSelectedDrivers(id ? [id] : []);
+        // setTimeout(() => setSelectedDrivers(id ? [id] : []), 0);
     }
 
     function EditModeClick() {
