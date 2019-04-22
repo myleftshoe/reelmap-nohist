@@ -1,3 +1,5 @@
+import { LatLng } from "../utils";
+
 const depot = [145.005252, -37.688797];
 
 // const vehicleProps = {
@@ -11,8 +13,9 @@ const depot = [145.005252, -37.688797];
 
 // const totalDuration = shiftDurations.reduce((a, b) => a + b, 0)
 
-export default async function vroom(items = [], drivers = []) {
+export default async function vroom(drivers = [], data) {
 
+    const items = data.all();
     if (!items.length) return { paths: [], items };
 
     // const depot = [145.005252, -37.688797];
@@ -29,15 +32,15 @@ export default async function vroom(items = [], drivers = []) {
     const options = { "g": true }; //returns route geometry
 
     const solution = await fetchSolution({ vehicles, jobs, options });
+    console.log(solution)
 
-    const newItems = mapSolutionToItems(solution, items, drivers);
-    const paths = mapRoutesToPaths(solution, drivers);
+    // const paths = mapRoutesToPaths(solution, drivers);
     const routes = mapSolutionToRoutes(solution, drivers);
+    const newItems = mapRoutesToItems(routes, items);
 
-    return { paths, items: newItems, solution, routes };
+    return { items: newItems, solution, routes };
     // return new Items(newItems);
 }
-
 
 async function fetchSolution(payload) {
     const response = await fetch(`http://localhost:3000/`, {
@@ -50,7 +53,6 @@ async function fetchSolution(payload) {
     });
     return response.json();
 }
-
 
 const mapItemsToJobs = (items, drivers) => items.map(item => ({
     id: parseInt(item.OrderId, 10),
@@ -73,38 +75,64 @@ const mapDriversToVehicles = (drivers) => drivers.map((driver, index) => {
     }
 });
 
-const mapSolutionToItems = (solution, items, drivers) => {
+function mapSolutionToRoutes(solution, drivers) {
+
+    const routes = new Map();
+    solution.routes.forEach(route => {
+
+        const { distance, duration, geometry, service } = route;
+
+        const steps = route.steps.map(
+            ({ arrival, distance, duration, job, location, service, type }, index, arr) => {
+                const prevStep = arr[index - 1] || { duration: 0, distance: 0 };
+                const step = {
+                    id: job ? job + '' : type,
+                    location: LatLng(location),
+                    arrival,
+                    duration: duration - prevStep.duration,
+                    distance: distance - prevStep.distance,
+                    service: service || 0,
+                }
+                return step;
+            }
+        )
+
+        const _route = {
+            start: steps[0].arrival,
+            end: steps[steps.length - 1].arrival,
+            distance,
+            duration,
+            service,
+            steps,
+            geometry,
+        }
+
+        routes.set(drivers[route.vehicle], _route)
+
+    });
+
+    return routes;
+}
+
+const mapRoutesToItems = (routes, items) => {
+
     const itemsMap = new Map(items.map(item => [item.OrderId, item]));
     const newItems = [];
-    solution.routes.forEach(route => {
-        const steps = route.steps.filter(s => s.type === "job");
-        // console.log(steps);
+
+    routes.forEach((route, key) => {
+        const steps = route.steps.slice(1, -1)
+        console.log(steps)
+        // const steps = route.steps.filter(step => step.id === "job");
         steps.forEach((step, i) => {
-            const item = itemsMap.get(`${step.job}`);
-            item.Driver = drivers[route.vehicle];
+            const item = itemsMap.get(`${step.id}`);
+            item.Driver = key;
             item.Sequence = i + 1;
             item.arrival = step.arrival;
             item.duration = step.duration;
             newItems.push(item);
         });
-    });
+    })
+
+    console.log(newItems)
     return newItems;
-}
-
-function mapRoutesToPaths(solution, drivers) {
-    return new Map(solution.routes.map(route => ([drivers[route.vehicle], route.geometry])));
-}
-
-
-function mapSolutionToRoutes(solution, drivers) {
-
-    const routes = new Map();
-    solution.routes.forEach(route => {
-        const _route = { ...route }
-        const steps = [...route.steps];
-        _route.start = steps[0].arrival;
-        _route.end = steps[steps.length - 1].arrival;
-        routes.set(drivers[route.vehicle], _route)
-    });
-    return routes;
 }

@@ -5,7 +5,7 @@ import toastStore from '../toasts/store'
 import Filter from '../common/filter'
 import { LatLng } from '../map/utils'
 import vroom from '../map/services/vroom2'
-import route from '../map/services/osrm'
+import osrmTrip from '../map/services/osrm'
 import collect from 'collect.js';
 import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
@@ -28,7 +28,7 @@ export default function StateProvider(props) {
     const [filter, setFilter] = useState('');
     const [sortBy, setSortBy] = useState('City');
     // const [suburb, setSuburb] = useState('');
-    const [paths, setPaths] = useState(new Map());
+    const [routes, setRoutes] = useState(new Map());
     const [busy, setBusy] = useState(false);
     const solutions = useDict();
     const snapshots = useJsonDict();
@@ -57,9 +57,9 @@ export default function StateProvider(props) {
         [items, selectedDrivers]
     );
 
-    let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
+    let activeRoutes = [...routes.entries()].map(([key, value]) => ({ key, value }));
     if (selectedDrivers.length) {
-        activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
+        activeRoutes = selectedDrivers.map(key => ({ key, value: routes.get(key) || '' }));
     }
 
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
@@ -69,11 +69,11 @@ export default function StateProvider(props) {
 
         setBusy(true);
 
-        const { paths: newPaths, newItems, solution, routes } = await vroom(items.all(), drivers);
-        setPaths(new Map([...routes.entries()].map(([key, value]) => [key, value.geometry])));
+        const { paths: newPaths, newItems, solution, routes: newRoutes } = await vroom(drivers, items);
+        setRoutes(new Map(newRoutes));
 
         const snapshotId = Date.now();
-        solutions.set(snapshotId, solution)
+        solutions.set(snapshotId, newRoutes)
         snapshots.set(snapshotId, store);
 
         const toast = new SolutionToast(snapshotId, solution);
@@ -88,9 +88,9 @@ export default function StateProvider(props) {
     async function recalcRoute(driver) {
         if (driver === 'UNASSIGNED') return;
         setBusy(true);
-        const { path } = await route(items.where('Driver', driver).sortBy('Sequence').all());
-        paths.set(driver, path);
-        setPaths(new Map(paths));
+        const { route } = await osrmTrip(driver, items);
+        routes.set(driver, route);
+        setRoutes(new Map(routes));
         setBusy(false);
     }
 
@@ -106,12 +106,12 @@ export default function StateProvider(props) {
     function clearAll() {
         const ids = activeItems.pluck('OrderId').all();
         dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
-        setPaths(new Map())
+        setRoutes(new Map())
     }
 
     function reassignRoute(from, to) {
         dispatch({ type: 'swap-route', from, to })
-        setPaths(mapMove(paths, to, from));
+        setRoutes(mapMove(routes, to, from));
     }
 
     function reverseRoute(driver) {
@@ -125,7 +125,8 @@ export default function StateProvider(props) {
         const fromDriver = store.get(id).Driver;
         dispatch({ type: 'assign', ids: [id], driver })
         recalcRoute(fromDriver);
-        recalcRoute(driver);
+        if (driver !== fromDriver)
+            recalcRoute(driver);
         console.log(fromDriver)
     }
 
@@ -183,10 +184,10 @@ export default function StateProvider(props) {
             const next = quickChange + 1;
             store.get(id).Sequence = next;
             setQuickChange(next)
-            const { newItems, path, order } = await route(items.where('Driver', fromItem.Driver).sortBy('Sequence').all());
+            const { newItems, path, order } = await osrmTrip(fromItem.Driver, items);
             // dispatch({ type: 'move', items: newItems, fromItem, toItem: fromItem });
             dispatch({ type: 'reorder', order })
-            paths.set(fromItem.Driver, path);
+            // routes.set(fromItem.Driver, route);
             return;
         }
         setQuickChange(store.get(id).Sequence);
@@ -222,9 +223,7 @@ export default function StateProvider(props) {
 
     function applySnapshot(id) {
         dispatch({ type: 'set', state: snapshots.get(id) });
-        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-        const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-        setPaths(paths);
+        setRoutes(new Map(solutions.get(id)));
     }
 
     const state = {
@@ -236,7 +235,7 @@ export default function StateProvider(props) {
         busy, //setBusy,
         // derived
         activeItems,
-        activePaths,
+        activeRoutes,
         filteredItems,
         isFiltered,
         selectedItem,
@@ -244,7 +243,8 @@ export default function StateProvider(props) {
         toasts,
         showPaths,
         items,
-        maxPaneId, setMaxPaneId
+        maxPaneId, setMaxPaneId,
+        routes
     };
 
     const actions = {
