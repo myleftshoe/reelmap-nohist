@@ -38,28 +38,6 @@ async function fetchSolution({ service = 'route', payload, options = '' }) {
     return response.json();
 }
 
-const mapRouteToItems = (route, items) => {
-
-    const itemsMap = new Map(items.map(item => [item.OrderId, item]));
-    const newItems = [];
-
-    // routes.forEach((route, key) => {
-    const steps = route.steps.slice(1, -1)
-    console.log(steps)
-    // const steps = route.steps.filter(step => step.id === "job");
-    steps.forEach((step, i) => {
-        const item = itemsMap.get(`${step.id}`);
-        item.Sequence = i + 1;
-        item.arrival = step.arrival;
-        item.duration = step.duration;
-        newItems.push(item);
-    });
-    // })
-
-    console.log(newItems)
-    return newItems;
-}
-
 function mapSolutionToRoute(solution, items, id) {
 
     const waypoints = [...solution.waypoints]
@@ -99,4 +77,26 @@ function mapSolutionToRoute(solution, items, id) {
     console.table(route);
     console.table(route.steps);
     return route;
+}
+
+const mapRouteToItems = (route, items) => {
+
+    const itemsMap = new Map(items.map(item => [item.OrderId, item]));
+    const newItems = [];
+
+    // routes.forEach((route, key) => {
+    const steps = route.steps.slice(1, -1)
+    console.log(steps)
+    // const steps = route.steps.filter(step => step.id === "job");
+    steps.forEach((step, i) => {
+        const item = itemsMap.get(`${step.id}`);
+        item.Sequence = i + 1;
+        item.arrival = step.arrival;
+        item.duration = step.duration;
+        newItems.push(item);
+    });
+    // })
+
+    console.log(newItems)
+    return newItems;
 }
