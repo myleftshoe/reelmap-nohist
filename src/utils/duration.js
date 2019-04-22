@@ -1,10 +1,10 @@
 export default function Duration(seconds) {
     return {
-        format(fmt = '{hh}:{mm}') {
+        format({ fmt = '{hh}:{mm}', fallback = '-' } = {}) {
             const m = seconds / 3600;
             const hh = Math.floor(m);
             const mm = Math.floor((m % 1) * 60);
-            if (!hh || !mm) return '-';
+            if (!Number.isInteger(hh) || !Number.isInteger(mm)) return fallback;
             return fmt.replace('{hh}', hh).replace('{mm}', mm.toString().padStart(2, '0'));
         },
         get hour() { return Math.trunc(seconds / 3600) }
