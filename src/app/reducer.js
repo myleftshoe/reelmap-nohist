@@ -26,28 +26,28 @@ export default function reducer(state, action) {
             break;
         }
         case 'set': {
-            // state = new Map(action.state);
+            state = new Map(action.state);
             break;
         }
         case 'move': {
-            const {items, fromItem, toItem} = action;
+            const { items, fromItem, toItem } = action;
             const fromIndex = items.indexOf(fromItem);
             const toIndex = items.indexOf(toItem);
             fromItem.pinned = true;
-            const newItems = move(items, fromIndex, toIndex).map((item, index) => ({...item, Sequence: index+1}));
+            const newItems = move(items, fromIndex, toIndex).map((item, index) => ({ ...item, Sequence: index + 1 }));
             newItems.forEach(item => state.set(item.OrderId, item))
             console.table(newItems, ['OrderId', 'Sequence', 'pinned', 'Street', 'City']);
             break;
         }
         case 'reverse': {
-            const newItems = [...action.items].reverse().map((item, index) => ({...item, Sequence: index+1}));
+            const newItems = [...action.items].reverse().map((item, index) => ({ ...item, Sequence: index + 1 }));
             newItems.forEach(item => state.set(item.OrderId, item));
             break;
         }
         case 'reorder': {
             action.order.forEach((id, index) => {
                 const item = state.get(id);
-                state.set(id, {...item, Sequence: index + 1})
+                state.set(id, { ...item, Sequence: index + 1 })
             });
             break;
         }
