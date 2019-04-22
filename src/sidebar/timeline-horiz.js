@@ -93,7 +93,7 @@ export default function TimelineHoriz({ state, dispath }) {
                     </Col>
                 )}
             </Times>
-            {drivers.map(driver => <Line>
+            {drivers.map(({ id: driver }) => <Line>
                 <Driver>{driver}</Driver>
                 <Row key={driver}>
                     {items.where('Driver', driver).sortBy('arrival').map(renderRow)}

@@ -1,3 +1,4 @@
+
 export const colors = {
     CHA: 'red',
     DRK: 'purple',
@@ -11,9 +12,22 @@ export const resizableProps = {
     defaultSize: 360,
 }
 
-export const drivers = ['SAM1', 'DRK', 'CHA'];
+// export const drivers = ['SAM1', 'DRK', 'CHA'];
 
-export const panes = [...drivers, 'UNASSIGNED'];
+function Driver(id, { color, start, end } = {}) {
+    this.id = id;
+    this.color = color || 'black';
+    this.start = start || 32400;
+    this.end = end || 61200;
+}
+
+export const drivers = new Map([
+    ['CHA', new Driver('CHA', { color: 'red' })],
+    ['DRK', new Driver('DRK', { color: 'purple' })],
+    ['SAM1', new Driver('SAM1', { color: 'green' })],
+]);
+
+export const panes = [...(drivers.keys()), 'UNASSIGNED'];
 
 export const theme = {
     badgeColor: '#facf00',

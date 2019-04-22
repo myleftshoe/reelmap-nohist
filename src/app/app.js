@@ -14,9 +14,9 @@ function App({ state, dispatch }) {
   useToast(state.toast);
 
   return <div style={{ display: 'flex', flexDirection: 'column' }}>
-    <div style={{ height: '0px', width: 'calc(100vw - 50px)', backgroundColor: '#2c2c2f', position: 'absolute', bottom: '0px', left: '50px', zIndex: 100, overflowX: 'auto' }}>
+    {/* <div style={{ height: '0px', width: 'calc(100vw - 50px)', backgroundColor: '#2c2c2f', position: 'absolute', bottom: '0px', left: '50px', zIndex: 100, overflowX: 'auto' }}>
       <TimelineHoriz state={state} dispatch={dispatch} />
-    </div>
+    </div> */}
     <div>
       <Resizable split='vertical' {...resizableProps}>
         <Sidebars state={state} dispatch={dispatch} />

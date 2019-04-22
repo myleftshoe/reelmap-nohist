@@ -69,7 +69,24 @@ export default function StateProvider(props) {
 
         setBusy(true);
 
-        const { paths: newPaths, newItems, solution, routes: newRoutes } = await vroom(drivers, items);
+        let result = await vroom(drivers, items);
+        const slackTime = result.slackTime;
+        if (slackTime > 3600) {
+            const ids = items.pluck('OrderId').all();
+            dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
+
+            const averageSlackTime = slackTime / drivers.size - 2400;
+            [...drivers.values()].forEach(driver => {
+                driver.end = Math.trunc(driver.end - averageSlackTime)
+            })
+            console.log('wwwwwwww', drivers, averageSlackTime);
+            result = await vroom(drivers, items)
+        }
+        const { paths: newPaths, newItems, solution, routes: newRoutes, slackTime: st } = result;
+
+        console.log('wwwwwwwwww', solution, st)
+
+
         setRoutes(new Map(newRoutes));
 
         const snapshotId = Date.now();

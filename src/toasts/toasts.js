@@ -32,7 +32,7 @@ export function SolutionToast(id, solution) {
             const { vehicle, distance, duration, service } = route;
             return <>
                 <Header id={vehicle}>
-                    <div>{drivers[vehicle]}</div>
+                    <div>{drivers.get(vehicle)}</div>
 
                 </Header>
                 <Solution distance={distance} duration={duration} service={service} />

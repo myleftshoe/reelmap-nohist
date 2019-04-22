@@ -31,7 +31,7 @@ function RouteBar({ state, dispatch }) {
             >
                 All <Badge>({state.items.count()})</Badge>
             </CustomControlBar.TextButton>
-            {drivers.map(driver =>
+            {[...drivers.keys()].map(driver =>
                 <CustomControlBar.TextButton
                     key={driver}
                     id={driver}
@@ -60,7 +60,7 @@ function ToolBar({ state, dispatch }) {
         <CustomControlBar small>
             <CustomControlBar.IconButton onClick={dispatch('editmode-click')}>{state.showPaths ? 'scatter_plot' : 'timeline'}</CustomControlBar.IconButton>
             <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
-                {drivers.map(driver =>
+                {[...drivers.keys()].map(driver =>
                     <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
                 )}
             </CustomControlBar.Select>
