@@ -23,14 +23,7 @@ function RouteBar({ state, dispatch }) {
 
     return (
         <CustomControlBar position='LEFT_TOP' small style={{ width: 120 }} >
-            <CustomControlBar.TextButton
-                id='ALL'
-                onClick={handleClick}
-                style={{ padding: '7px 0px', marginBottom: 5, borderBottom: '1px solid #00000015' }}
-                textLabel='All'
-            >
-                All <Badge>({state.items.count()})</Badge>
-            </CustomControlBar.TextButton>
+            <CustomControlBar.Title>Routes</CustomControlBar.Title>
             {[...drivers.keys()].map(driver =>
                 <CustomControlBar.TextButton
                     key={driver}
@@ -50,6 +43,14 @@ function RouteBar({ state, dispatch }) {
                 textLabel='Unassigned'
             >
                 Unassigned <Badge>({state.items.where('Driver', 'UNASSIGNED').count()})</Badge>
+            </CustomControlBar.TextButton>
+            <CustomControlBar.TextButton
+                id='ALL'
+                onClick={handleClick}
+                style={{ padding: '7px 0px' }}
+                textLabel='All'
+            >
+                All <Badge>({state.items.count()})</Badge>
             </CustomControlBar.TextButton>
         </CustomControlBar>
     )
