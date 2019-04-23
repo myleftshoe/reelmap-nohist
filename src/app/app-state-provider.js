@@ -70,12 +70,11 @@ export default function StateProvider(props) {
         setBusy(true);
 
         const unassignedIds = items.where('Driver', 'UNASSIGNED').pluck('OrderId').all();
-        console.log(unassignedIds)
+
         let result = await vroom(drivers, items);
+
         const slackTime = result.slackTime;
         if (balanced && slackTime > 3600) {
-            const ids = items.pluck('OrderId').all();
-            // dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
             unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
 
             const averageSlackTime = slackTime / drivers.size - 2400;
@@ -85,13 +84,9 @@ export default function StateProvider(props) {
                 driver.end = Math.trunc(driver.end - averageSlackTime)
                 reducedDrivers.set(key, driver)
             })
-            console.log('wwwwwwww', reducedDrivers, averageSlackTime);
             result = await vroom(reducedDrivers, items)
         }
         const { paths: newPaths, newItems, solution, routes: newRoutes, slackTime: st } = result;
-
-        console.log('wwwwwwwwww', solution, st)
-
 
         setRoutes(new Map(newRoutes));
 
