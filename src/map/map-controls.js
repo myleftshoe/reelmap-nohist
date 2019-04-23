@@ -6,9 +6,9 @@ import Badge from '../common/badge';
 
 function MapControls({ state, dispatch }) {
     return <>
-        <ToolBar state={state} dispatch={dispatch} />
         <RouteBar state={state} dispatch={dispatch} />
         <CalculateButton state={state} dispatch={dispatch} />
+        <ToolBar state={state} dispatch={dispatch} />
     </>
 }
 
@@ -22,7 +22,7 @@ function RouteBar({ state, dispatch }) {
     }
 
     return (
-        <CustomControlBar position='LEFT_TOP' small style={{ width: 120, marginTop: 50 }} >
+        <CustomControlBar position='LEFT_TOP' small style={{ width: 120 }} >
             <CustomControlBar.TextButton
                 id='ALL'
                 onClick={handleClick}
@@ -57,7 +57,7 @@ function RouteBar({ state, dispatch }) {
 
 function ToolBar({ state, dispatch }) {
     return (
-        <CustomControlBar small>
+        <CustomControlBar position='LEFT_TOP' switchDirection small style={{ width: 120 }}>
             <CustomControlBar.IconButton onClick={dispatch('editmode-click')}>{state.showPaths ? 'scatter_plot' : 'timeline'}</CustomControlBar.IconButton>
             <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
                 {[...drivers.keys()].map(driver =>

@@ -21,6 +21,7 @@ S.ButtonBase = ({ vertical, color, active = false, disabled }) => css`
     display:flex;
     align-items:center;
     justify-content: center;
+    flex:1;
     cursor:pointer;
     border:none;
     outline:none;

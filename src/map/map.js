@@ -25,7 +25,7 @@ export default function Map(props) {
             onRightClick={props.onRightClick}
             LoadingComponent={null}
         />
-        <ThemeSwitcher bindingPosition='TOP_LEFT' map={map} />
+        <ThemeSwitcher position='LEFT_BOTTOM' map={map} />
         {props.children}
     </>
 }
