@@ -11,7 +11,7 @@ export default function ThemeSwitcher({ map, position }) {
         localStorage.setItem('mapTheme', themeName);
     }
     return <CustomControlBar small position={position}>
-        <CustomControlBar.IconButton onClick={switchTheme}>invert_colors</CustomControlBar.IconButton>
+        <CustomControlBar.IconButton title='Switch map theme' onClick={switchTheme}>invert_colors</CustomControlBar.IconButton>
         {/* <CustomControlBar.Divider/> */}
         {/* <CustomControlBar.TextButton onClick={switchTheme}>Satellite</CustomControlBar.TextButton> */}
     </CustomControlBar>

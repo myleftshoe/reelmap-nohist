@@ -79,11 +79,14 @@ export default function StateProvider(props) {
             unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
 
             const averageSlackTime = slackTime / drivers.size - 2400;
-            [...drivers.values()].forEach(driver => {
+            const reducedDrivers = new Map();
+            drivers.forEach((value, key) => {
+                const driver = { ...value };
                 driver.end = Math.trunc(driver.end - averageSlackTime)
+                reducedDrivers.set(key, driver)
             })
-            console.log('wwwwwwww', drivers, averageSlackTime);
-            result = await vroom(drivers, items)
+            console.log('wwwwwwww', reducedDrivers, averageSlackTime);
+            result = await vroom(reducedDrivers, items)
         }
         const { paths: newPaths, newItems, solution, routes: newRoutes, slackTime: st } = result;
 
