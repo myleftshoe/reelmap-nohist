@@ -18,7 +18,7 @@ export const Header = styled.span`
 `
 
 export function SolutionToast(id, solution) {
-    const { vehicle, distance, duration, service } = solution.summary;
+    const { distance, duration, service } = solution.summary;
     return ({
         id,
         content: <>
@@ -30,10 +30,10 @@ export function SolutionToast(id, solution) {
         </>,
         expandedContent: solution.routes.map(route => {
             const { vehicle, distance, duration, service } = route;
+            const driver = [...drivers.values()][vehicle].id
             return <>
                 <Header id={vehicle}>
-                    <div>{drivers.get(vehicle)}</div>
-
+                    <div>{driver}</div>
                 </Header>
                 <Solution distance={distance} duration={duration} service={service} />
             </>;

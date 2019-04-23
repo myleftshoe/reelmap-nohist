@@ -97,6 +97,14 @@ function CalculateButton({ state, dispatch }) {
             >
                 Balanced route
             </CustomControlBar.TextButton>
+            <CustomControlBar.TextButton
+                id='clear-all'
+                style={{ padding: '7px 0px', marginTop: 5 }}
+                onClick={dispatch('clear-all')}
+                title='Clear all routes'
+            >
+                Clear all
+            </CustomControlBar.TextButton>
         </CustomControlBar>
     )
 }

@@ -36,7 +36,7 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
         {/* <NavButton id='timeline' active={activeSidebar === 'timeline'} onClick={handleClick} tooltip='Timeline'>timeline</NavButton> */}
         {/* <NavButton id='arrival' active={state.sortBy === 'arrival'} onClick={handleClick} tooltip='Auto assign'>timeline</NavButton> */}
         <NavButton id='history' active={activeSidebar === 'history'} onClick={handleClick} tooltip='History' badge={{ count: state.toasts.size, color: theme.badgeColor }}>history</NavButton>
-        <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>warning</NavButton>
+        {/* <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>warning</NavButton> */}
         <Busy busy={state.busy} />
     </>
 }
