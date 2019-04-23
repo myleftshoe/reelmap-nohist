@@ -65,15 +65,18 @@ export default function StateProvider(props) {
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
     const selectedItem = store.get(selectedMarkerId);
 
-    async function autoAssign() {
+    async function autoAssign({ balanced = false }) {
 
         setBusy(true);
 
+        const unassignedIds = items.where('Driver', 'UNASSIGNED').pluck('OrderId').all();
+        console.log(unassignedIds)
         let result = await vroom(drivers, items);
         const slackTime = result.slackTime;
-        if (slackTime > 3600) {
+        if (balanced && slackTime > 3600) {
             const ids = items.pluck('OrderId').all();
-            dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
+            // dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
+            unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
 
             const averageSlackTime = slackTime / drivers.size - 2400;
             [...drivers.values()].forEach(driver => {

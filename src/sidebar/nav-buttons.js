@@ -15,10 +15,10 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
                 onSidebarChange('history');
                 break;
             }
-            case 'editmode':
-            case 'autoassign': {
-                break;
-            }
+            // case 'editmode':
+            // case 'autoassign': {
+            //     break;
+            // }
             default: {
                 state.setSortBy(btnId);
                 onSidebarChange('drivers')

@@ -81,6 +81,10 @@ S.TextButton = styled.button`
     font-size:18px;
 `
 
-console.log(S.ButtonSmall)
+S.Title = styled.div`
+    align-self: center;
+    padding: 8px;
+`
+
 
 export default S;
