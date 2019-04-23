@@ -2,6 +2,8 @@ import React from 'react'
 import Solution from '../common/solution';
 import { drivers } from '../common/constants';
 import styled from '@emotion/styled';
+import Badge from '../common/badge';
+import Duration from '../utils/duration';
 
 export const Header = styled.span`
     display: flex;
@@ -29,11 +31,12 @@ export function SolutionToast(id, solution) {
             <Solution distance={distance} duration={duration} service={service} />
         </>,
         expandedContent: solution.routes.map(route => {
-            const { vehicle, distance, duration, service } = route;
+            const { vehicle, distance, duration, service, start, end } = route;
             const driver = [...drivers.values()][vehicle].id
             return <>
                 <Header id={vehicle}>
                     <div>{driver}</div>
+                    <Badge>{Duration(start).format()} - {Duration(end).format()}</Badge>
                 </Header>
                 <Solution distance={distance} duration={duration} service={service} />
             </>;

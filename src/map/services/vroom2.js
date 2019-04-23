@@ -10,7 +10,7 @@ export default async function vroom(driversMap, data) {
 
     const drivers = [...driversMap.keys()]
     const items = data.all();
-    if (!items.length) return { paths: [], items };
+    if (!items.length) return { items };
 
     // const depot = [145.005252, -37.688797];
     // const drivers = ['CHA'];
@@ -23,19 +23,15 @@ export default async function vroom(driversMap, data) {
 
     const jobs = mapItemsToJobs(items, drivers);
     const vehicles = mapDriversToVehicles(driversMap);
-    console.log(vehicles)
     const options = { "g": true }; //returns route geometry
 
     const solution = await fetchSolution({ vehicles, jobs, options });
-    console.log(Date.now() / 1000, solution)
 
-    console.log(vehicles)
-    // const paths = mapRoutesToPaths(solution, drivers);
     const routes = mapSolutionToRoutes(solution, drivers);
-    console.log(routes, [...routes.values()])
+    const modifiedSolution = modifySolution(solution, drivers);
+
     const slackTime = [...driversMap.values()].reduce((acc, driver) => {
         const route = routes.get(driver.id);
-        console.log(driver.start, driver.end)
         let slack = driver.end - driver.start;
         if (route) {
             slack = driver.end - route.end;
@@ -44,7 +40,6 @@ export default async function vroom(driversMap, data) {
             return acc + slack;
         return acc;
     }, 0)
-    console.log(slackTime)
 
     // if (slackTime > 1000) {
     //     const averageSlackTime = slackTime / drivers.length;
@@ -57,7 +52,7 @@ export default async function vroom(driversMap, data) {
 
 
     const newItems = mapRoutesToItems(routes, items);
-    return { items: newItems, solution, routes, slackTime };
+    return { items: newItems, solution: modifiedSolution, routes, slackTime };
     // return new Items(newItems);
 }
 
@@ -83,7 +78,6 @@ const mapItemsToJobs = (items, drivers) => items.map(item => ({
 
 const mapDriversToVehicles = (drivers) => [...drivers.values()].map((driver, index) => {
     // console.log(driver, shiftDurations[index], Math.ceil(capacityFactor * shiftDurations[index]))
-    console.log(driver.start, driver.end)
     return {
         "id": index,
         "start": depot,
@@ -94,6 +88,46 @@ const mapDriversToVehicles = (drivers) => [...drivers.values()].map((driver, ind
         skills: [0, index + 1]
     }
 });
+
+function modifySolution(solution, drivers) {
+
+    const modifiedSolution = {};
+    modifiedSolution.routes = [];
+    modifiedSolution.summary = solution.summary;
+
+    solution.routes.forEach(route => {
+
+        const modifiedSteps = route.steps.map(
+            (step, index, arr) => {
+                const prevStep = arr[index - 1] || { duration: 0, distance: 0 };
+                const modifiedStep = {
+                    ...step,
+                    id: step.job ? step.job + '' : step.type,
+                    location: LatLng(step.location),
+                    duration: step.duration - prevStep.duration,
+                    distance: step.distance - prevStep.distance,
+                    service: step.service || 0,
+                }
+                return modifiedStep;
+            }
+        )
+
+        const _route = {
+            vehicle: drivers[route.vehicle],
+            ...route,
+            start: modifiedSteps[0].arrival,
+            end: modifiedSteps[modifiedSteps.length - 1].arrival,
+            steps: modifiedSteps,
+        };
+
+
+        modifiedSolution.routes.push(_route);
+
+    });
+
+    return modifiedSolution;
+
+}
 
 function mapSolutionToRoutes(solution, drivers) {
 

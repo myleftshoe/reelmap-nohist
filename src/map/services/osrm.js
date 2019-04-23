@@ -12,10 +12,7 @@ export default async function route(id, data) {
     const destination = depot;
     const lngLats = items.map(({ GeocodedAddress: { latitude, longitude } }) => `${longitude},${latitude}`);
     const payload = [source, ...lngLats, destination].join(';');
-    // console.log(payload);
     const solution = await fetchSolution({ service: 'trip', payload, options });
-    console.log(solution);
-
 
     const route = mapSolutionToRoute(solution, items, id);
     const newItems = mapRouteToItems(route, items)
@@ -52,7 +49,6 @@ function mapSolutionToRoute(solution, items, id) {
         const waypoint = waypoints[index];
         const { duration, distance } = legs[waypoint.waypoint_index - 1];
         const id = stepIds[waypoint.waypoint_index];
-        // console.log(id, waypoint.waypoint_index)
         const step = {
             id,
             location: LatLng(waypoint.location),
@@ -64,7 +60,6 @@ function mapSolutionToRoute(solution, items, id) {
         steps.push(step);
     }
     steps[steps.length - 1].service = 0;
-    // console.table(steps)
     const route = {
         start: 36000,
         end: steps[steps.length - 1].arrival,
@@ -74,8 +69,6 @@ function mapSolutionToRoute(solution, items, id) {
         service: steps.map(item => item.service).reduce((prev, next) => prev + next),
         steps,
     };
-    console.table(route);
-    console.table(route.steps);
     return route;
 }
 
@@ -86,7 +79,6 @@ const mapRouteToItems = (route, items) => {
 
     // routes.forEach((route, key) => {
     const steps = route.steps.slice(1, -1)
-    console.log(steps)
     // const steps = route.steps.filter(step => step.id === "job");
     steps.forEach((step, i) => {
         const item = itemsMap.get(`${step.id}`);
@@ -97,6 +89,5 @@ const mapRouteToItems = (route, items) => {
     });
     // })
 
-    console.log(newItems)
     return newItems;
 }
