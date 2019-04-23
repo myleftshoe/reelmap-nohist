@@ -86,7 +86,7 @@ export default function StateProvider(props) {
             })
             result = await vroom(reducedDrivers, items)
         }
-        const { paths: newPaths, newItems, solution, routes: newRoutes, slackTime: st } = result;
+        const { solution, routes: newRoutes } = result;
 
         setRoutes(new Map(newRoutes));
 
