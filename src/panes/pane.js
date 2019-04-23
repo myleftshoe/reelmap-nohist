@@ -106,7 +106,7 @@ function Pane(props) {
                 {props.title}
                 <Minibar>
                     {props.info && <Badge color='#fff5'>{props.info}</Badge>}
-                    <Minibar.Button visible={showMaximizeButton} onClick={handleMaximizeClick} style={{ paddingRight: 3 }}>
+                    <Minibar.Button visible={showMaximizeButton} title='Maximize' onClick={handleMaximizeClick} style={{ paddingRight: 3 }}>
                         fullscreen
                     </Minibar.Button>
                     <Badge style={{ minWidth: '16px', marginRight: '-6px', paddingLeft: 0 }} color={props.countColor || null}>{props.count}</Badge>
