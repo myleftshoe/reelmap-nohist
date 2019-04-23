@@ -81,14 +81,14 @@ function ToolBar({ state, dispatch }) {
 function CalculateButton({ state, dispatch }) {
     return (
         <CustomControlBar position='LEFT_TOP' small style={{ flexDirection: 'column', width: 120 }} >
-            <CustomControlBar.Title>Calculate</CustomControlBar.Title>
+            <CustomControlBar.Title>Calculate Routes</CustomControlBar.Title>
             <CustomControlBar.TextButton
                 id='calculate-optimal-route'
                 onClick={dispatch('auto-assign')}
                 title='Fastest possible route (may not use all vehicles)'
                 style={{ backgroundColor: 'orange', margin: 5 }}
             >
-                Optimal Route
+                Optimal
             </CustomControlBar.TextButton>
             <CustomControlBar.TextButton
                 id='calculate-balanced-route'
@@ -96,7 +96,7 @@ function CalculateButton({ state, dispatch }) {
                 title='Allocate evenly across all vehicles'
                 style={{ backgroundColor: 'yellow', margin: 5, border: 'none' }}
             >
-                Balanced route
+                Balanced
             </CustomControlBar.TextButton>
             <CustomControlBar.TextButton
                 id='clear-all'
