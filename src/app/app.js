@@ -6,7 +6,6 @@ import Sidebars from '../sidebar/sidebars';
 import MapContainer from '../map/map-container';
 import TimelineHoriz from '../sidebar/timeline-horiz'
 
-const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 function App({ state, dispatch }) {
 

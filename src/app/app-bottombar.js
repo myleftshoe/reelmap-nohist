@@ -6,7 +6,6 @@ import Sidebars from '../sidebar/sidebars';
 import MapContainer from '../map/map-container';
 import TextButton from '../common/text-button';
 
-const openInNew = id => window.open(`http://localhost:3006/${id}`)
 
 function App({ state, dispatch }) {
 

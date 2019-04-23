@@ -5,12 +5,8 @@ import Duration from '../utils/duration';
 
 export default function Panes(props) {
 
-    const { panes, items, routes, groupBy, children, isFiltered, onDrop, onMaximizeEnd, onOpenInNew, maxPaneId } = props;
+    const { panes, items, routes, groupBy, children, isFiltered, onDrop, onMaximizeEnd, maxPaneId } = props;
     const [_panes, setPanes] = useState(panes);
-
-    const paneActionButtons = [
-        { id: 'open-in-new', tooltip: 'Open in new', icon: 'open_in_new', onClick: onOpenInNew, visible: maxPaneId }
-    ]
 
     return _panes.map((id) => {
         const paneItems = groupBy ? items.where(groupBy, id) : items;
@@ -30,7 +26,6 @@ export default function Panes(props) {
                 maximized={maxPaneId}
                 onDrop={onDrop}
                 onMaximize={onMaximizeEnd}
-                actionButtons={paneActionButtons}
             >
                 {children(paneItems.all())}
             </Pane>
