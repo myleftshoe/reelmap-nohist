@@ -11,7 +11,6 @@ import MarkerInfoWindow from './marker-info-window';
 
 function MapContainer({ state, dispatch }) {
     const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: state.quickChange || '' });
-    console.log(state.activeItems, state.activeRoutes)
     return (
         <GoogleMap
             onClick={dispatch('map-click')}
@@ -29,7 +28,6 @@ function MapContainer({ state, dispatch }) {
                 cursor={cursor}
                 showLabel={true}
                 onMarkerClick={dispatch('marker-click')}
-                onMarkerRightClick={dispatch('marker-rightclick')}
                 onMarkerMouseOver={state.setSelectedMarkerId}
             />
             <MapControls state={state} dispatch={dispatch} />
@@ -41,7 +39,7 @@ function MapContainer({ state, dispatch }) {
                 <SuburbBoundary suburb={suburb} />
             */}
             {state.selectedMarkerId && <MarkerInfoWindow state={state} dispatch={dispatch} />}
-            {state.showPaths && <Routes hidden={state.isFiltered} routes={state.activeRoutes} onRightClick={dispatch('reverse-route')} />}
+            {state.showPaths && <Routes hidden={state.isFiltered} routes={state.activeRoutes} />}
 
         </GoogleMap>
     )

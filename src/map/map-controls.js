@@ -6,7 +6,6 @@ import useToggle from '../hooks/useToggle';
 import '@trendmicro/react-checkbox/dist/react-checkbox.css';
 
 function MapControls({ state, dispatch }) {
-    console.log(state.activeRoutes)
     return <>
         <RouteBar state={state} dispatch={dispatch} />
         <CalculateButton state={state} dispatch={dispatch} />

@@ -2,7 +2,7 @@ import React from 'react'
 import { colors } from '../common/constants';
 import Route from './route';
 
-function Routes({ routes, hidden = false, onRightClick }) {
+function Routes({ routes, hidden = false }) {
     if (hidden) return null;
     return routes.map(({ key, value }) => {
         return <Route
@@ -10,7 +10,6 @@ function Routes({ routes, hidden = false, onRightClick }) {
             id={`Route.${key}`}
             path={value.geometry || ''}
             color={colors[key]}
-            onRightClick={() => onRightClick(key)}
         />
     }
     )

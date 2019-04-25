@@ -23,7 +23,6 @@ export default function StateProvider(props) {
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
     const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
-    const [quickChange, setQuickChange] = useState();
     const [showPaths, toggleShowPaths] = useToggle(true);
     const [filter, setFilter] = useState('');
     const [sortBy, setSortBy] = useState('City');
@@ -191,29 +190,10 @@ export default function StateProvider(props) {
             const { routes } = result;
             setRoutes(new Map(routes));
             return;
-            reassignItem(id, mapEditMode.id);
         }
         setSelectedMarkerId(id)
     }
 
-    async function MarkerRightClick(id) {
-        console.log('MarkerRightClick', id, quickChange)
-        if (quickChange) {
-            const fromItem = store.get(id);
-            const driverItems = items.where('Driver', fromItem.Driver).sortBy('Sequence').all();
-            const toItem = driverItems[quickChange];
-            dispatch({ type: 'move', items: driverItems, fromItem, toItem });
-            const next = quickChange + 1;
-            store.get(id).Sequence = next;
-            setQuickChange(next)
-            const { newItems, path, order } = await osrmTrip(fromItem.Driver, items);
-            // dispatch({ type: 'move', items: newItems, fromItem, toItem: fromItem });
-            dispatch({ type: 'reorder', order })
-            // routes.set(fromItem.Driver, route);
-            return;
-        }
-        setQuickChange(store.get(id).Sequence);
-    }
 
     function SelectionChange(ids) {
         setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
@@ -228,30 +208,12 @@ export default function StateProvider(props) {
     }
 
     function EditModeClick() {
-        // setPaths(new Map())
         toggleShowPaths();
-        // setMapEditMode({ on: true });
-    }
-
-    function MapRightClick() {
-        if (quickChange) {
-            setQuickChange(undefined);
-            return;
-        }
-        if (!mapEditMode.id) return;
-        const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
-        setMapEditMode({ ...mapEditMode, tool })
     }
 
     function MapClick(map) {
-        console.log('mmmmm', map)
         setSelectedMarkerId(null);
         setMapEditMode({});
-        // setMap(map);
-        // setTimeout(() =>
-        // map.fitBounds(Bounds.from(items.pluck('GeocodedAddress').map(ga => LatLng(ga)).all()))
-        //     , 500
-        // )
     }
 
     function applySnapshot(id) {
@@ -262,8 +224,7 @@ export default function StateProvider(props) {
     const state = {
         filter, setFilter,
         sortBy, setSortBy,
-        mapEditMode, //setMapEditMode,
-        quickChange, //setQuickChange,
+        mapEditMode,
         selectedDrivers, setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
         busy, //setBusy,
@@ -289,13 +250,11 @@ export default function StateProvider(props) {
         'reverse-route': reverseRoute,
         'drop': Drop,
         'marker-click': MarkerClick,
-        'marker-rightclick': MarkerRightClick,
         'selection-complete': SelectionComplete,
         'selection-change': SelectionChange,
         'maximize-end': MaximizeEnd,
         'editmode-click': EditModeClick,
         'map-click': MapClick,
-        'map-rightclick': MapRightClick,
     }
 
     const dispatcher = type => actions[type];

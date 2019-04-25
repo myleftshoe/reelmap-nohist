@@ -24,7 +24,6 @@ export default function Route({ id, path, color, fitBounds = true, ...eventProps
             color={color}
             {...eventProps}
             onClick={fitBounds ? () => map.fitBounds(Bounds.from(points)) : eventProps.onClick}
-            onRightClick={eventProps.onRightClick}
             zIndex={zIndex}
         />
     </>
