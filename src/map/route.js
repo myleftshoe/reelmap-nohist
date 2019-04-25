@@ -5,7 +5,7 @@ import RoutePolygon from './route-polygon';
 import { GoogleMapContext } from '@googlemap-react/core'
 import { Bounds } from './utils'
 
-export default function Route({ id, path, color, fitBounds = true, ...eventProps }) {
+export default function Route({ id, path, color, fitBounds = true, showPath, ...eventProps }) {
     if (!window.google) return null;
     const mapContext = useContext(GoogleMapContext);
     const { map } = mapContext.state;
@@ -16,7 +16,7 @@ export default function Route({ id, path, color, fitBounds = true, ...eventProps
         <RoutePolyline
             id={`${id}.polyline`}
             path={points}
-            color={color}
+            color={showPath ? color : 'transparent'}
         />
         <RoutePolygon
             id={`${id}.polygon`}

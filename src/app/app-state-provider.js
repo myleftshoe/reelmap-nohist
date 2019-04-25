@@ -23,7 +23,6 @@ export default function StateProvider(props) {
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
     const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
-    const [showPaths, toggleShowPaths] = useToggle(true);
     const [filter, setFilter] = useState('');
     const [sortBy, setSortBy] = useState('City');
     // const [suburb, setSuburb] = useState('');
@@ -96,8 +95,6 @@ export default function StateProvider(props) {
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
-
-        if (!showPaths) toggleShowPaths();
 
         setBusy(false);
     }
@@ -207,10 +204,6 @@ export default function StateProvider(props) {
         // setTimeout(() => setSelectedDrivers(id ? [id] : []), 0);
     }
 
-    function EditModeClick() {
-        toggleShowPaths();
-    }
-
     function MapClick(map) {
         setSelectedMarkerId(null);
         setMapEditMode({});
@@ -236,7 +229,6 @@ export default function StateProvider(props) {
         selectedItem,
         toast,
         toasts,
-        showPaths,
         items,
         maxPaneId, setMaxPaneId,
         routes
@@ -253,7 +245,6 @@ export default function StateProvider(props) {
         'selection-complete': SelectionComplete,
         'selection-change': SelectionChange,
         'maximize-end': MaximizeEnd,
-        'editmode-click': EditModeClick,
         'map-click': MapClick,
     }
 

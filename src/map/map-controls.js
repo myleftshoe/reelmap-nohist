@@ -4,9 +4,10 @@ import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 
 
-function MapControls({ state, dispatch }) {
+function MapControls({ state, dispatch, handleAction }) {
     return <>
         <RouteBar state={state} dispatch={dispatch} />
+        <ShowDetailsButton state={state} dispatch={dispatch} handleAction={handleAction} />
         <ClearButton state={state} dispatch={dispatch} />
         <CalculateButton state={state} dispatch={dispatch} />
         <RegionSelectTool state={state} dispatch={dispatch} />
@@ -73,6 +74,21 @@ function RouteBar({ state, dispatch }) {
             )}
         </CustomControlBar>
     )
+}
+
+function ShowDetailsButton({ state, dispatch, handleAction }) {
+    return <>
+        <CustomControlBar position='LEFT_TOP' small switchDirection  >
+            <CustomControlBar.TextButton
+                id='clear-all'
+                onClick={() => handleAction('toggle-show-details')}
+                title='Show details'
+                style={{ width: 100 }}
+            >
+                Show Details
+            </CustomControlBar.TextButton>
+        </CustomControlBar>
+    </>
 }
 
 function ClearButton({ state, dispatch }) {

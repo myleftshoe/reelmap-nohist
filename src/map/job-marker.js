@@ -9,12 +9,12 @@ export default function JobMarker({ id, label, position, color, cursor, ...event
         opts={{
             draggable: true,
             // label: `${Sequence}`,
-            // label: label && {
-            //     text: `${label}`,
-            //     color: 'black',
-            //     fontSize: '9px',
-            //     fontWeight: 'bold',
-            // },
+            label: label && {
+                text: `${label}`,
+                color: 'black',
+                fontSize: '9px',
+                fontWeight: 'bold',
+            },
             position: LatLng(position),
             icon: {
                 url: `http://maps.google.com/mapfiles/ms/icons/${color}.png`,

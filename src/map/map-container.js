@@ -7,10 +7,25 @@ import Routes from './routes';
 import useCursor from '../hooks/useCursor'
 import MapControls from './map-controls';
 import MarkerInfoWindow from './marker-info-window';
+import useToggle from '../hooks/useToggle';
 
 
 function MapContainer({ state, dispatch }) {
+
     const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: state.quickChange || '' });
+
+    const [showDetails, toggleShowDetails] = useToggle(false);
+
+    function handleAction(action) {
+        switch (action) {
+            case 'toggle-show-details': {
+                toggleShowDetails();
+                break;
+            }
+            default: { }
+        }
+    }
+
     return (
         <GoogleMap
             onClick={dispatch('map-click')}
@@ -26,11 +41,11 @@ function MapContainer({ state, dispatch }) {
                 items={state.activeItems}
                 selectedMarkerId={state.selectedMarkerId}
                 cursor={cursor}
-                showLabel={true}
+                showLabel={showDetails}
                 onMarkerClick={dispatch('marker-click')}
                 onMarkerMouseOver={state.setSelectedMarkerId}
             />
-            <MapControls state={state} dispatch={dispatch} />
+            <MapControls state={state} dispatch={dispatch} handleAction={handleAction} />
             {/*
                 <ContouredPolygon
                     id='polygon'
@@ -38,8 +53,8 @@ function MapContainer({ state, dispatch }) {
                 />
                 <SuburbBoundary suburb={suburb} />
             */}
+            <Routes hidden={state.isFiltered} showPaths={showDetails} routes={state.activeRoutes} />
             {state.selectedMarkerId && <MarkerInfoWindow state={state} dispatch={dispatch} />}
-            {state.showPaths && <Routes hidden={state.isFiltered} routes={state.activeRoutes} />}
 
         </GoogleMap>
     )

@@ -8,11 +8,11 @@ export default function RoutePolyline({ id, path, color }) {
             path,
             geodesic: true,
             strokeColor: color,
-            strokeOpacity: 0.0,
+            strokeOpacity: 0.5,
             strokeWeight: 5, // 33 is the max
             strokePosition: 2, //window.google.maps.StrokePosition.OUTSIDE,
             fillColor: color,
-            fillOpacity: 0.0,
+            fillOpacity: 0.5,
         }}
     // onClick={onClick}
     />
