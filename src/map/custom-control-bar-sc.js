@@ -39,8 +39,8 @@ S.ButtonBase = ({ vertical, color, active = false, disabled }) => css`
         : 'border-left: 1px solid #00000015'
     };
     :first-of-type {
-        border-left: none;
-        border-top: none;
+        border-left: 1px solid transparent;
+        border-top: 1px solid transparent;
     }
 `
 

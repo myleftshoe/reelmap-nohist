@@ -6,16 +6,18 @@ const depot = '145.005252,-37.688797';
 export default async function route(id, data) {
 
     const items = data.where('Driver', id).sortBy('Sequence').all()
-
-    const options = '?overview=full&source=first&destination=last'
+    console.table(items, ['ShortAddress', 'Sequence'])
+    // const options = '?overview=full&source=first&destination=last'
+    const options = '?overview=full'
     const source = depot;
     const destination = depot;
     const lngLats = items.map(({ GeocodedAddress: { latitude, longitude } }) => `${longitude},${latitude}`);
     const payload = [source, ...lngLats, destination].join(';');
-    const solution = await fetchSolution({ service: 'trip', payload, options });
+    const solution = await fetchSolution({ service: 'route', payload, options });
 
     const route = mapSolutionToRoute(solution, items, id);
     const newItems = mapRouteToItems(route, items)
+    console.table(items, ['ShortAddress', 'Sequence'])
 
     return {
         newItems,
@@ -38,8 +40,8 @@ async function fetchSolution({ service = 'route', payload, options = '' }) {
 function mapSolutionToRoute(solution, items, id) {
 
     const waypoints = [...solution.waypoints]
-
-    const { distance, duration, geometry, legs } = solution.trips[0];
+    console.log(solution)
+    const { distance, duration, geometry, legs } = solution.routes[0];
 
     const stepIds = ['start', ...items.map(item => item.OrderId), 'end'];
     const steps = [{ id: 'start', arrival: 36000, duration: 0, location: LatLng(waypoints[0].location), distance: 0, service: 0 }];
@@ -47,8 +49,8 @@ function mapSolutionToRoute(solution, items, id) {
     for (let index = 1; index < waypoints.length; index++) {
         const prevStep = steps[index - 1];
         const waypoint = waypoints[index];
-        const { duration, distance } = legs[waypoint.waypoint_index - 1];
-        const id = stepIds[waypoint.waypoint_index];
+        const { duration, distance } = legs[index - 1];
+        const id = stepIds[index];
         const step = {
             id,
             location: LatLng(waypoint.location),

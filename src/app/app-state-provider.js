@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './mock-data-store'
 import toastStore from '../toasts/store'
 import Filter from '../common/filter'
-import { LatLng } from '../map/utils'
+import { LatLng, Bounds } from '../map/utils'
 import vroom from '../map/services/vroom2'
 import osrmTrip from '../map/services/osrm'
 import collect from 'collect.js';
@@ -33,6 +33,17 @@ export default function StateProvider(props) {
     const solutions = useDict();
     const snapshots = useJsonDict();
     const [maxPaneId, setMaxPaneId] = useState();
+    // const [map, setMap] = useState();
+
+    // useEffect(() => {
+    //     if (map) {
+    //         // setTimeout(() =>
+    //         map.fitBounds(Bounds.from(items.pluck('GeocodedAddress').map(ga => LatLng(ga)).all()))
+    //         //     , 1000
+    //         // );
+    //         setMap(undefined);
+    //     }
+    // }, [map])
 
     //!important: useDict causes clear and delete
     //to error inless () => is used.
@@ -184,10 +195,14 @@ export default function StateProvider(props) {
         }
     }
 
-    function MarkerClick(id) {
+    async function MarkerClick(id) {
         if (mapEditMode.id) {
-            reassignItem(id, mapEditMode.id);
+            dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id })
+            const result = await vroom(drivers, items);
+            const { routes } = result;
+            setRoutes(new Map(routes));
             return;
+            reassignItem(id, mapEditMode.id);
         }
         setSelectedMarkerId(id)
     }
@@ -239,6 +254,17 @@ export default function StateProvider(props) {
         setMapEditMode({ ...mapEditMode, tool })
     }
 
+    function MapClick(map) {
+        console.log('mmmmm', map)
+        setSelectedMarkerId(null);
+        setMapEditMode({});
+        // setMap(map);
+        // setTimeout(() =>
+        // map.fitBounds(Bounds.from(items.pluck('GeocodedAddress').map(ga => LatLng(ga)).all()))
+        //     , 500
+        // )
+    }
+
     function applySnapshot(id) {
         dispatch({ type: 'set', state: snapshots.get(id) });
         setRoutes(new Map(solutions.get(id)));
@@ -249,6 +275,7 @@ export default function StateProvider(props) {
         sortBy, setSortBy,
         mapEditMode, //setMapEditMode,
         quickChange, //setQuickChange,
+        selectedDrivers, setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
         busy, //setBusy,
         // derived
@@ -278,6 +305,7 @@ export default function StateProvider(props) {
         'selection-change': SelectionChange,
         'maximize-end': MaximizeEnd,
         'editmode-click': EditModeClick,
+        'map-click': MapClick,
         'map-rightclick': MapRightClick,
     }
 

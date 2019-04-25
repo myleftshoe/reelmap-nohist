@@ -17,7 +17,7 @@ const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerC
             big={selectedMarkerId === id}
             onClick={() => onMarkerClick(id)}
             onRightClick={() => onMarkerRightClick(id)}
-            onMouseOver={() => onMarkerMouseOver(id)}
+        // onMouseOver={() => onMarkerMouseOver(id)}
         />
     })
 }

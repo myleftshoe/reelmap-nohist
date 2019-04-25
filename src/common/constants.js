@@ -1,8 +1,10 @@
 
 export const colors = {
     CHA: 'red',
+    CHA2: 'yellow',
     DRK: 'purple',
     SAM1: 'green',
+    SAM2: 'pink',
     UNASSIGNED: 'blue'
 }
 
@@ -23,8 +25,10 @@ function Driver(id, { color, start, end } = {}) {
 
 export const drivers = new Map([
     ['CHA', new Driver('CHA', { color: 'red' })],
+    ['CHA2', new Driver('CHA2', { color: 'yellow' })],
     ['DRK', new Driver('DRK', { color: 'purple' })],
     ['SAM1', new Driver('SAM1', { color: 'green' })],
+    ['SAM2', new Driver('SAM2', { color: 'pink' })],
 ]);
 
 export const panes = [...(drivers.keys()), 'UNASSIGNED'];
