@@ -23,10 +23,8 @@ function MapControls({ state, dispatch }) {
 }
 
 
-function RouteButton({ label, onLabelClick, onIconClick }) {
-    const [selected, toggleSelected] = useToggle(false);
+function RouteButton({ label, onLabelClick, onIconClick, selected }) {
     function handleLabelClick(e) {
-        toggleSelected();
         onLabelClick && onLabelClick(e.target.id);
     }
     return <>
@@ -56,23 +54,18 @@ function RouteButton({ label, onLabelClick, onIconClick }) {
 
 function RouteBar({ state, dispatch }) {
 
-    const [selectedRoutes, setSelectedRoutes] = useState(new Set());
-
     function handleClick(id) {
-        if (selectedRoutes.has(id))
-            selectedRoutes.delete(id);
+        if (state.selectedDrivers.includes(id))
+            state.setSelectedDrivers(state.selectedDrivers.filter(driver => driver !== id));
         else
-            selectedRoutes.add(id);
-        console.log([...selectedRoutes])
-        setSelectedRoutes(selectedRoutes);
-        state.setSelectedDrivers([...selectedRoutes])
+            state.setSelectedDrivers([...state.selectedDrivers, id])
         // dispatch('maximize-end')(id);
     }
 
     return (
         <CustomControlBar position='LEFT_TOP' small switchDirection style={{ backgroundColor: '#fff', padding: 3 }}>
             {[...drivers.keys()].map(driver =>
-                <RouteButton key={driver} id={driver} label={driver} onLabelClick={handleClick} onIconClick={e => dispatch('selection-change')([driver])} />
+                <RouteButton key={driver} selected={state.selectedDrivers.includes(driver) || !state.selectedDrivers.length} id={driver} label={driver} onLabelClick={handleClick} onIconClick={e => dispatch('selection-change')([driver])} />
             )}
         </CustomControlBar>
     )
