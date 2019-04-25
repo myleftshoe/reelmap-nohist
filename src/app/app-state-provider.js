@@ -33,20 +33,9 @@ export default function StateProvider(props) {
     const solutions = useDict();
     const snapshots = useJsonDict();
     const [maxPaneId, setMaxPaneId] = useState();
-    // const [map, setMap] = useState();
 
-    // useEffect(() => {
-    //     if (map) {
-    //         // setTimeout(() =>
-    //         map.fitBounds(Bounds.from(items.pluck('GeocodedAddress').map(ga => LatLng(ga)).all()))
-    //         //     , 1000
-    //         // );
-    //         setMap(undefined);
-    //     }
-    // }, [map])
-
-    //!important: useDict causes clear and delete
-    //to error inless () => is used.
+    // !important: useDict causes clear and delete
+    // to error unless () => is used.
     toastActions.onClear(() => solutions.clear());
     toastActions.onRemove(id => solutions.delete(id));
     toastActions.onSelect(applySnapshot);
