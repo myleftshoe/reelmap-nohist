@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { colors, drivers } from '../common/constants';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
-import useToggle from '../hooks/useToggle';
-import '@trendmicro/react-checkbox/dist/react-checkbox.css';
+
 
 function MapControls({ state, dispatch }) {
     return <>
         <RouteBar state={state} dispatch={dispatch} />
+        <ClearButton state={state} dispatch={dispatch} />
         <CalculateButton state={state} dispatch={dispatch} />
+        <RegionSelectTool state={state} dispatch={dispatch} />
+    </>
+}
+
+function RegionSelectTool({ state, dispatch }) {
+    return (
         <RegionSelectControl
             id='regionSelectTool'
             title='Region select tool'
@@ -18,9 +24,8 @@ function MapControls({ state, dispatch }) {
             clearOnComplete
             color={colors[state.mapEditMode.id]}
         />
-    </>
+    )
 }
-
 
 function RouteButton({ label, onLabelClick, onIconClick, selected }) {
     function handleLabelClick(e) {
@@ -70,7 +75,7 @@ function RouteBar({ state, dispatch }) {
     )
 }
 
-function CalculateButton({ state, dispatch }) {
+function ClearButton({ state, dispatch }) {
     return <>
         <CustomControlBar position='LEFT_TOP' small switchDirection  >
             <CustomControlBar.TextButton
@@ -82,6 +87,11 @@ function CalculateButton({ state, dispatch }) {
                 Clear
             </CustomControlBar.TextButton>
         </CustomControlBar>
+    </>
+}
+
+function CalculateButton({ state, dispatch }) {
+    return <>
         <CustomControlBar position='LEFT_TOP' small switchDirection  >
             <CustomControlBar.TextButton
                 id='calculate-balanced-route'
