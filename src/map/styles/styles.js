@@ -8,13 +8,13 @@ import simpleAndLight from './simple-and-light'
 import lightgreyAndBlue from './lightgrey-and-blue'
 
 const styles = {
-    nightMode,
+    // nightMode,
     shadesOfGray,
     ultraLight,
-    mohammad,
-    grayscaleSimple,
-    simpleAndLight,
-    lightgreyAndBlue,
+    // mohammad,
+    // grayscaleSimple,
+    // simpleAndLight,
+    // lightgreyAndBlue,
 }
 
 export default styles;

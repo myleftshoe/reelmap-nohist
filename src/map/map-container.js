@@ -14,7 +14,7 @@ function MapContainer({ state, dispatch }) {
     console.log(state.activeItems, state.activeRoutes)
     return (
         <GoogleMap
-            onClick={() => state.setSelectedMarkerId(null)}
+            onClick={dispatch('map-click')}
             onRightClick={dispatch('map-rightclick')}
             cursor={cursor}
         >
