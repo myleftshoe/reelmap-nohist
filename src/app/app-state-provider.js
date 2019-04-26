@@ -31,6 +31,7 @@ export default function StateProvider(props) {
     const solutions = useDict();
     const snapshots = useJsonDict();
     const [maxPaneId, setMaxPaneId] = useState();
+    const [isUnderSubscribed, setIsUnderSubscribed] = useState(false);
 
     // !important: useDict causes clear and delete
     // to error unless () => is used.
@@ -64,6 +65,8 @@ export default function StateProvider(props) {
     const selectedItem = store.get(selectedMarkerId);
 
     async function autoAssign({ balanced = false }) {
+        const _isUnderSubscribed = isUnderSubscribed;
+        setIsUnderSubscribed(false);
 
         setBusy(true);
 
@@ -72,18 +75,7 @@ export default function StateProvider(props) {
         let result = await vroom(drivers, items);
 
         const slackTime = result.slackTime;
-        if (balanced && slackTime > 3600) {
-            unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
 
-            const averageSlackTime = slackTime / drivers.size - 2400;
-            const reducedDrivers = new Map();
-            drivers.forEach((value, key) => {
-                const driver = { ...value };
-                driver.end = Math.trunc(driver.end - averageSlackTime)
-                reducedDrivers.set(key, driver)
-            })
-            result = await vroom(reducedDrivers, items)
-        }
         const { solution, routes: newRoutes } = result;
 
         setRoutes(new Map(newRoutes));
@@ -97,6 +89,25 @@ export default function StateProvider(props) {
         setToast(toast);
 
         setBusy(false);
+
+        if (slackTime > 3600) {
+            setIsUnderSubscribed(!_isUnderSubscribed);
+            unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
+
+            const averageSlackTime = slackTime / drivers.size - 2400;
+            const reducedDrivers = new Map();
+            drivers.forEach((value, key) => {
+                const driver = { ...value };
+                driver.end = Math.trunc(driver.end - averageSlackTime)
+                reducedDrivers.set(key, driver)
+            })
+            result = await vroom(reducedDrivers, items)
+        }
+
+    }
+
+    function balanceSolution() {
+        autoAssign({ balanced: true })
     }
 
     async function recalcRoute(driver) {
@@ -231,7 +242,8 @@ export default function StateProvider(props) {
         toasts,
         items,
         maxPaneId, setMaxPaneId,
-        routes
+        routes,
+        isUnderSubscribed
     };
 
     const actions = {
@@ -246,6 +258,7 @@ export default function StateProvider(props) {
         'selection-change': SelectionChange,
         'maximize-end': MaximizeEnd,
         'map-click': MapClick,
+        'balance-solution': balanceSolution,
     }
 
     const dispatcher = type => actions[type];

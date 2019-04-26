@@ -1,3 +1,8 @@
 .shrink-font-size {
     font-size: .8rem;
 }
+
+.Toastify__toast-container--bottom-left{
+    margin-bottom: 20px;
+    /* margin-left:28px; */
+}

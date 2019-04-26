@@ -111,7 +111,7 @@ function CalculateButton({ state, dispatch }) {
         <CustomControlBar position='LEFT_TOP' small switchDirection  >
             <CustomControlBar.TextButton
                 id='calculate-balanced-route'
-                onClick={() => dispatch('auto-assign')({ balanced: true })}
+                onClick={() => dispatch('auto-assign')({ balanced: false })}
                 title='Allocate evenly across all vehicles'
                 style={{ width: 100 }}
             >
