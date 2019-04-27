@@ -10,9 +10,17 @@ export default function driverStore() {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const store = new Dict(state);
+
     store.setColor = (id, color) => {
-        console.log(id, color)
         dispatch({ type: 'set-color', id, color })
+    }
+
+    store.setStart = (id, seconds) => {
+        dispatch({ type: 'set-start', id, seconds })
+    }
+
+    store.setEnd = (id, seconds) => {
+        dispatch({ type: 'set-end', id, seconds })
     }
 
     return store;
