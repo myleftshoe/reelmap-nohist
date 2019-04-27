@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Sidebar from './sidebar';
 import ToastSidebar from './toast-sidebar';
 import DriverSidebar from './driver-sidebar';
+import SettingsSidebar from './settings-sidebar';
 import NavButtons from './nav-buttons';
 import Timeline from './timeline';
 import { Tooltip } from 'react-tippy';
@@ -21,6 +22,10 @@ function Sidebars({ state, dispatch }) {
         }
         case 'history': {
             sidebar = <ToastSidebar />
+            break;
+        }
+        case 'settings': {
+            sidebar = <SettingsSidebar />
             break;
         }
         case 'drivers': {

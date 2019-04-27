@@ -1,6 +1,5 @@
 import React from 'react'
 import Solution from '../common/solution';
-import { drivers } from '../common/constants';
 import styled from '@emotion/styled';
 import Badge from '../common/badge';
 import Duration from '../utils/duration';
@@ -21,6 +20,7 @@ export const Header = styled.span`
 
 export function SolutionToast(id, solution) {
     const { distance, duration, service } = solution.summary;
+    console.log(solution.routes.values())
     return ({
         id,
         content: <>
@@ -30,9 +30,9 @@ export function SolutionToast(id, solution) {
             </Header> */}
             <Solution distance={distance} duration={duration} service={service} />
         </>,
-        expandedContent: solution.routes.map(route => {
+        expandedContent: [...solution.routes.values()].map(route => {
             const { vehicle, distance, duration, service, start, end } = route;
-            const driver = [...drivers.values()][vehicle].id
+            const driver = route.id;
             return <>
                 <Header id={vehicle}>
                     <div>{driver}</div>

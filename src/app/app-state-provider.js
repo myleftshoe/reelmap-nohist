@@ -2,23 +2,22 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './mock-data-store'
 import toastStore from '../toasts/store'
+import driverStore from '../app/driver-store'
 import Filter from '../common/filter'
-import { LatLng, Bounds } from '../map/utils'
+import { LatLng } from '../map/utils'
 import vroom from '../map/services/vroom2'
 import osrmTrip from '../map/services/osrm'
 import collect from 'collect.js';
-import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
 import useDict from '../hooks/useDict';
 import useJsonDict from '../hooks/useJsonDict';
-import useToggle from '../hooks/useToggle';
-import move from 'lodash-move';
 
 export default function StateProvider(props) {
 
     const [store, dispatch] = useStore(dataStore);
     const [toasts, toastActions] = useStore(toastStore);
+    const [drivers] = useStore(driverStore);
     const [toast, setToast] = useState({});
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
@@ -76,15 +75,15 @@ export default function StateProvider(props) {
 
         const slackTime = result.slackTime;
 
-        const { solution, routes: newRoutes } = result;
+        const { solution, routes: newRoutes, result: _result } = result;
 
         setRoutes(new Map(newRoutes));
 
         const snapshotId = Date.now();
         solutions.set(snapshotId, newRoutes)
         snapshots.set(snapshotId, store);
-
-        const toast = new SolutionToast(snapshotId, solution);
+        console.log(newRoutes, solution, _result)
+        const toast = new SolutionToast(snapshotId, _result);
         toastActions.add(toast.id, toast);
         setToast(toast);
 

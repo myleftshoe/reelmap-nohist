@@ -1,0 +1,29 @@
+table {
+    overflow: hidden;
+    pointer-events:all;
+    font-size: 0.6rem;
+    color: #0007;
+    font-weight:500;
+    border-collapse: collapse;
+  }
+
+  tr:hover {
+    background-color: #00f3;
+  }
+
+  td, th {
+    position: relative;
+    height:12px;
+    width:12px;
+  }
+  td:hover::after,
+  th:hover::after {
+    content: "";
+    position: absolute;
+    background-color: #00f3;
+    left: 0;
+    top: -5000px;
+    height: 10000px;
+    width: 100%;
+    z-index: -1;
+  }

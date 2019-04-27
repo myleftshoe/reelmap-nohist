@@ -1,5 +1,7 @@
 import React from 'react'
-import { colors, drivers } from '../common/constants';
+import { useStore } from 'outstated'
+import driverStore from '../app/driver-store'
+import { colors } from '../common/constants';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 
@@ -58,6 +60,7 @@ function RouteButton({ label, onLabelClick, onIconClick, selected }) {
 }
 
 function RouteBar({ state, dispatch }) {
+    const [drivers, driverActions] = useStore(driverStore);
 
     function handleClick(id) {
         if (state.selectedDrivers.includes(id))

@@ -15,6 +15,10 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
                 onSidebarChange('history');
                 break;
             }
+            case 'settings': {
+                onSidebarChange('settings');
+                break;
+            }
             default: {
                 state.setSortBy(buttonId);
                 onSidebarChange('drivers')
@@ -27,6 +31,8 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
         <NavButton id='OrderId' active={state.sortBy === 'OrderId'} onClick={handleClick} tooltip='By order number'>sort</NavButton>
         <NavButton id='Sequence' active={state.sortBy === 'Sequence'} onClick={handleClick} tooltip='By delivery order'>format_list_numbered</NavButton>
         <NavButton id='history' active={activeSidebar === 'history'} onClick={handleClick} tooltip='History' badge={{ count: state.toasts.size, color: theme.badgeColor }}>history</NavButton>
+        <div style={{ height: 1, width: '100%', backgroundColor: '#fff1', margin: '24px 0px' }} />
+        <NavButton id='settings' onClick={handleClick} tooltip='Settings'>settings</NavButton>
         <Busy busy={state.busy} />
     </>
 }

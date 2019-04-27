@@ -50,9 +50,10 @@ export default async function vroom(driversMap, data) {
     //     await vroom(driversMap, data)
     // }
 
+    const result = {summary: modifiedSolution.summary, routes}
 
     const newItems = mapRoutesToItems(routes, items);
-    return { items: newItems, solution: modifiedSolution, routes, slackTime };
+    return { items: newItems, solution: modifiedSolution, routes, slackTime, result };
     // return new Items(newItems);
 }
 
