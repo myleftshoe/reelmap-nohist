@@ -29,6 +29,7 @@ export default async function vroom(driversMap, data) {
 
     const routes = mapSolutionToRoutes(solution, drivers);
     const modifiedSolution = modifySolution(solution, drivers);
+    modifiedSolution.routes = routes;
 
     const slackTime = [...driversMap.values()].reduce((acc, driver) => {
         const route = routes.get(driver.id);
@@ -50,11 +51,10 @@ export default async function vroom(driversMap, data) {
     //     await vroom(driversMap, data)
     // }
 
-    const result = {summary: modifiedSolution.summary, routes}
+    // const result = {summary: modifiedSolution.summary, routes}
 
     const newItems = mapRoutesToItems(routes, items);
-    return { items: newItems, solution: modifiedSolution, routes, slackTime, result };
-    // return new Items(newItems);
+    return { items: newItems, solution: modifiedSolution, slackTime };
 }
 
 async function fetchSolution(payload) {

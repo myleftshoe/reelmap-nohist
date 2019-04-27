@@ -75,15 +75,15 @@ export default function StateProvider(props) {
 
         const slackTime = result.slackTime;
 
-        const { solution, routes: newRoutes, result: _result } = result;
+        const { solution } = result;
 
-        setRoutes(new Map(newRoutes));
+        setRoutes(new Map(solution.routes));
 
         const snapshotId = Date.now();
-        solutions.set(snapshotId, newRoutes)
+        solutions.set(snapshotId, solution.routes)
         snapshots.set(snapshotId, store);
-        console.log(newRoutes, solution, _result)
-        const toast = new SolutionToast(snapshotId, _result);
+        console.log(solution)
+        const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
 
