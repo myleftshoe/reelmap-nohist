@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './mock-data-store'
 import toastStore from '../toasts/store'

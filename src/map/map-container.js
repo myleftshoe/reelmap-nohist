@@ -1,8 +1,9 @@
 import React from 'react'
+import { useStore } from 'outstated'
+import driverStore from '../app/driver-store'
 import GoogleMap from './map'
 import DepotMarker from './depot-marker';
 import JobMarkers from './job-markers';
-import { colors } from '../common/constants';
 import Routes from './routes';
 import useCursor from '../hooks/useCursor'
 import MapControls from './map-controls';
@@ -12,7 +13,12 @@ import useToggle from '../hooks/useToggle';
 
 function MapContainer({ state, dispatch }) {
 
-    const cursor = useCursor({ shape: state.mapEditMode.tool, color: colors[state.mapEditMode.id], label: state.quickChange || '' });
+    const drivers = useStore(driverStore);
+
+    const driver = drivers.get(state.mapEditMode.id) || {}
+    const color = driver.color || 'blue';
+
+    const cursor = useCursor({ shape: state.mapEditMode.tool, color, label: state.quickChange || '' });
 
     const [showDetails, toggleShowDetails] = useToggle(false);
 

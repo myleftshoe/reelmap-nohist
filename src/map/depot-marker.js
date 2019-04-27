@@ -11,12 +11,9 @@ export default function DepotMarker({ id, position, color, cursor, ...eventProps
             // label: id,
             position: LatLng(position),
             icon: {
-                // url: `https://cdn.iconscout.com/icon/premium/png-256-thumb/map-pin-121-864982.png`,
                 url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
                 // scaledSize: window.google && new google.maps.Size(40, 40)
             },
-            // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
-            // icon: labeledIcon({label:id, color: colors[Driver]}),
             cursor
         }}
     />
