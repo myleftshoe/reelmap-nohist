@@ -9,6 +9,18 @@ export default function reducer(state, action) {
             state.set(id, { ...driver, color })
             break;
         }
+        case 'set-start': {
+            const { id, seconds } = action;
+            const driver = state.get(id);
+            state.set(id, { ...driver, start: seconds })
+            break;
+        }
+        case 'set-end': {
+            const { id, seconds } = action;
+            const driver = state.get(id);
+            state.set(id, { ...driver, end: seconds })
+            break;
+        }
         default: { }
     }
     return new Map(state);

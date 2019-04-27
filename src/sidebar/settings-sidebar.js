@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from '@emotion/styled';
 import { useStore } from 'outstated'
 import driverStore from '../app/driver-store'
@@ -6,6 +6,7 @@ import Pane from '../panes/pane';
 import './table.css'
 import ColorPicker from './color-picker';
 import SimpleTimeField from 'react-simple-timefield';
+import Duration from '../utils/duration';
 
 export const Header = styled.span`
     display: flex;
@@ -75,9 +76,9 @@ const TimeField = styled(SimpleTimeField)`
 
 
 function SettingsSidebar({ state, dispatch }) {
-    const [time, setTime] = useState('09:00')
+
     const drivers = useStore(driverStore);
-    console.log(drivers)
+
     return (
         <>
             <SidebarTitle>Settings</SidebarTitle>
@@ -86,8 +87,10 @@ function SettingsSidebar({ state, dispatch }) {
                 onMaximize={() => { }}
                 expanded={true}
             >
-                {[...drivers.values()].map(driver =>
-                    <React.Fragment key={driver.id}>
+                {[...drivers.values()].map(driver => {
+                    const start = Duration(driver.start).format();
+                    const end = Duration(driver.end).format();
+                    return <React.Fragment key={driver.id}>
                         <Header>
                             <HeaderLeft>
                                 <ColorPicker color={driver.color} onChange={color => drivers.setColor(driver.id, color)}></ColorPicker>
@@ -102,8 +105,8 @@ function SettingsSidebar({ state, dispatch }) {
                                 <Cell>Typical Start</Cell>
                                 <Cell>
                                     <TimeField
-                                        value={time}
-                                        onChange={setTime}
+                                        value={start}
+                                        onChange={time => drivers.setStart(driver.id, Duration.from(time).seconds)}
                                     />
                                 </Cell>
                             </Row>
@@ -112,12 +115,13 @@ function SettingsSidebar({ state, dispatch }) {
                                 <Cell>
                                     {/* <TimePicker start={9} end={17} value={time} onChange={setTime} /> */}
                                     <TimeField
-                                        value={time}
-                                        onChange={setTime}
+                                        value={end}
+                                        // onChange={setTime}
+                                        onChange={time => drivers.setEnd(driver.id, Duration.from(time).seconds)}
                                     />
                                 </Cell>
                             </Row>
-                            <Row>
+                            {/* <Row>
                                 <Cell>Max. End</Cell>
                                 <Cell>
                                     <TimeField
@@ -125,11 +129,11 @@ function SettingsSidebar({ state, dispatch }) {
                                         onChange={setTime}
                                     />
                                 </Cell>
-                            </Row>
+                            </Row> */}
                         </Content>
 
                     </React.Fragment>
-                )
+                })
                 }
             </Pane>
         </>
