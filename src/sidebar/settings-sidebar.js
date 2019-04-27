@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled';
 import { useStore } from 'outstated'
 import driverStore from '../app/driver-store'
