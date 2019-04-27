@@ -76,7 +76,7 @@ const TimeField = styled(SimpleTimeField)`
 
 function SettingsSidebar({ state, dispatch }) {
     const [time, setTime] = useState('09:00')
-    const [drivers, driverActions] = useStore(driverStore);
+    const drivers = useStore(driverStore);
     console.log(drivers)
     return (
         <>
@@ -90,7 +90,7 @@ function SettingsSidebar({ state, dispatch }) {
                     <React.Fragment key={driver.id}>
                         <Header>
                             <HeaderLeft>
-                                <ColorPicker color={driver.color} onChange={color => driverActions.setColor(driver.id, color)}></ColorPicker>
+                                <ColorPicker color={driver.color} onChange={color => drivers.setColor(driver.id, color)}></ColorPicker>
                                 <Driver key={driver.id}>{driver.id}</Driver>
                             </HeaderLeft>
                             <HeaderRight>

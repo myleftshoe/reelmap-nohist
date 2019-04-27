@@ -60,7 +60,7 @@ function RouteButton({ label, onLabelClick, onIconClick, selected }) {
 }
 
 function RouteBar({ state, dispatch }) {
-    const [drivers, driverActions] = useStore(driverStore);
+    const drivers = useStore(driverStore);
 
     function handleClick(id) {
         if (state.selectedDrivers.includes(id))
@@ -72,8 +72,8 @@ function RouteBar({ state, dispatch }) {
 
     return (
         <CustomControlBar position='LEFT_TOP' small switchDirection style={{ backgroundColor: '#fff', padding: 3 }}>
-            {[...drivers.keys()].map(driver =>
-                <RouteButton key={driver} selected={state.selectedDrivers.includes(driver) || !state.selectedDrivers.length} id={driver} label={driver} onLabelClick={handleClick} onIconClick={e => dispatch('selection-change')([driver])} />
+            {drivers.keys().map(id =>
+                <RouteButton key={id} selected={state.selectedDrivers.includes(id) || !state.selectedDrivers.length} id={id} label={id} onLabelClick={handleClick} onIconClick={e => dispatch('selection-change')([id])} />
             )}
         </CustomControlBar>
     )

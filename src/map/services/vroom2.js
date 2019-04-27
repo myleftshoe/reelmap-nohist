@@ -6,32 +6,32 @@ const depot = [145.005252, -37.688797];
 
 // const totalDuration = shiftDurations.reduce((a, b) => a + b, 0)
 
-export default async function vroom(driversMap, data) {
+export default async function vroom(drivers, data) {
 
-    const drivers = [...driversMap.keys()]
+    const driverIds = drivers.keys()
     const items = data.all();
     if (!items.length) return { items };
 
     // const depot = [145.005252, -37.688797];
-    // const drivers = ['CHA'];
+    // const driverIds = ['CHA'];
 
-    // const capacity = [Math.ceil(1.2 * items.length / drivers.length)]
+    // const capacity = [Math.ceil(1.2 * items.length / driverIds.length)]
     // const totalJobs = items.length;
-    // const _totalDuration = (drivers.length === 1) ? 1 : totalDuration;
+    // const _totalDuration = (driverIds.length === 1) ? 1 : totalDuration;
     // const capacityFactor = totalJobs / _totalDuration;
     // console.log(capacityFactor)
-
-    const jobs = mapItemsToJobs(items, drivers);
-    const vehicles = mapDriversToVehicles(driversMap);
+    console.log(driverIds)
+    const jobs = mapItemsToJobs(items, driverIds);
+    const vehicles = mapDriversToVehicles(drivers);
     const options = { "g": true }; //returns route geometry
 
     const solution = await fetchSolution({ vehicles, jobs, options });
 
-    const routes = mapSolutionToRoutes(solution, drivers);
-    const modifiedSolution = modifySolution(solution, drivers);
+    const routes = mapSolutionToRoutes(solution, driverIds);
+    const modifiedSolution = modifySolution(solution, driverIds);
     modifiedSolution.routes = routes;
 
-    const slackTime = [...driversMap.values()].reduce((acc, driver) => {
+    const slackTime = [...drivers.values()].reduce((acc, driver) => {
         const route = routes.get(driver.id);
         let slack = driver.end - driver.start;
         if (route) {
@@ -43,12 +43,12 @@ export default async function vroom(driversMap, data) {
     }, 0)
 
     // if (slackTime > 1000) {
-    //     const averageSlackTime = slackTime / drivers.length;
-    //     [...driversMap.values()].forEach(driver => {
+    //     const averageSlackTime = slackTime / driverIds.length;
+    //     [...drivers.values()].forEach(driver => {
     //         driver.end = Math.trunc(driver.end - averageSlackTime)
     //     })
-    //     console.log(driversMap);
-    //     await vroom(driversMap, data)
+    //     console.log(drivers);
+    //     await vroom(drivers, data)
     // }
 
     // const result = {summary: modifiedSolution.summary, routes}
@@ -69,15 +69,15 @@ async function fetchSolution(payload) {
     return response.json();
 }
 
-const mapItemsToJobs = (items, drivers) => items.map(item => ({
+const mapItemsToJobs = (items, driverIds) => items.map(item => ({
     id: parseInt(item.OrderId, 10),
     location: [item.GeocodedAddress.longitude, item.GeocodedAddress.latitude],
     // amount: [1],
-    skills: [item.Driver ? drivers.indexOf(item.Driver) + 1 : 0],
+    skills: [item.Driver ? driverIds.indexOf(item.Driver) + 1 : 0],
     service: 120 //2 mins
 }));
 
-const mapDriversToVehicles = (drivers) => [...drivers.values()].map((driver, index) => {
+const mapDriversToVehicles = (driverIds) => [...driverIds.values()].map((driver, index) => {
     // console.log(driver, shiftDurations[index], Math.ceil(capacityFactor * shiftDurations[index]))
     return {
         "id": index,
@@ -90,7 +90,7 @@ const mapDriversToVehicles = (drivers) => [...drivers.values()].map((driver, ind
     }
 });
 
-function modifySolution(solution, drivers) {
+function modifySolution(solution, driverIds) {
 
     const modifiedSolution = {};
     modifiedSolution.routes = [];
@@ -114,7 +114,7 @@ function modifySolution(solution, drivers) {
         )
 
         const _route = {
-            vehicle: drivers[route.vehicle],
+            vehicle: driverIds[route.vehicle],
             ...route,
             start: modifiedSteps[0].arrival,
             end: modifiedSteps[modifiedSteps.length - 1].arrival,
@@ -130,7 +130,7 @@ function modifySolution(solution, drivers) {
 
 }
 
-function mapSolutionToRoutes(solution, drivers) {
+function mapSolutionToRoutes(solution, driverIds) {
 
     const routes = new Map();
     solution.routes.forEach(route => {
@@ -162,7 +162,7 @@ function mapSolutionToRoutes(solution, drivers) {
             geometry,
         }
 
-        routes.set(drivers[route.vehicle], _route)
+        routes.set(driverIds[route.vehicle], _route)
 
     });
 

@@ -12,12 +12,13 @@ import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
 import useDict from '../hooks/useDict';
 import useJsonDict from '../hooks/useJsonDict';
+import Dict from '../common/dict';
 
 export default function StateProvider(props) {
 
     const [store, dispatch] = useStore(dataStore);
     const [toasts, toastActions] = useStore(toastStore);
-    const [drivers] = useStore(driverStore);
+    const drivers = useStore(driverStore);
     const [toast, setToast] = useState({});
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
@@ -94,11 +95,10 @@ export default function StateProvider(props) {
             unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
 
             const averageSlackTime = slackTime / drivers.size - 2400;
-            const reducedDrivers = new Map();
-            drivers.forEach((value, key) => {
-                const driver = { ...value };
+            const reducedDrivers = new Dict();
+            drivers.all().forEach(driver => {
                 driver.end = Math.trunc(driver.end - averageSlackTime)
-                reducedDrivers.set(key, driver)
+                reducedDrivers.set(driver.id, driver)
             })
             result = await vroom(reducedDrivers, items)
         }
