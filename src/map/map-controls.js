@@ -1,88 +1,127 @@
 import React from 'react'
-import { colors, drivers } from '../common/constants';
+import { useStore } from 'outstated'
+import driverStore from '../app/driver-store'
+import { colors } from '../common/constants';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
-import Badge from '../common/badge';
 
-function MapControls({ state, dispatch }) {
+
+function MapControls({ state, dispatch, handleAction }) {
     return <>
-        <ToolBar state={state} dispatch={dispatch} />
         <RouteBar state={state} dispatch={dispatch} />
+        <ShowDetailsButton state={state} dispatch={dispatch} handleAction={handleAction} />
+        <ClearButton state={state} dispatch={dispatch} />
         <CalculateButton state={state} dispatch={dispatch} />
+        <RegionSelectTool state={state} dispatch={dispatch} />
+    </>
+}
+
+function RegionSelectTool({ state, dispatch }) {
+    return (
+        <RegionSelectControl
+            id='regionSelectTool'
+            title='Region select tool'
+            hidden
+            active={state.mapEditMode.tool}
+            onSelectionComplete={dispatch('selection-complete')}
+            clearOnComplete
+            color={colors[state.mapEditMode.id]}
+        />
+    )
+}
+
+function RouteButton({ label, onLabelClick, onIconClick, selected }) {
+    function handleLabelClick(e) {
+        onLabelClick && onLabelClick(e.target.id);
+    }
+    return <>
+        <CustomControlBar.IconButton small
+            id={label}
+            title={label}
+            color={colors[label]}
+            // disabled
+            onClick={onIconClick}
+            style={{ margin: '0px 4px', flexBasis: '24px', flexGrow: 0, backgroundColor: colors[label], border: '1px solid black' }}
+        >
+            fiber_manual_record
+        </CustomControlBar.IconButton>
+        <CustomControlBar.TextButton small
+            id={label}
+            onClick={handleLabelClick}
+            color='black'
+            style={{ border: 'none', justifyContent: 'flex-start' }}
+            textLabel={label}
+        >
+            {label}
+            <span type='checkbox' style={{ paddingLeft: 12, paddingBottom: 3, fontWeight: 'bold', opacity: !selected && 0 }} >✓</span>
+            {/* <i style={{ fontSize: 16 }} className='material-icons'>check_mark</i> */}
+        </CustomControlBar.TextButton>
     </>
 }
 
 function RouteBar({ state, dispatch }) {
+    const drivers = useStore(driverStore);
 
-    function handleClick(e) {
-        let id = e.target.id;
-        if (id === 'ALL')
-            id = null;
-        dispatch('maximize-end')(id);
+    function handleClick(id) {
+        if (state.selectedDrivers.includes(id))
+            state.setSelectedDrivers(state.selectedDrivers.filter(driver => driver !== id));
+        else
+            state.setSelectedDrivers([...state.selectedDrivers, id])
+        // dispatch('maximize-end')(id);
     }
 
     return (
-        <CustomControlBar position='LEFT_TOP' small style={{ width: 120, marginTop: 50 }} >
-            <CustomControlBar.TextButton
-                id='ALL'
-                onClick={handleClick}
-                style={{ padding: '7px 0px', marginBottom: 5, borderBottom: '1px solid #00000015' }}
-                textLabel='All'
-            >
-                All <Badge>({state.items.count()})</Badge>
-            </CustomControlBar.TextButton>
-            {drivers.map(driver =>
-                <CustomControlBar.TextButton
-                    key={driver}
-                    id={driver}
-                    onClick={handleClick}
-                    color='white'
-                    style={{ margin: 5, backgroundColor: colors[driver] }}
-                    textLabel={driver}
-                >
-                    {driver} <Badge>({state.items.where('Driver', driver).count()})</Badge>
-                </CustomControlBar.TextButton>
+        <CustomControlBar position='LEFT_TOP' small switchDirection style={{ backgroundColor: '#fff', padding: 3 }}>
+            {drivers.keys().map(id =>
+                <RouteButton key={id} selected={state.selectedDrivers.includes(id) || !state.selectedDrivers.length} id={id} label={id} onLabelClick={handleClick} onIconClick={e => dispatch('selection-change')([id])} />
             )}
-            <CustomControlBar.TextButton
-                id='UNASSIGNED'
-                style={{ padding: '7px 0px', marginTop: 5 }}
-                onClick={handleClick}
-                textLabel='Unassigned'
-            >
-                Unassigned <Badge>({state.items.where('Driver', 'UNASSIGNED').count()})</Badge>
-            </CustomControlBar.TextButton>
         </CustomControlBar>
     )
 }
 
-function ToolBar({ state, dispatch }) {
-    return (
-        <CustomControlBar small>
-            <CustomControlBar.IconButton onClick={dispatch('editmode-click')}>{state.showPaths ? 'scatter_plot' : 'timeline'}</CustomControlBar.IconButton>
-            <CustomControlBar.Select onSelectionChanged={dispatch('selection-change')}>
-                {drivers.map(driver =>
-                    <CustomControlBar.IconButton key={driver} id={driver} title={driver} color={colors[driver]}>fiber_manual_record</CustomControlBar.IconButton>
-                )}
-            </CustomControlBar.Select>
-            <RegionSelectControl
-                id='regionSelectTool'
-                title='Region select tool'
-                hidden
-                active={state.mapEditMode.tool}
-                onSelectionComplete={dispatch('selection-complete')}
-                clearOnComplete
-                color={colors[state.mapEditMode.id]}
-            />
+function ShowDetailsButton({ state, dispatch, handleAction }) {
+    return <>
+        <CustomControlBar position='LEFT_TOP' small switchDirection  >
+            <CustomControlBar.TextButton
+                id='clear-all'
+                onClick={() => handleAction('toggle-show-details')}
+                title='Show details'
+                style={{ width: 100 }}
+            >
+                Show Details
+            </CustomControlBar.TextButton>
         </CustomControlBar>
-    )
+    </>
+}
+
+function ClearButton({ state, dispatch }) {
+    return <>
+        <CustomControlBar position='LEFT_TOP' small switchDirection  >
+            <CustomControlBar.TextButton
+                id='clear-all'
+                onClick={dispatch('clear-all')}
+                title='Clear all routes'
+                style={{ width: 100 }}
+            >
+                Clear
+            </CustomControlBar.TextButton>
+        </CustomControlBar>
+    </>
 }
 
 function CalculateButton({ state, dispatch }) {
-    return (
-        <CustomControlBar position='TOP_LEFT' small>
-            <CustomControlBar.TextButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>Calculate!</CustomControlBar.TextButton>
+    return <>
+        <CustomControlBar position='LEFT_TOP' small switchDirection  >
+            <CustomControlBar.TextButton
+                id='calculate-balanced-route'
+                onClick={() => dispatch('auto-assign')({ balanced: false })}
+                title='Allocate evenly across all vehicles'
+                style={{ width: 100 }}
+            >
+                Calculate
+            </CustomControlBar.TextButton>
         </CustomControlBar>
-    )
+    </>
 }
 
 export default MapControls;

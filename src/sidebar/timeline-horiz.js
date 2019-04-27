@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import styled from '@emotion/styled';
+import { useStore } from 'outstated'
+import driverStore from '../app/driver-store'
 import range from '../utils/range';
-import { colors, drivers } from '../common/constants';
+import { colors } from '../common/constants';
 import Badge from '../common/badge';
 import clamp from 'lodash.clamp';
 import Duration from '../utils/duration';
@@ -48,6 +50,8 @@ const Col = styled.div`
 
 export default function TimelineHoriz({ state, dispath }) {
 
+    const [drivers, driverActions] = useStore(driverStore);
+
     const [multiplier, setMultiplier] = useState(600)
     const items = state.items;
 
@@ -93,7 +97,7 @@ export default function TimelineHoriz({ state, dispath }) {
                     </Col>
                 )}
             </Times>
-            {drivers.map(driver => <Line>
+            {drivers.map(({ id: driver }) => <Line>
                 <Driver>{driver}</Driver>
                 <Row key={driver}>
                     {items.where('Driver', driver).sortBy('arrival').map(renderRow)}

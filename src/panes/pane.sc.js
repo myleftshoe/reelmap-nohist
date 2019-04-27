@@ -22,6 +22,7 @@ export const PaneHeader = styled.div`
     align-items:center;
     max-width:800px;
     flex:0 0 38px;
+    :hover {cursor: pointer};
 `
 
 export const PaneContent = styled.div`

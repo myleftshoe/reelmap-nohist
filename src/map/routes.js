@@ -2,16 +2,17 @@ import React from 'react'
 import { colors } from '../common/constants';
 import Route from './route';
 
-function Routes({ paths, hidden = false, onRightClick }) {
+function Routes({ routes, hidden = false, showPaths }) {
     if (hidden) return null;
-    return paths.map(({ path, driver }) =>
-        <Route
-            key={`Route.${driver}`}
-            id={`Route.${driver}`}
-            path={path}
-            color={colors[driver]}
-            onRightClick={() => onRightClick(driver)}
+    return routes.map(({ key, value }) => {
+        return <Route
+            key={`Route.${key}`}
+            id={`Route.${key}`}
+            showPath={showPaths}
+            path={value.geometry || ''}
+            color={colors[key]}
         />
+    }
     )
 }
 

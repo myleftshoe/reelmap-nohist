@@ -68,3 +68,6 @@ CustomControlBar.Select = ({ onSelectionChanged, children, small, vertical, mult
         React.cloneElement(child, { small, vertical, active: selected.has(child.props.id), onClick: e => handleClick(child, e) })
     )
 }
+
+CustomControlBar.Title = (props) =>
+    <S.Title>{props.children}</S.Title>

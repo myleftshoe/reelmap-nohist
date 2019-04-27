@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker'
 import { GoogleMapProvider } from '@googlemap-react/core'
 import { Provider as DataProvider } from 'outstated'
 import dataStore from './app/mock-data-store'
+import driverStore from './app/driver-store'
 import toastStore from './toasts/store'
 import AppContainer from './app/app-container'
 
@@ -14,7 +15,7 @@ const history = createBrowserHistory()
 
 ReactDOM.render(
     <GoogleMapProvider>
-        <DataProvider stores={[dataStore, toastStore]}>
+        <DataProvider stores={[dataStore, driverStore, toastStore]}>
             <Router history={history}>
                 <Switch>
                     <Route path="/" component={AppContainer} />

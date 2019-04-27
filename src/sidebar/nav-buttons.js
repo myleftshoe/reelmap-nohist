@@ -5,8 +5,8 @@ import { theme } from '../common/constants';
 
 function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
 
-    function handleClick(btnId) {
-        switch (btnId) {
+    function handleClick(buttonId) {
+        switch (buttonId) {
             case 'timeline': {
                 onSidebarChange('timeline');
                 break;
@@ -15,12 +15,12 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
                 onSidebarChange('history');
                 break;
             }
-            case 'editmode':
-            case 'autoassign': {
+            case 'settings': {
+                onSidebarChange('settings');
                 break;
             }
             default: {
-                state.setSortBy(btnId);
+                state.setSortBy(buttonId);
                 onSidebarChange('drivers')
             }
         }
@@ -28,15 +28,11 @@ function NavButtons({ state, dispatch, onSidebarChange, activeSidebar }) {
 
     return <>
         <NavButton id='City' active={state.sortBy === 'City'} onClick={handleClick} tooltip='By suburb'>location_city</NavButton>
-        {/* <NavButton id='PostalCode,City' active={state.sortBy === 'PostalCode,City'} onClick={handleClick} tooltip='Group by post code'>local_post_office</NavButton> */}
         <NavButton id='OrderId' active={state.sortBy === 'OrderId'} onClick={handleClick} tooltip='By order number'>sort</NavButton>
         <NavButton id='Sequence' active={state.sortBy === 'Sequence'} onClick={handleClick} tooltip='By delivery order'>format_list_numbered</NavButton>
-        {/* <NavButton id='editmode' onClick={dispatch('editmode-click')} tooltip='Auto assign'>scatter_plot</NavButton> */}
-        {/* <NavButton id='autoassign' onClick={dispatch('auto-assign')} tooltip='Auto assign'>timeline</NavButton> */}
-        {/* <NavButton id='timeline' active={activeSidebar === 'timeline'} onClick={handleClick} tooltip='Timeline'>timeline</NavButton> */}
-        {/* <NavButton id='arrival' active={state.sortBy === 'arrival'} onClick={handleClick} tooltip='Auto assign'>timeline</NavButton> */}
         <NavButton id='history' active={activeSidebar === 'history'} onClick={handleClick} tooltip='History' badge={{ count: state.toasts.size, color: theme.badgeColor }}>history</NavButton>
-        <NavButton id='clearall' onClick={dispatch('clear-all')} tooltip='Clear all'>warning</NavButton>
+        <div style={{ height: 1, width: '100%', backgroundColor: '#fff1', margin: '24px 0px' }} />
+        <NavButton id='settings' onClick={handleClick} tooltip='Settings'>settings</NavButton>
         <Busy busy={state.busy} />
     </>
 }

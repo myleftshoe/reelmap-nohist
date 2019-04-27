@@ -21,6 +21,7 @@ S.ButtonBase = ({ vertical, color, active = false, disabled }) => css`
     display:flex;
     align-items:center;
     justify-content: center;
+    flex:1;
     cursor:pointer;
     border:none;
     outline:none;
@@ -38,8 +39,8 @@ S.ButtonBase = ({ vertical, color, active = false, disabled }) => css`
         : 'border-left: 1px solid #00000015'
     };
     :first-of-type {
-        border-left: none;
-        border-top: none;
+        border-left: 1px solid transparent;
+        border-top: 1px solid transparent;
     }
 `
 
@@ -81,6 +82,10 @@ S.TextButton = styled.button`
     font-size:18px;
 `
 
-console.log(S.ButtonSmall)
+S.Title = styled.div`
+    align-self: center;
+    padding: 8px;
+`
+
 
 export default S;

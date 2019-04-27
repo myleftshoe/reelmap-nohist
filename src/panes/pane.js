@@ -7,8 +7,6 @@ import { PaneContainer, PaneHeader, PaneContent } from './pane.sc'
 
 function Pane(props) {
 
-    const { actionButtons = [] } = props;
-
     const [expanded, toggleExpanded] = useToggle(props.expanded);
     const [headerMouseOver, setHeaderMouseOver] = useState(false);
 
@@ -75,13 +73,6 @@ function Pane(props) {
         props.onMaximize(props.id)
     }
 
-    function handleActionButtonClick(id) {
-        console.log(id);
-        const actionButton = actionButtons.find(ab => ab.id === id);
-        actionButton.onClick(props.id);
-        // props.onOpenInNew(props.id)
-    }
-
     function handleHeaderMouseOver() {
         setHeaderMouseOver(true);
     }
@@ -114,23 +105,11 @@ function Pane(props) {
             >
                 {props.title}
                 <Minibar>
-                    {actionButtons.map(({ id, tooltip, icon, onClick, visible }) =>
-                        visible && headerMouseOver &&
-                        <Minibar.Button key={id} id={id} visible={true} onClick={handleActionButtonClick}>
-                            {icon}
-                        </Minibar.Button>
-                    )}
-                    {/* {showOpenInNewButton &&
-                        <Minibar.Button visible={true} onClick={handleOpenInNewClick}>
-                            open_in_new
-                        </Minibar.Button>
-                    } */}
-                    {showMaximizeButton &&
-                        <Minibar.Button visible={true} onClick={handleMaximizeClick}>
-                            fullscreen
-                        </Minibar.Button>
-                    }
-                    <Badge color={props.countColor || null}>{props.count}</Badge>
+                    {props.info && <Badge color='#fff5'>{props.info}</Badge>}
+                    <Minibar.Button visible={showMaximizeButton} title='Maximize' onClick={handleMaximizeClick} style={{ paddingRight: 3 }}>
+                        fullscreen
+                    </Minibar.Button>
+                    <Badge style={{ minWidth: '16px', marginRight: '-6px', paddingLeft: 0 }} color={props.countColor || null}>{props.count}</Badge>
                 </Minibar>
             </PaneHeader>
             <PaneContent>

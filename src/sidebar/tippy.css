@@ -1,0 +1,14 @@
+.tippy-tooltip.tomato-theme {
+    background-color: white;
+    color: #000;
+  }
+
+  .tippy-tooltip.tomato-theme[data-animatefill] {
+    background-color: transparent;
+  }
+
+  .tippy-tooltip.tomato-theme .tippy-backdrop {
+    background-color: white;
+    height:300px;
+    /* width:300px; */
+  }

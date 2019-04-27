@@ -16,6 +16,7 @@ const Badge = styled.span`
     ${badgeBase}
     background-color:${props => props.color};
     color:${props => props.color && '#000'};
+    :hover {cursor: pointer};
     float: right;
 `
 

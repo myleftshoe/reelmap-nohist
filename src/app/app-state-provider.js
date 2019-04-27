@@ -1,41 +1,40 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useStore } from 'outstated'
 import dataStore from './mock-data-store'
 import toastStore from '../toasts/store'
+import driverStore from '../app/driver-store'
 import Filter from '../common/filter'
 import { LatLng } from '../map/utils'
 import vroom from '../map/services/vroom2'
-import route from '../map/services/osrm'
+import osrmTrip from '../map/services/osrm'
 import collect from 'collect.js';
-import { drivers } from '../common/constants'
 import mapMove from '../utils/map-move';
 import { SolutionToast } from '../toasts';
 import useDict from '../hooks/useDict';
 import useJsonDict from '../hooks/useJsonDict';
-import useToggle from '../hooks/useToggle';
-import move from 'lodash-move';
+import Dict from '../common/dict';
 
 export default function StateProvider(props) {
 
     const [store, dispatch] = useStore(dataStore);
     const [toasts, toastActions] = useStore(toastStore);
+    const drivers = useStore(driverStore);
     const [toast, setToast] = useState({});
     const [selectedMarkerId, setSelectedMarkerId] = useState();
     const [selectedDrivers, setSelectedDrivers] = useState([]);
     const [mapEditMode, setMapEditMode] = useState({ on: true, id: null, tool: null });
-    const [quickChange, setQuickChange] = useState();
-    const [showPaths, toggleShowPaths] = useToggle(true);
     const [filter, setFilter] = useState('');
     const [sortBy, setSortBy] = useState('City');
     // const [suburb, setSuburb] = useState('');
-    const [paths, setPaths] = useState(new Map());
+    const [routes, setRoutes] = useState(new Map());
     const [busy, setBusy] = useState(false);
     const solutions = useDict();
     const snapshots = useJsonDict();
     const [maxPaneId, setMaxPaneId] = useState();
+    const [isUnderSubscribed, setIsUnderSubscribed] = useState(false);
 
-    //!important: useDict causes clear and delete
-    //to error inless () => is used.
+    // !important: useDict causes clear and delete
+    // to error unless () => is used.
     toastActions.onClear(() => solutions.clear());
     toastActions.onRemove(id => solutions.delete(id));
     toastActions.onSelect(applySnapshot);
@@ -57,40 +56,65 @@ export default function StateProvider(props) {
         [items, selectedDrivers]
     );
 
-    let activePaths = [...paths.entries()].map(([driver, path]) => ({ driver, path }));
+    let activeRoutes = [...routes.entries()].map(([key, value]) => ({ key, value }));
     if (selectedDrivers.length) {
-        activePaths = selectedDrivers.map(driver => ({ driver, path: paths.get(driver) || '' }));
+        activeRoutes = selectedDrivers.map(key => ({ key, value: routes.get(key) || '' }));
     }
 
     // const polygonPoints = items.where('City', suburb).map(({ GeocodedAddress }) => LatLng(GeocodedAddress)).filter().all();
     const selectedItem = store.get(selectedMarkerId);
 
-    async function autoAssign() {
+    async function autoAssign({ balanced = false }) {
+        const _isUnderSubscribed = isUnderSubscribed;
+        setIsUnderSubscribed(false);
 
         setBusy(true);
 
-        const { paths: newPaths, newItems, solution } = await vroom(items.all(), drivers);
-        setPaths(newPaths);
+        const unassignedIds = items.where('Driver', 'UNASSIGNED').pluck('OrderId').all();
+
+        let result = await vroom(drivers, items);
+
+        const slackTime = result.slackTime;
+
+        const { solution } = result;
+
+        setRoutes(new Map(solution.routes));
 
         const snapshotId = Date.now();
-        solutions.set(snapshotId, solution)
+        solutions.set(snapshotId, solution.routes)
         snapshots.set(snapshotId, store);
-
+        console.log(solution)
         const toast = new SolutionToast(snapshotId, solution);
         toastActions.add(toast.id, toast);
         setToast(toast);
 
-        if (!showPaths) toggleShowPaths();
-
         setBusy(false);
+
+        if (slackTime > 3600) {
+            setIsUnderSubscribed(!_isUnderSubscribed);
+            unassignedIds.forEach(id => store.get(id).Driver = 'UNASSIGNED')
+
+            const averageSlackTime = slackTime / drivers.size - 2400;
+            const reducedDrivers = new Dict();
+            drivers.all().forEach(driver => {
+                driver.end = Math.trunc(driver.end - averageSlackTime)
+                reducedDrivers.set(driver.id, driver)
+            })
+            result = await vroom(reducedDrivers, items)
+        }
+
+    }
+
+    function balanceSolution() {
+        autoAssign({ balanced: true })
     }
 
     async function recalcRoute(driver) {
         if (driver === 'UNASSIGNED') return;
         setBusy(true);
-        const { path } = await route(items.where('Driver', driver).sortBy('Sequence').all());
-        paths.set(driver, path);
-        setPaths(new Map(paths));
+        const { route } = await osrmTrip(driver, items);
+        routes.set(driver, route);
+        setRoutes(new Map(routes));
         setBusy(false);
     }
 
@@ -106,12 +130,12 @@ export default function StateProvider(props) {
     function clearAll() {
         const ids = activeItems.pluck('OrderId').all();
         dispatch({ type: 'assign', ids, driver: 'UNASSIGNED' });
-        setPaths(new Map())
+        setRoutes(new Map())
     }
 
     function reassignRoute(from, to) {
         dispatch({ type: 'swap-route', from, to })
-        setPaths(mapMove(paths, to, from));
+        setRoutes(mapMove(routes, to, from));
     }
 
     function reverseRoute(driver) {
@@ -125,7 +149,8 @@ export default function StateProvider(props) {
         const fromDriver = store.get(id).Driver;
         dispatch({ type: 'assign', ids: [id], driver })
         recalcRoute(fromDriver);
-        recalcRoute(driver);
+        if (driver !== fromDriver)
+            recalcRoute(driver);
         console.log(fromDriver)
     }
 
@@ -165,32 +190,17 @@ export default function StateProvider(props) {
         }
     }
 
-    function MarkerClick(id) {
+    async function MarkerClick(id) {
         if (mapEditMode.id) {
-            reassignItem(id, mapEditMode.id);
+            dispatch({ type: 'assign', ids: [id], driver: mapEditMode.id })
+            const result = await vroom(drivers, items);
+            const { routes } = result;
+            setRoutes(new Map(routes));
             return;
         }
         setSelectedMarkerId(id)
     }
 
-    async function MarkerRightClick(id) {
-        console.log('MarkerRightClick', id, quickChange)
-        if (quickChange) {
-            const fromItem = store.get(id);
-            const driverItems = items.where('Driver', fromItem.Driver).sortBy('Sequence').all();
-            const toItem = driverItems[quickChange];
-            dispatch({ type: 'move', items: driverItems, fromItem, toItem });
-            const next = quickChange + 1;
-            store.get(id).Sequence = next;
-            setQuickChange(next)
-            const { newItems, path, order } = await route(items.where('Driver', fromItem.Driver).sortBy('Sequence').all());
-            // dispatch({ type: 'move', items: newItems, fromItem, toItem: fromItem });
-            dispatch({ type: 'reorder', order })
-            paths.set(fromItem.Driver, path);
-            return;
-        }
-        setQuickChange(store.get(id).Sequence);
-    }
 
     function SelectionChange(ids) {
         setMapEditMode({ ...mapEditMode, tool: ids[0] && 'pointer', id: ids[0] })
@@ -204,47 +214,35 @@ export default function StateProvider(props) {
         // setTimeout(() => setSelectedDrivers(id ? [id] : []), 0);
     }
 
-    function EditModeClick() {
-        // setPaths(new Map())
-        toggleShowPaths();
-        // setMapEditMode({ on: true });
-    }
-
-    function MapRightClick() {
-        if (quickChange) {
-            setQuickChange(undefined);
-            return;
-        }
-        if (!mapEditMode.id) return;
-        const tool = mapEditMode.tool === 'rectangle' ? 'pointer' : 'rectangle'
-        setMapEditMode({ ...mapEditMode, tool })
+    function MapClick(map) {
+        setSelectedMarkerId(null);
+        setMapEditMode({});
     }
 
     function applySnapshot(id) {
         dispatch({ type: 'set', state: snapshots.get(id) });
-        const _drivers = selectedDrivers.length ? selectedDrivers : [...drivers];
-        const paths = new Map(solutions.get(id).routes.map(route => ([_drivers[route.vehicle], route.geometry])));
-        setPaths(paths);
+        setRoutes(new Map(solutions.get(id)));
     }
 
     const state = {
         filter, setFilter,
         sortBy, setSortBy,
-        mapEditMode, //setMapEditMode,
-        quickChange, //setQuickChange,
+        mapEditMode,
+        selectedDrivers, setSelectedDrivers,
         selectedMarkerId, setSelectedMarkerId,
         busy, //setBusy,
         // derived
         activeItems,
-        activePaths,
+        activeRoutes,
         filteredItems,
         isFiltered,
         selectedItem,
         toast,
         toasts,
-        showPaths,
         items,
-        maxPaneId, setMaxPaneId
+        maxPaneId, setMaxPaneId,
+        routes,
+        isUnderSubscribed
     };
 
     const actions = {
@@ -255,12 +253,11 @@ export default function StateProvider(props) {
         'reverse-route': reverseRoute,
         'drop': Drop,
         'marker-click': MarkerClick,
-        'marker-rightclick': MarkerRightClick,
         'selection-complete': SelectionComplete,
         'selection-change': SelectionChange,
         'maximize-end': MaximizeEnd,
-        'editmode-click': EditModeClick,
-        'map-rightclick': MapRightClick,
+        'map-click': MapClick,
+        'balance-solution': balanceSolution,
     }
 
     const dispatcher = type => actions[type];

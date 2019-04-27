@@ -2,10 +2,10 @@ import React from 'react'
 import JobMarker from './job-marker';
 import { colors } from '../common/constants';
 
-const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerClick, onMarkerRightClick, onMarkerMouseOver }) => {
+const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerClick, onMarkerMouseOver }) => {
     return items.map(({ OrderId: id, GeocodedAddress, Driver, Sequence }) => {
         // if (!GeocodedAddress) return null;
-        const label = showLabel && (Sequence || null);
+        const label = showLabel ? (Sequence || null) : null;
         const driver = Driver || 'UNASSIGNED'
         return <JobMarker
             key={id}
@@ -16,8 +16,7 @@ const JobMarkers = ({ items = [], selectedMarkerId, cursor, showLabel, onMarkerC
             cursor={cursor}
             big={selectedMarkerId === id}
             onClick={() => onMarkerClick(id)}
-            onRightClick={() => onMarkerRightClick(id)}
-            onMouseOver={() => onMarkerMouseOver(id)}
+        // onMouseOver={() => onMarkerMouseOver(id)}
         />
     })
 }
