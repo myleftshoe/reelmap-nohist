@@ -5,7 +5,7 @@ export default function Dict(iterable) {
     return {
 
         get(id) {
-            return dict.get(id);
+            return dict.get(id) || {};
         },
 
         set(id, value) {

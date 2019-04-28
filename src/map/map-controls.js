@@ -1,7 +1,6 @@
 import React from 'react'
 import { useStore } from 'outstated'
 import driverStore from '../app/driver-store'
-import { colors } from '../common/constants';
 import CustomControlBar from './custom-control-bar';
 import RegionSelectControl from './region-select-control';
 
@@ -17,6 +16,8 @@ function MapControls({ state, dispatch, handleAction }) {
 }
 
 function RegionSelectTool({ state, dispatch }) {
+    const drivers = useStore(driverStore);
+    const { color } = drivers.get(state.mapEditMode.id);
     return (
         <RegionSelectControl
             id='regionSelectTool'
@@ -25,23 +26,28 @@ function RegionSelectTool({ state, dispatch }) {
             active={state.mapEditMode.tool}
             onSelectionComplete={dispatch('selection-complete')}
             clearOnComplete
-            color={colors[state.mapEditMode.id]}
+            color={color}
         />
     )
 }
 
 function RouteButton({ label, onLabelClick, onIconClick, selected }) {
+
+    const drivers = useStore(driverStore);
+    const { color } = drivers.get(label);
+
     function handleLabelClick(e) {
         onLabelClick && onLabelClick(e.target.id);
     }
+
     return <>
         <CustomControlBar.IconButton small
             id={label}
             title={label}
-            color={colors[label]}
+            color={drivers.get(label).color}
             // disabled
             onClick={onIconClick}
-            style={{ margin: '0px 4px', flexBasis: '24px', flexGrow: 0, backgroundColor: colors[label], border: '1px solid black' }}
+            style={{ margin: '0px 4px', flexBasis: '24px', flexGrow: 0, backgroundColor: color, border: '1px solid black' }}
         >
             fiber_manual_record
         </CustomControlBar.IconButton>

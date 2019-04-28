@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useStore } from 'outstated'
 import driverStore from '../app/driver-store'
 import range from '../utils/range';
-import { colors } from '../common/constants';
 import Badge from '../common/badge';
 import clamp from 'lodash.clamp';
 import Duration from '../utils/duration';
@@ -50,7 +49,7 @@ const Col = styled.div`
 
 export default function TimelineHoriz({ state, dispath }) {
 
-    const [drivers, driverActions] = useStore(driverStore);
+    const drivers = useStore(driverStore);
 
     const [multiplier, setMultiplier] = useState(600)
     const items = state.items;
@@ -73,9 +72,11 @@ export default function TimelineHoriz({ state, dispath }) {
         let diff = nextTime - time;
         const width = Math.trunc((diff - Math.floor(diff).toFixed(2)) * multiplier) || 0;
 
+        const { color } = drivers.get(item.Driver);
+
         const ret = (
             <Col key={item.OrderId} width={width}>
-                <Badge draggable onDragStart={() => console.log('dragstart')} color={colors[item.Driver]}>{item.Sequence}</Badge>
+                <Badge draggable onDragStart={() => console.log('dragstart')} color={color}>{item.Sequence}</Badge>
                 {Duration(item.arrival).format('{mm}')}
             </Col>
         );

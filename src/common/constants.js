@@ -1,13 +1,4 @@
 
-export const colors = {
-    CHA: 'red',
-    CHA2: 'yellow',
-    DRK: 'purple',
-    SAM1: 'green',
-    SAM2: 'pink',
-    UNASSIGNED: 'blue'
-}
-
 export const resizableProps = {
     minSize: 300,
     maxSize: 874,

@@ -18,10 +18,11 @@ export default function JobMarker({ id, label, position, color, cursor, ...event
             position: LatLng(position),
             icon: {
                 url: `http://maps.google.com/mapfiles/ms/icons/${color}.png`,
+                // url: `https://maps.gstatic.com/mapfiles/ms2/micons/${color}.png`,
                 labelOrigin: { x: 16, y: 10 }
             },
-            // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${colors[driver]}.png` },
-            // icon: labeledIcon({label:id, color: colors[Driver]}),
+            // icon: { url: `http://labs.google.com/ridefinder/images/mm_20_${color}.png` },
+            // icon: labeledIcon({label:id, color}),
             cursor
         }}
         {...eventProps}

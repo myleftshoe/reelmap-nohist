@@ -1,9 +1,12 @@
 import React from 'react'
 import { InfoWindow } from '@googlemap-react/core';
 import MarkerInfoWindowContent from './marker-infowindow-content';
-import { colors } from '../common/constants';
+import { useStore } from 'outstated'
+import driverStore from '../app/driver-store'
 
 function MarkerInfoWindow({ state, dispatch }) {
+    const drivers = useStore(driverStore);
+    const color = drivers.get(state.selectedItem.Driver);
     return (
         <InfoWindow
             anchorId={state.selectedMarkerId}
@@ -13,9 +16,10 @@ function MarkerInfoWindow({ state, dispatch }) {
         >
             <MarkerInfoWindowContent
                 item={state.selectedItem}
-                color={colors[state.selectedItem.Driver]}
+                color={color}
                 onDriverChange={dispatch('reassign-item')}
-                dropDownValues={colors}
+                dropDownValues={[]}
+            // dropDownValues={colors}
             />
         </InfoWindow>
     )

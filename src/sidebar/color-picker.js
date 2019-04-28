@@ -4,7 +4,8 @@ import 'tippy.js/themes/light.css'
 import Tooltip from '@tippy.js/react'
 
 
-const colors = ['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300BE']
+// const colors = ['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300BE']
+const colors = ['blue', 'red', 'green', 'lightblue', 'yellow', 'purple', 'pink', 'orange'];
 
 const Colors = styled.div`
     display: flex;
